@@ -119,6 +119,35 @@ export default function UploadPage() {
           </div>
         </motion.div>
       )}
+
+      {/* Demo Mode Section */}
+      <div className="mt-16 pt-10 border-t border-gray-200">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Try Demo Mode</h2>
+          <p className="mt-2 text-gray-500">Don't have a dataset? Use our pre-configured enterprise datasets to see FairAI in action.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { tag: "HR & Recruitment", name: "hiring_dataset.csv", rows: 500, bias: "Age & Gender Bias", color: "bg-blue-50 text-blue-700 border-blue-200" },
+            { tag: "Financial Services", name: "loan_dataset.csv", rows: 500, bias: "Income & Gender Bias", color: "bg-green-50 text-green-700 border-green-200" },
+            { tag: "Healthcare", name: "healthcare_dataset.csv", rows: 500, bias: "Age & Gender Treatment Bias", color: "bg-purple-50 text-purple-700 border-purple-200" },
+          ].map((demo, i) => (
+            <div key={i} className={`p-6 rounded-2xl border ${demo.color} transition-transform hover:-translate-y-1 cursor-pointer shadow-sm`} onClick={() => {
+              localStorage.setItem("dataset_info", JSON.stringify({ filename: demo.name, shape: { rows: demo.rows, cols: 6 }, columns: ["gender", "age", "status"], preview: [] }));
+              localStorage.setItem("demo_mode", demo.name);
+              router.push("/dashboard");
+            }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">{demo.tag}</div>
+              <h3 className="text-lg font-bold mb-1">{demo.name}</h3>
+              <p className="text-sm opacity-90 mb-4">{demo.rows} Rows • Intentional {demo.bias}</p>
+              <button className="w-full py-2 bg-white/50 hover:bg-white border rounded-lg font-semibold text-sm transition-colors">
+                Run Demo Analysis
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
