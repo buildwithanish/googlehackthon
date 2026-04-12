@@ -1,41 +1,81 @@
-# FairAI - Enterprise Responsible AI Platform Architecture
+# FairAI: Responsible AI Governance Platform
+**System Architecture & Technical Design**
 
-## System Overview
+## 1. High-Level Enterprise Architecture
 
-User -> [ Frontend Dashboard (Next.js 14) ] -> [ FastAPI Backend ] -> [ Bias Detection Engine (Fairlearn, Pandas) ] -> [ Explainable AI Engine (Google Gemini) ] -> [ Governance Reports ]
+```mermaid
+graph TD
+    %% User Layer
+    U[Decision Makers & Auditors] <-->|Web & Mobile UI| F[Next.js + Tailwind Dashboard]
+    U2[Data Scientists] <-->|REST / Swagger| A
+    
+    %% Application Layer
+    subgraph Frontend Cloud (Vercel)
+        F
+    end
+    
+    subgraph API Layer (FastAPI)
+        A[FastAPI Core Server]
+        R[Router & Authentication]
+        A --> R
+    end
+    
+    F <-->|HTTPS / JSON| A
+    
+    %% Engine Layer
+    subgraph Assessment Engines
+        BD[Bias Detection Engine]
+        FM[Fairlearn Metrics Engine]
+        XAI[Gemini XAI Explainer]
+        RM[Monitoring & Alerts Module]
+        
+        R --> BD
+        R --> FM
+        R --> XAI
+        R --> RM
+    end
+    
+    %% Platform Services
+    XAI <--> |gRPC| G[Google Gemini API]
+    
+    %% Data Layer
+    subgraph Data Layer
+        DB[(Cloud Postgres SQL)]
+        D[Demo Datasets: Hiring, Loan, Healthcare]
+        DB -.->|Logs & Audit| RM
+        BD <--> D
+    end
 
-### 1. Frontend Dashboard (Next.js 14, TailwindCSS, Recharts)
-The modern UI provides a command-and-control center for AI Governance:
-- **Model Registry:** Tracks versions, status, and compliance of deployed models.
-- **Bias Monitoring Panel:** Real-time drift detection and dataset anomaly analysis.
-- **Fairness Metrics Explorer:** Visualizes complex disparity metrics using dynamic charts.
-- **Explainable AI Report:** Renders human-readable Gemini insights and mitigation steps.
-- **Enterprise Risk Dashboard:** Summarizes ethical compliance and compliance scorecards across industries.
+    style F fill:#000,stroke:#333,stroke-width:2px,color:#fff
+    style A fill:#009688,stroke:#333,stroke-width:2px,color:#fff
+    style G fill:#4285F4,stroke:#333,stroke-width:2px,color:#fff
+    style BD fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#fff
+```
 
-### 2. FastAPI Backend (Python 3.10+, Uvicorn)
-The high-performance API server linking the UI to the AI processing modules:
-- `/upload_dataset`: Profiles dataset and detects sensitive attributes safely.
-- `/analyze_bias`: Executes the enterprise bias detection engine for rigorous metrics calculation.
-- `/generate_ai_explanation`: Connects to Google GenAI for deep contextual investigation.
-- `/fairness_metrics`: Serves thresholds and interpretation guides metadata.
+## 2. Platform Modules Architecture
 
-### 3. Enterprise Bias Detection Engine (Scikit-learn, Fairlearn)
-The quantitative analysis core module:
-- Implements **Demographic Parity**, **Equal Opportunity**, and **Disparate Impact (80% rule)**.
-- Handles multi-demographic cross-sections and intersectional bias vectors.
+### 🛡️ Enterprise AI Governance
+Serves as the control plane for model policies and registry.
+- **Model Registry System:** Keeps track of model hashes, endpoints, and deployment context.
+- **Approval Workflow:** Models cannot be moved to production if the `Disparate Impact` is $< 0.8$.
+- **AI Risk Scorecard:** Proprietary 6-axis framework evaluating Transparency, Ethics, Robustness, Accountability, Compliance, and Drift.
 
-### 4. Responsible AI Monitoring & Governance
-The tracking lifecycle system:
-- **Fairness Drift Detection:** Monitors score changes across model iterations.
-- **Policy Compliance:** Validates models against AI regulations (ISO 42001, EU AI Act).
-- **Automated Alerts:** Triggers notifications for anomalies and severe dataset imbalance.
+### 🌐 Responsible AI Monitoring
+- **Real-Time Hook:** Intercepts batches of live inference data to calculate fairness drift over time.
+- **Automated Alerts:** If the Demographic Parity difference exceeds $0.15$, an automatic Slack / Email alert is triggered via the Alert Manager.
+- **Heatmaps:** A cross-demographic correlation map pinpointing where intersectional bias occurs (e.g. Older + Female).
 
-### 5. Google Gemini Intergration (Explainable AI)
-- Leverages cutting-edge LLMs to translate raw statistical matrices into natural language.
-- Generates specific mitigation recommendations based on the precise distribution of dataset failures.
+### 📖 LLM-Powered XAI (Explainable AI)
+- **Deep Insight Generation:** Bridges the gap between Data Scientists and Legal teams by interpreting raw mathematical matrices into understandable text via Google Gemini.
+- **Remediation Engine:** Autonomously suggests ML mitigation techniques (e.g., Reweighting, Adversarial Debiasing, Threshold Optimization) based on the identified bias type.
 
----
-## Deployment Architecture
-- **Frontend:** Deployed globally on Vercel ensuring low-latency access and seamless CI/CD integration.
-- **Backend:** Containerized API hosted on Google Cloud Run or Render.
-- **Database (Optional/Future):** PostgreSQL for persisting the Model Registry and long-term Governance Audit logs.
+## 3. Technology Stack Breakdown
+
+| Category | Enterprise Technology Used |
+|---|---|
+| **Frontend UI/UX** | React 19, Next.js App Router, Tailwind CSS, Shadcn UI / Recharts |
+| **API Backend** | Python 3.11+, FastAPI, Uvicorn, ASGI |
+| **Machine Learning** | Pandas, Numpy, Scikit-learn, Fairlearn |
+| **GenAI / LLMs** | Google Gemini 1.5 Flash (via `google-genai` SDK) |
+| **Cloud Hosting** | Vercel (Frontend), Render (Containerized Backend) |
+| **Deployment** | Docker, Git Actions CI/CD |
