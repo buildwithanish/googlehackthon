@@ -1,75 +1,229 @@
-# ⚖️ FairAI – System Architecture & Demo Setup
-> **Google Build with AI – Solution Challenge 2026** · Advanced AI Governance Platform
+# ⚖️ FairAI – Bias Detection Platform
 
-![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
-![Render](https://img.shields.io/badge/API-Render-black?logo=render)
-![Python](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)
+[![Vercel](https://img.shields.io/badge/Frontend-Vercel-black?logo=vercel)](https://vercel.com)
+[![Render](https://img.shields.io/badge/Backend-Render-46e3b7?logo=render)](https://render.com)
+[![Python](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/UI-Next.js%2014-black?logo=next.js)](https://nextjs.org)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
-FairAI is an enterprise-grade AI governance platform. It detects intersectional bias, calculates disparate impact, provides a centralized Model Registry, and uses LLMs to automate mitigations.
+> **Google Solution Challenge 2026** | Developed by **Anish** | Team **Synapse Squad Hub**
 
-## 🚀 Features & Modules
-
-### 1️⃣ AI Governance Platform (V3)
-- Models Sandbox & Version Tracking.
-- Policy Management with European Union AI Act and NYC Local Law 144 templates.
-- **Enterprise Risk Scorecard:** 6-axis radar evaluating diversity, transparency, and readiness.
-
-### 2️⃣ Continuous Monitoring
-- Real-Time Fairness Drift Detection graphs.
-- Monitoring tags for Pipeline Failure & Imbalance severity warnings.
-- Dataset shift tracking.
-
-### 3️⃣ Enterprise Bias Detection
-- Evaluates Demographic Parity, Equal Opportunity, and the Disparate Impact (80% rule).
-- Handles edge-cases for Recommender Systems, Hiring platforms, and Loan Systems.
-
-### 4️⃣ LLM Explainable AI (Google Gemini 1.5)
-- **Deep Explainer:** Converts abstract matrix metrics to a Human-readable summary.
-- Recommended automated debugging tasks targeted at root cause (e.g. Adversarial Debiasing limits).
+FairAI is a production-ready AI bias detection and fairness auditing platform. It detects bias in ML datasets using Microsoft Fairlearn and IBM AIF360, explains results using Google Gemini AI, and presents actionable mitigation strategies on a modern SaaS dashboard.
 
 ---
 
-## 📁 System Architecture
+## Problem Statement
+
+> *"Unbiased AI Decision – Ensuring fairness and detecting bias in automated decision systems."*
+
+AI systems used in loan approvals, hiring, healthcare, and insurance are trained on historical data that encodes human biases. FairAI gives developers and compliance teams the tools to measure, visualize, and fix these biases before deployment.
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Dataset Upload** | Upload any CSV dataset for immediate bias analysis |
+| **Demo Mode** | One-click demo with pre-built biased datasets |
+| **5 Fairness Metrics** | Demographic Parity, Equal Opportunity, Disparate Impact, Equalized Odds, Fairness Score |
+| **Fairness Gauge** | Speedometer-style indicator (Green/Yellow/Red) |
+| **AI Bias Explanation** | Google Gemini generates plain-language explanations |
+| **Mitigation Playbook** | 5 actionable strategies with impact/effort ratings |
+| **PDF/JSON Report** | Downloadable compliance audit report |
+| **3 Demo Datasets** | Loan, Hiring, Healthcare with intentional bias patterns |
+
+---
+
+## Project Structure
+
 ```
 fairai/
-├── backend/                  ← FastAPI REST API Core
-├── bias_detection/           ← Fairlearn Metrics Logic Engine
-├── dashboard/                ← Enterprise Visualization Hub
-├── datasets/                 ← Demo Bias Datasets (Hiring, Healthcare, Loans)
-├── frontend/                 ← Next.js 14 Web App + Tailwind UI
-├── scripts/                  ← Setup & Dataset generation automation routines
+├── backend/                   ← FastAPI REST API
+│   ├── main.py                ← All API endpoints
+│   ├── aif360_analysis.py     ← IBM AIF360 integration
+│   ├── fairlearn_analysis.py  ← Microsoft Fairlearn integration
+│   └── report_generator.py   ← Markdown + JSON report generation
+│
+├── bias_detection/            ← Core ML pipeline
+│   ├── metrics.py             ← Fairness metric calculations
+│   └── ai_explainer.py        ← Gemini API integration
+│
+├── frontend/                  ← Next.js 14 web application
+│   ├── app/
+│   │   ├── page.tsx           ← Landing page (dark hero + live demo)
+│   │   ├── upload/page.tsx    ← Dataset upload + demo mode
+│   │   ├── dashboard/page.tsx ← Bias dashboard with gauge + charts
+│   │   ├── metrics/page.tsx   ← Fairness metrics reference
+│   │   └── report/page.tsx    ← AI bias report + download
+│   └── components/
+│       ├── Navbar.tsx
+│       └── Footer.tsx
+│
+├── datasets/                  ← Demo datasets
+│   ├── demo_dataset.csv       ← 5,000 rows (loan approvals with gender bias)
+│   ├── hiring_dataset.csv     ← 500 rows (hiring bias)
+│   └── healthcare_dataset.csv ← 500 rows (healthcare disparities)
+│
+├── generate_demo_dataset.py   ← Dataset generator (generates up to 1 crore rows)
+├── requirements.txt
+├── Dockerfile
+└── docker-compose.yml
 ```
 
-## 🎮 Demo Mode Details
-We have included three intentionally biased datasets specifically built to demonstrate the FairAI warning system in action.
-- **`hiring_dataset.csv`**: Demonstrates age & gender bias (Older women significantly discriminated against in predictions).
-- **`loan_dataset.csv`**: Highlights income disparities combined with employment status.
-- **`healthcare_dataset.csv`**: Shows discrimination regarding severe disease treatment recommendations.
+---
 
-**To Run Demo Mode:**
-1. Navigate to the `Upload Dataset` page.
-2. Under "Try Demo Mode", click **Run Demo Analysis** on any card.
-3. Automatically simulates pipeline analysis onto the visual dashboard.
+## Demo Mode
+
+### Quick Demo (No Upload Required)
+1. Visit your deployed Vercel URL
+2. Click **"Run Demo Analysis"** on the landing page or upload page
+3. The dashboard loads instantly with real bias metrics and AI explanation
+
+### Demo Datasets Included
+
+| Dataset | Rows | Bias Type | Target Column | Sensitive Column |
+|---------|------|-----------|--------------|-----------------|
+| `demo_dataset.csv` | 5,000 | Gender + Income bias in loans | `loan_approved` | `gender` |
+| `hiring_dataset.csv` | 500 | Age & Gender in hiring | `hired` | `gender` |
+| `healthcare_dataset.csv` | 500 | Demographic treatment gaps | `outcome` | `gender` |
+
+**Bias statistics from demo_dataset.csv:**
+- Male approval rate: **40.4%**
+- Female approval rate: **31.8%**
+- Non-Binary approval rate: **24.8%**
+- Disparate Impact: **~0.61** (fails EEOC 80% rule)
 
 ---
 
-## ⚙️ Deployment Instructions
+## Generate Large Dataset (1 Crore Rows)
 
-### Frontend (Next.js / Vercel)
-1. Import the `/frontend` root via Vercel.
-2. Add Environmental Parameters:
-   - `NEXT_PUBLIC_GEMINI_API_KEY`
-   - `NEXT_PUBLIC_API_URL` (Points to Render deployment)
-3. Deploy!
+```bash
+# Small demo dataset (5,000 rows) — already included
+python generate_demo_dataset.py
 
-### Backend (FastAPI / Render)
-1. Import Git Repo to Render.com -> Select Web Service.
-2. Build Settings:
-   - Language: **Docker**
-   - Health Check Path: `/health`
-   - Advanced: Start Command: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
-3. Link `GEMINI_API_KEY` inside Render settings.
+# Large dataset (10,000,000 rows = 1 crore)
+python generate_demo_dataset.py --large
+
+# Custom size
+python generate_demo_dataset.py --rows 100000
+```
 
 ---
 
-*Winner Candidate 2026 – Ethical Bias Detection Platform Initiative*
+## Local Development
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Git
+
+### Backend Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/buildwithanish/googlehackthon.git
+cd googlehackthon
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # Mac/Linux
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set environment variables
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
+
+# Start backend
+uvicorn backend.main:app --reload --port 8000
+# API docs: http://localhost:8000/docs
+```
+
+### Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set environment variables
+cp .env.local.example .env.local
+# Edit .env.local:
+# NEXT_PUBLIC_API_URL=http://localhost:8000
+# NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
+
+# Start development server
+npm run dev
+# App: http://localhost:3000
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Health check |
+| `GET` | `/demo_dataset` | Download sample CSV |
+| `POST` | `/upload_dataset` | Upload and preview CSV |
+| `POST` | `/analyze_bias` | Run fairness analysis |
+| `GET` | `/fairness_metrics` | Metric definitions |
+| `POST` | `/generate_ai_explanation` | Gemini AI explanation |
+| `POST` | `/bias_report` | Download report (JSON/MD) |
+
+**Swagger Docs:** `https://your-backend.onrender.com/docs`
+
+---
+
+## Deployment
+
+### Frontend → Vercel
+
+1. Go to [vercel.com](https://vercel.com) → New Project → Import `googlehackthon`
+2. Set **Root Directory** to `frontend`
+3. Add Environment Variables:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_key
+   ```
+4. Deploy!
+
+### Backend → Render
+
+1. Go to [render.com](https://render.com) → New → Web Service
+2. Connect your GitHub repo
+3. Settings:
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Health Check:** `/health`
+4. Add Environment Variable: `GEMINI_API_KEY=your_key`
+5. Deploy!
+
+---
+
+## Fairness Metrics Explained
+
+| Metric | Ideal | Threshold | Legal Reference |
+|--------|-------|-----------|----------------|
+| Fairness Score | 100 | ≥ 80 | Composite index |
+| Demographic Parity Difference | 0.0 | ≤ 0.10 | CFPB Fair Lending |
+| Equalized Odds Difference | 0.0 | ≤ 0.10 | CFPB Fair Lending |
+| Disparate Impact Ratio | 1.0 | ≥ 0.80 | EEOC 4/5ths Rule |
+
+---
+
+## Team
+
+| Role | Name |
+|------|------|
+| Lead Developer & AI Engineer | **Anish** |
+| Hackathon Team | **Synapse Squad Hub** |
+| Challenge | Google Solution Challenge 2026 |
+
+---
+
+*FairAI v2.0 | MIT License | Developed by Anish | Team Synapse Squad Hub*
