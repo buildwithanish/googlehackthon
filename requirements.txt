@@ -8,3 +8,8 @@ numpy
 google-generativeai
 plotly
 python-multipart
+reportlab
+python-pptx
+python-docx
+shap
+matplotlib

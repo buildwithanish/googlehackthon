@@ -11,7 +11,7 @@ def generate_bias_report(metrics_results, group_rates, sensitive_feature, target
         # Use gemini-1.5-flash for fast responses
         model = genai.GenerativeModel('gemini-1.5-flash')
         
-        prompt = f\"\"\"
+        prompt = f"""
         Act as an expert AI Ethics and Fairness Analyst. 
         I have evaluated an ML dataset/model for bias. 
         Target Variable: {target_variable}
@@ -31,7 +31,7 @@ def generate_bias_report(metrics_results, group_rates, sensitive_feature, target
         3. 3 actionable mitigation suggestions to reduce this bias in the dataset or the model.
         
         Format the response in Markdown with clear headings and bullet points.
-        \"\"\"
+        """
         
         response = model.generate_content(prompt)
         return response.text

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { 
   Brain, GitBranch, Shield, Heart, FileText, HelpCircle, 
-  Zap, Activity, Code, Scale
+  Zap, Activity, Code, Scale, RefreshCw, DollarSign
 } from "lucide-react";
 
 export default function Footer() {
@@ -46,15 +46,15 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Navigation */}
+          {/* Platform Navigation */}
           <div className="lg:col-span-2">
             <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Platform</h4>
             <ul className="space-y-4">
               {[
-                { name: "Upload Dataset", href: "/upload" },
-                { name: "Bias Dashboard", href: "/dashboard" },
-                { name: "Fairness Metrics", href: "/metrics" },
-                { name: "AI Reports", href: "/report" },
+                { name: "Bias Simulator", href: "/simulator", icon: <RefreshCw className="w-3 h-3" /> },
+                { name: "Governance Panel", href: "/dashboard", icon: <Shield className="w-3 h-3" /> },
+                { name: "AI Metrics", href: "/metrics", icon: <Activity className="w-3 h-3" /> },
+                { name: "Reports", href: "/report", icon: <FileText className="w-3 h-3" /> },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-slate-500 hover:text-indigo-400 text-sm font-semibold transition-all flex items-center justify-center lg:justify-start gap-2 group">
@@ -66,45 +66,42 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company & Legal */}
-          <div className="lg:col-span-2">
-            <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Governance</h4>
-            <ul className="space-y-4">
+          {/* Legal & Ethics */}
+          <div className="lg:col-span-3">
+            <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Governance & Ethics</h4>
+            <ul className="grid grid-cols-1 gap-4">
               {[
-                { name: "Our Mission", href: "/about", icon: <Heart className="w-3 h-3" /> },
+                { name: "AI Ethics Charter", href: "/ethics", icon: <Scale className="w-3 h-3" /> },
+                { name: "About AnishNova", href: "/about", icon: <Heart className="w-3 h-3" /> },
                 { name: "Privacy Policy", href: "/privacy", icon: <Shield className="w-3 h-3" /> },
-                { name: "Terms of Service", href: "/terms", icon: <FileText className="w-3 h-3" /> },
-                { name: "Ethics Code", href: "/security", icon: <Scale className="w-3 h-3" /> },
+                { name: "Terms & Conditions", href: "/terms", icon: <FileText className="w-3 h-3" /> },
+                { name: "Refund Policy", href: "/refund", icon: <DollarSign className="w-3 h-3" /> },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-slate-500 hover:text-indigo-400 text-sm font-semibold transition-all flex items-center justify-center lg:justify-start gap-2">
+                  <Link href={link.href} className="text-slate-500 hover:text-indigo-400 text-sm font-semibold transition-all flex items-center justify-center lg:justify-start gap-2 group">
+                    <span className="p-1 rounded bg-white/5 group-hover:bg-indigo-500/20 transition-colors">
+                      {link.icon}
+                    </span>
                     {link.name}
-                    <span className="opacity-30 text-[10px]">↗</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Team Special Feature */}
-          <div className="lg:col-span-4">
-            <div className="relative p-8 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-white/5 overflow-hidden group">
-              <div className="absolute top-0 right-0 p-2.5 bg-indigo-500/20 text-indigo-400 rounded-bl-2xl">
-                <Shield className="w-4 h-4 animate-spin-slow" />
+          {/* Submission Info */}
+          <div className="lg:col-span-3">
+            <div className="relative p-8 rounded-3xl bg-indigo-600/5 border border-indigo-500/10 overflow-hidden group">
+              <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-4 text-indigo-400">Team Synapse Squad Hub</h4>
+              <p className="text-xs text-slate-500 font-medium mb-6 leading-relaxed">
+                Empowering the future of AI through mathematical transparency.
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Official Project</div>
+                <div className="text-sm font-black text-white italic">Google Solution Challenge '26</div>
               </div>
-              <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-6 mb-4">Official Submission</h4>
-              <div className="space-y-4 text-center lg:text-left">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-indigo-400 font-black uppercase tracking-widest pl-1">DEVELOPED BY</span>
-                  <p className="text-xl font-black text-white bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Team Synapse Squad Hub</p>
-                </div>
-                <div className="flex flex-col gap-1 pt-4 border-t border-white/5">
-                  <span className="text-xs text-purple-400 font-black uppercase tracking-widest pl-1">ORGANIZATION</span>
-                  <p className="text-lg font-bold text-slate-300">AnishNova Technologies</p>
-                </div>
-                <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] text-slate-500 font-bold uppercase tracking-wider group-hover:bg-indigo-500/10 group-hover:text-indigo-400 transition-colors">
-                  Google Solution Challenge 2026
-                </div>
+              <div className="mt-8 pt-4 border-t border-white/5">
+                 <p className="text-[10px] text-slate-600 font-bold uppercase italic">Dev: Anish Kumar Raj</p>
               </div>
             </div>
           </div>
@@ -113,38 +110,23 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col gap-1.5 text-center md:text-left">
-            <p className="text-slate-500 text-sm font-bold tracking-tight">
-              © 2026 FairAI Ecosystem. <span className="text-slate-700 font-normal">Registered under AnishNova Technologies.</span>
-            </p>
-            <p className="text-slate-700 text-[10px] font-black uppercase tracking-[0.3em]">
-              Precision. Fairness. Transparency.
+            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
+              © 2026 FairAI Ecosystem • A Product of AnishNova Technologies
             </p>
           </div>
 
-          <div className="flex flex-col items-center md:items-end gap-3">
-             <div className="flex px-4 py-1.5 rounded-full bg-slate-900 border border-white/5 items-center gap-2.5 shadow-2xl">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="text-slate-300 text-[10px] font-black uppercase tracking-[0.15em]">Neural Engine Operational</span>
+          <div className="flex items-center gap-6">
+             <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] font-black uppercase text-slate-700 tracking-tighter">Engine v2.1.0 Online</span>
              </div>
-             <p className="text-slate-600 text-[9px] font-medium max-w-xs text-center md:text-right leading-tight">
-               Built with Google Cloud Run & Vertex AI Simulation Frameworks.
+             <div className="w-px h-4 bg-white/5" />
+             <p className="text-slate-800 text-[9px] font-black uppercase tracking-widest">
+               India • Global
              </p>
           </div>
         </div>
       </div>
-      
-      <style jsx>{`
-        .animate-spin-slow {
-          animation: spin 8s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </footer>
   );
 }

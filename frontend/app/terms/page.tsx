@@ -1,54 +1,55 @@
 "use client";
-import { motion } from "framer-motion";
-import { FileText, Scale, Zap, AlertTriangle } from "lucide-react";
+import { FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function TermsPage() {
   return (
-    <div className="bg-slate-950 min-h-screen text-slate-300 py-24">
-      <div className="max-w-4xl mx-auto px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-          <h1 className="text-5xl font-black text-white mb-4">Terms of Service</h1>
-          <p className="text-purple-400 font-semibold tracking-widest uppercase text-xs">Effective Date: April 14, 2026</p>
-        </motion.div>
+    <div className="min-h-screen bg-slate-950 text-white p-12">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-20">
+          <Link href="/" className="text-xl font-black italic mb-12 block">FAIRAI</Link>
+          <h1 className="text-5xl font-black italic mb-6">TERMS OF SERVICE</h1>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Governing FairAI & AnishNova Tech</p>
+        </header>
 
-        <div className="space-y-12 leading-relaxed">
+        <div className="space-y-12 text-slate-400 leading-relaxed font-medium">
+          <section className="p-8 rounded-3xl bg-white/[0.02] border border-white/5">
+            <h2 className="text-white text-xl font-black italic mb-4 flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-indigo-400" /> ACCEPTABLE USE
+            </h2>
+            <p className="mb-4">
+              FairAI is a governance tool. Users agree to use the platform solely for identifying and mitigating bias 
+              in automated systems. 
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-sm text-slate-500">
+                <li>No unlawful data reverse-engineering.</li>
+                <li>No automated scraping of the FairAI analytical engine.</li>
+                <li>No sharing of audit reports for malicious purposes.</li>
+            </ul>
+          </section>
+
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <Scale className="w-5 h-5 text-purple-500" />
-              1. Agreement to Terms
+            <h2 className="text-white text-xl font-black italic mb-4 flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-indigo-400" /> LIABILITY LIMITATION
             </h2>
             <p>
-              By accessing FairAI (the "Platform"), you agree to be bound by these Terms of Service. The platform is operated by AnishNova Technologies. If you do not agree with these terms, please refrain from using our services.
+              FairAI provides mathematical metrics based on provided data. We are not responsible for legal decisions 
+              made based on these reports. Final compliance responsibility remains with the deploying organization.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-purple-500" />
-              2. Use License
-            </h2>
+            <h2 className="text-white text-xl font-black italic mb-4">INTELLECTUAL PROPERTY</h2>
             <p>
-              FairAI grants you a limited, non-exclusive license to use our bias detection tools for internal auditing and research purposes. You may not attempt to decompile or reverse engineer any software contained on the Platform's backend or Antigravity engine.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-purple-500" />
-              3. Disclaimer
-            </h2>
-            <p>
-              The fairness metrics provided by FairAI are based on mathematical models (Fairlearn, AIF360) and AI explanations (Google Gemini). While highly accurate, these results should be used as a guide for ethical decision-making and do not constitute legal advice.
-            </p>
-          </section>
-
-          <section className="p-8 rounded-2xl bg-purple-500/5 border border-purple-500/20">
-            <h3 className="text-white font-bold mb-2">Compliance Responsibility</h3>
-            <p className="text-sm">
-              Users are solely responsible for ensuring their AI models comply with local and international regulations, including the EU AI Act and GDPR. FairAI is a tool to assist in that journey.
+              The Antigravity Engine, UI components, and FairAI branding are intellectual property of 
+              AnishNova Technologies and Synapse Squad Hub.
             </p>
           </section>
         </div>
+
+        <footer className="mt-32 pt-12 border-t border-white/5 text-center">
+             <Link href="/dashboard" className="text-indigo-400 font-black uppercase text-xs tracking-widest hover:text-white transition-colors">Accept & Enter Dashboard</Link>
+        </footer>
       </div>
     </div>
   );
