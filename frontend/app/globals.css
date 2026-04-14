@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #070B1A;
-  --card: #0F172A;
+  --background: #050816;
+  --card: #0B1023;
   --foreground: #f8fafc;
   --accent-gradient: linear-gradient(135deg, #818cf8, #c084fc);
+  --glass-bg: rgba(11, 16, 35, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 * {

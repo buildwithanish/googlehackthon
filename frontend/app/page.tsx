@@ -1,13 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Brain, Database, Zap, ArrowRight, ShieldCheck, BarChart3, 
   FileText, Cpu, Search, Filter, Layers, Users, Globe, 
   ShieldAlert, Sparkles, LayoutGrid, CheckCircle, Activity,
   Upload, FileQuestion, TrendingUp, PieChart, Info, Mail,
-  Github, Twitter, Linkedin
+  ChevronRight, RefreshCw, Shuffle
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -15,23 +15,40 @@ import {
 } from 'recharts';
 import { useDropzone } from 'react-dropzone';
 
+// Custom Icons to avoid Lucide Export Issues
+const Github = (props: any) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+  </svg>
+);
+
+const Twitter = (props: any) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+  </svg>
+);
+
+const Linkedin = (props: any) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 // Animations
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+interface UploadedFileInfo {
+  name: string;
+  rows: string;
+  cols: string;
+  score: string;
+}
 
-// Mock Data for Dashboard Preview
 const barData = [
   { name: 'Age', bias: 0.12 },
   { name: 'Gender', bias: 0.45 },
@@ -45,10 +62,10 @@ const pieData = [
   { name: 'Biased', value: 25 },
 ];
 
-const COLORS = ['#6366f1', '#f43f5e', '#10b981', '#f59e0b'];
+const COLORS = ['#818cf8', '#f43f5e', '#10b981', '#f59e0b'];
 
 export default function LandingPage() {
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedFileInfo | null>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -64,409 +81,497 @@ export default function LandingPage() {
   });
 
   return (
-    <div className="flex flex-col w-full bg-[#070B1A] text-slate-200 overflow-x-hidden pt-10">
+    <div className="flex flex-col w-full bg-[#050816] text-slate-200 overflow-x-hidden">
       
-      {/* ── HERO SECTION ── */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 overflow-hidden">
-        {/* Background Glows */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] animate-pulse delay-700" />
+      {/* ── HIGH-END HERO SECTION ── */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden pt-20">
+        {/* Subtle Ambient Lighting */}
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none" />
+        <div className="absolute bottom-[0%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/grid.svg')] bg-repeat opacity-[0.02] pointer-events-none" />
         
-        <div className="relative z-10 max-w-6xl mx-auto text-center space-y-8">
+        <div className="relative z-10 max-w-7xl mx-auto text-center space-y-12">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-bold uppercase tracking-widest text-indigo-400"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md"
           >
-            <Sparkles className="w-3.5 h-3.5" /> Google Solution Challenge 2026
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Google Solution Challenge 2026
           </motion.div>
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter text-white"
-          >
-            FairAI <br />
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Bias Detection Platform</span>
-          </motion.h1>
+          <div className="space-y-4">
+            <motion.h1 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-7xl md:text-[11rem] font-black tracking-tighter leading-none text-white select-none"
+            >
+              FairAI
+            </motion.h1>
+            <motion.h2
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ delay: 0.3, duration: 1 }}
+               className="text-3xl md:text-5xl font-black italic tracking-tight text-slate-400 uppercase"
+            >
+               Bias <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Detection Platform</span>
+            </motion.h2>
+          </div>
           
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+            transition={{ delay: 0.5 }}
+            className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto leading-relaxed font-medium"
           >
-            Detect, explain, and eliminate bias in AI systems using fairness metrics and Google AI. 
-            The professional standard for algorithmic governance.
+            Detect, explain, and eliminate bias in AI systems using advanced fairness metrics and Google AI intelligence. Built for professional governance.
           </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+            transition={{ delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8"
           >
-            <Link href="/upload" className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(79,70,229,0.3)]">
-              Upload Dataset
+            <Link href="/upload" className="group relative px-10 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:scale-110 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] overflow-hidden">
+               <span className="relative z-10 flex items-center gap-3">
+                 <Database className="w-5 h-5" /> Upload Dataset
+               </span>
             </Link>
-            <Link href="/upload" className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-bold transition-all hover:bg-white/10 hover:scale-105 active:scale-95">
-              Run Demo Analysis
+            <Link href="/upload" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl">
+               <Zap className="w-5 h-5 text-indigo-400" /> Run Demo Analysis
             </Link>
           </motion.div>
 
-          {/* Badges */}
+          {/* Trust indicators / Badges */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-16"
+            transition={{ delay: 1 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto pt-24"
           >
             {[
-              { icon: <ShieldCheck className="w-4 h-4" />, label: "25+ AI Bias Tools" },
-              { icon: <Globe className="w-4 h-4" />, label: "Cloud Native" },
-              { icon: <Zap className="w-4 h-4" />, label: "Google Cloud Powered" },
-              { icon: <FileText className="w-4 h-4" />, label: "PDF / Word Reports" }
+              { icon: <ShieldCheck />, label: "25+ AI Bias Tools" },
+              { icon: <Globe />, label: "Cloud Native" },
+              { icon: <Zap />, label: "Google Cloud Powered" },
+              { icon: <FileText />, label: "PDF / Word Reports" }
             ].map((badge, i) => (
-              <div key={i} className="flex items-center gap-2 px-6 py-3 bg-[#0F172A] border border-white/5 rounded-2xl text-[11px] font-bold text-slate-400">
-                <span className="text-indigo-500">{badge.icon}</span>
-                {badge.label}
+              <div key={i} className="flex flex-col items-center gap-3 p-6 bg-[#0B1023]/40 border border-white/5 rounded-3xl backdrop-blur-sm group hover:border-indigo-500/30 transition-all">
+                <span className="text-indigo-500 group-hover:scale-110 transition-transform">{badge.icon}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{badge.label}</span>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ── CSV UPLOAD SECTION ── */}
-      <section className="py-24 px-6 bg-[#090D25]/50 border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl font-black text-white italic">Dataset Ingestion</h2>
-            <p className="text-slate-400">Analyze your training data for hidden systematic biases.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            <div className="md:col-span-2">
-              <div 
-                {...getRootProps()} 
-                className={`h-80 border-2 border-dashed rounded-[40px] flex flex-col items-center justify-center transition-all cursor-pointer bg-[#0F172A]/40 ${isDragActive ? 'border-indigo-500 bg-indigo-500/5' : 'border-white/10 hover:border-white/20'}`}
-              >
-                <input {...getInputProps()} />
-                <div className="w-16 h-16 bg-indigo-500/10 rounded-3xl flex items-center justify-center mb-6 text-indigo-400">
-                  <Upload className="w-8 h-8" />
+      {/* ── PREMIUM CSV UPLOAD INTERFACE ── */}
+      <section className="py-32 px-6 bg-[#0B1023]/20 border-y border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+             <div className="lg:w-1/2 space-y-8">
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white italic uppercase leading-[0.85]">
+                   Seamless <br /> <span className="text-indigo-500">Data Ingestion</span>
+                </h2>
+                <p className="text-slate-500 text-lg font-bold leading-relaxed italic uppercase tracking-tight">
+                   Our high-performance engine supports multi-encoding CSV files up to 500MB. Upload and let FairAI profile your data health in real-time.
+                </p>
+                <div className="flex gap-10">
+                   <div>
+                      <p className="text-3xl font-black text-white italic tracking-tighter">500MB</p>
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Max capacity</p>
+                   </div>
+                   <div>
+                      <p className="text-3xl font-black text-indigo-500 italic tracking-tighter">128ms</p>
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Parsing latency</p>
+                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 uppercase italic tracking-wider">Drag & Drop CSV</h3>
-                <p className="text-sm text-slate-500 mb-8">Supported formats: .CSV (Max size 500MB)</p>
-                <button className="px-6 py-3 bg-white text-black rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform">
-                  Upload Dataset
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-8 rounded-[40px] bg-[#0F172A] border border-white/5 h-full">
-                <h3 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-6">Inbound Metadata</h3>
-                {uploadedFile ? (
-                  <div className="space-y-6">
-                    <div>
-                      <p className="text-[10px] text-slate-500 uppercase font-black">Dataset Name</p>
-                      <p className="text-lg font-bold text-white truncate">{uploadedFile.name}</p>
+             </div>
+             
+             <div className="lg:w-1/2 w-full">
+                <div 
+                  {...getRootProps()} 
+                  className={`relative p-12 md:p-20 rounded-[60px] border-2 border-dashed transition-all cursor-pointer bg-[#0B1023] shadow-3xl ${isDragActive ? 'border-indigo-500 bg-indigo-500/5 shadow-indigo-500/10' : 'border-white/10 hover:border-indigo-500/30 group'}`}
+                >
+                  <input {...getInputProps()} />
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-indigo-500/10 rounded-[30px] flex items-center justify-center mb-10 text-indigo-400 group-hover:scale-110 transition-transform duration-500">
+                      <Upload className="w-10 h-10" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[10px] text-slate-500 uppercase font-black">Rows</p>
-                        <p className="text-xl font-bold text-white">{uploadedFile.rows}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-500 uppercase font-black">Cols</p>
-                        <p className="text-xl font-bold text-white">{uploadedFile.cols}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-500 uppercase font-black">Quality Score</p>
-                      <p className="text-3xl font-black text-emerald-400">{uploadedFile.score}</p>
-                    </div>
+                    <h3 className="text-2xl font-black text-white mb-3 uppercase italic tracking-widest">Drop your CSV here</h3>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-10">UTF-8 • ISO-8859 • MacRoman</p>
+                    <button className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
+                      Browse Files
+                    </button>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center text-slate-600">
-                    <FileQuestion className="w-12 h-12 mb-4 opacity-20" />
-                    <p className="text-[10px] font-black uppercase tracking-widest">Waiting for data...</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── POWERBI STYLE DASHBOARD PREVIEW ── */}
-      <section className="py-24 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
-            <div className="space-y-4">
-              <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Forensic Dashboard</h2>
-              <p className="text-slate-400 max-w-xl">Deep analytics on data distribution and potential bias signals.</p>
-            </div>
-            <div className="flex gap-4">
-              <div className="px-4 py-2 bg-[#0F172A] border border-white/10 rounded-xl text-xs font-bold text-slate-300 flex items-center gap-2">
-                <Filter className="w-3.5 h-3.5" /> Filter Views
-              </div>
-              <div className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/20">
-                <LayoutGrid className="w-3.5 h-3.5" /> Export Data
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {[
-              { label: "Total Records", value: "12,450", color: "text-indigo-400" },
-              { label: "Columns", value: "24", color: "text-blue-400" },
-              { label: "Missing Values", value: "0.2%", color: "text-emerald-400" },
-              { label: "Data Quality Score", value: "85/100", color: "text-purple-400" }
-            ].map((kpi, i) => (
-              <div key={i} className="p-8 rounded-[30px] bg-[#0F172A] border border-white/5 hover:border-indigo-500/30 transition-all group">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{kpi.label}</p>
-                <p className={`text-4xl font-black tracking-tighter ${kpi.color}`}>{kpi.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 p-8 rounded-[40px] bg-[#0F172A] border border-white/5 min-h-[400px]">
-              <h3 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-8 italic">Bias Variance by Feature</h3>
-              <div className="h-80 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                    <XAxis 
-                      dataKey="name" 
-                      stroke="#475569" 
-                      fontSize={11} 
-                      axisLine={false} 
-                      tickLine={false} 
-                    />
-                    <YAxis 
-                      stroke="#475569" 
-                      fontSize={11} 
-                      axisLine={false} 
-                      tickLine={false} 
-                    />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #ffffff10', borderRadius: '12px' }}
-                      itemStyle={{ color: '#818cf8', fontWeight: 'bold' }}
-                    />
-                    <Bar dataKey="bias" fill="#6366f1" radius={[10, 10, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            
-            <div className="p-8 rounded-[40px] bg-[#0F172A] border border-white/5">
-              <h3 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-8 italic">Overall Fairness Balance</h3>
-              <div className="h-80 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie
-                      data={pieData}
-                      innerRadius={80}
-                      outerRadius={100}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </RePieChart>
-                </ResponsiveContainer>
-                <div className="text-center">
-                  <p className="text-3xl font-black text-white italic">75% FAIR</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase">Optimal Target: 90%+</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── DATA PREVIEW TABLE ── */}
-      <section className="py-24 px-6 bg-[#070B1A]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-10">
-            <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">Data Preview</h2>
-            <div className="flex items-center gap-4 bg-[#0F172A] border border-white/5 rounded-2xl px-4 py-2">
-              <Search className="w-4 h-4 text-slate-500" />
-              <input type="text" placeholder="Search dataset..." className="bg-transparent border-none focus:outline-none text-sm text-slate-300 w-64" />
-            </div>
-          </div>
-          
-          <div className="rounded-[30px] border border-white/5 bg-[#0F172A]/30 overflow-hidden backdrop-blur-xl">
-             <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead>
-                   <tr className="bg-white/5 border-b border-white/5">
-                      {['ID', 'Age', 'Gender', 'Income', 'Occupation', 'Credit Score', 'Status'].map((head, i) => (
-                        <th key={i} className="px-8 py-5 font-black uppercase text-[10px] tracking-widest text-slate-400">{head}</th>
-                      ))}
-                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5 font-mono text-[12px] text-slate-300">
-                   {[1, 2, 3, 4, 5].map((row) => (
-                     <tr key={row} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="px-8 py-5 text-indigo-400 font-bold">#USR-{1000 + row}</td>
-                        <td className="px-8 py-5">24</td>
-                        <td className="px-8 py-5">Male</td>
-                        <td className="px-8 py-5">$54,000</td>
-                        <td className="px-8 py-5">Engineer</td>
-                        <td className="px-8 py-5">
-                           <div className="flex items-center gap-2">
-                             <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-500 w-[70%]" />
-                             </div>
-                             712
-                           </div>
-                        </td>
-                        <td className="px-8 py-5">
-                           <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-lg text-[9px] font-bold uppercase">Passed</span>
-                        </td>
-                     </tr>
-                   ))}
-                </tbody>
-             </table>
-             <div className="p-6 border-t border-white/5 flex justify-between items-center">
-                <p className="text-[10px] font-bold text-slate-500 uppercase">Showing 5 of 12,450 results</p>
-                <div className="flex gap-2">
-                   <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold hover:bg-white/10 transition-all uppercase">Prev</button>
-                   <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold hover:bg-white/10 transition-all uppercase">Next</button>
+                  
+                  {/* Floating Metadata Indicator */}
+                  <AnimatePresence>
+                    {uploadedFile && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="absolute -bottom-10 -right-10 bg-[#0B1023] border border-white/10 p-10 rounded-[40px] shadow-4xl w-72 backdrop-blur-3xl"
+                      >
+                         <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-6">Inbound Profile</h4>
+                         <div className="space-y-4">
+                            <div className="flex justify-between items-center text-[11px] font-bold">
+                               <span className="text-slate-500 uppercase tracking-tight italic">Records</span>
+                               <span className="text-white italic">{uploadedFile.rows}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-[11px] font-bold">
+                               <span className="text-slate-500 uppercase tracking-tight italic">Score</span>
+                               <span className="text-emerald-400 font-black italic">{uploadedFile.score}</span>
+                            </div>
+                         </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
              </div>
           </div>
         </div>
       </section>
 
-      {/* ── AI INSIGHTS & BIAS ANALYSIS ── */}
-      <section className="py-24 px-6 bg-gradient-to-b from-[#070B1A] to-[#090D25]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+      {/* ── POWERBI STYLE ANALYTICS DASHBOARD ── */}
+      <section className="py-40 px-6 relative overflow-hidden bg-[#050816]">
+        <div className="absolute top-1/2 left-0 w-[40%] h-[40%] bg-indigo-600/[0.03] rounded-full blur-[160px] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto space-y-24 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-10">
+            <div className="space-y-4">
+               <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white italic uppercase leading-none">
+                  Professional <br /> <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Analytics Suite</span>
+               </h2>
+               <p className="text-slate-500 text-lg font-bold italic tracking-tight uppercase">High-fidelity forensic visualization for dataset clusters.</p>
+            </div>
+            <div className="flex gap-4">
+               <div className="px-6 py-3 bg-[#0B1023] border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-300 flex items-center gap-3">
+                  <Filter className="w-4 h-4" /> Filter Clusters
+               </div>
+               <div className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 shadow-xl overflow-hidden relative group transition-all hover:scale-105 active:scale-95">
+                  <LayoutGrid className="w-4 h-4" /> Export Report
+               </div>
+            </div>
+          </div>
+
+          {/* KPI Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             {[
+               { label: "Total Records", value: "12,450", trend: "+3.2%", color: "text-indigo-400" },
+               { label: "Total Columns", value: "24", trend: "0.0", color: "text-blue-400" },
+               { label: "Missing Values", value: "0.2%", trend: "-0.1%", color: "text-emerald-400" },
+               { label: "Data Quality Score", value: "85/100", trend: "Target: 90", color: "text-purple-400" }
+             ].map((kpi, i) => (
+               <div key={i} className="p-10 rounded-[40px] bg-[#0B1023] border border-white/5 group hover:border-indigo-500/20 transition-all shadow-xl">
+                  <div className="flex justify-between items-start mb-4">
+                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{kpi.label}</p>
+                     <p className="text-[9px] font-black text-indigo-500 uppercase">{kpi.trend}</p>
+                  </div>
+                  <p className={`text-5xl font-black tracking-tighter italic ${kpi.color}`}>{kpi.value}</p>
+               </div>
+             ))}
+          </div>
+
+          {/* Chart Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+             <div className="lg:col-span-2 p-12 rounded-[50px] bg-[#0B1023] border border-white/5 min-h-[500px] shadow-2xl overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+                   <BarChart3 className="w-64 h-64" />
+                </div>
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-indigo-400 mb-12 italic">Bias Distribution Matrix</h3>
+                <div className="h-[400px] w-full relative z-10">
+                   <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={barData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                        <XAxis 
+                          dataKey="name" 
+                          stroke="#475569" 
+                          fontSize={11} 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{ fontWeight: 800 }}
+                        />
+                        <YAxis 
+                          stroke="#475569" 
+                          fontSize={11} 
+                          axisLine={false} 
+                          tickLine={false} 
+                        />
+                        <Tooltip 
+                          cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                          contentStyle={{ backgroundColor: '#0B1023', border: '1px solid #ffffff10', borderRadius: '24px', padding: '16px' }}
+                          itemStyle={{ color: '#818cf8', fontWeight: '900', fontSize: '12px' }}
+                        />
+                        <Bar dataKey="bias" fill="#6366f1" radius={[12, 12, 0, 0]} />
+                      </BarChart>
+                   </ResponsiveContainer>
+                </div>
+             </div>
+
+             <div className="p-12 rounded-[50px] bg-[#0B1023] border border-white/5 flex flex-col items-center justify-center text-center shadow-2xl">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] text-indigo-400 mb-12 italic w-full text-left">System Ethics Balance</h3>
+                <div className="h-[300px] w-full relative">
+                   <ResponsiveContainer width="100%" height="100%">
+                      <RePieChart>
+                        <Pie
+                          data={pieData}
+                          innerRadius={90}
+                          outerRadius={120}
+                          paddingAngle={8}
+                          dataKey="value"
+                          stroke="none"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </RePieChart>
+                   </ResponsiveContainer>
+                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <p className="text-5xl font-black text-white italic tracking-tighter">75%</p>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">FAIR</p>
+                   </div>
+                </div>
+                <div className="mt-12 space-y-4 w-full">
+                   <div className="flex justify-between items-center p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 italic">Target Parity</span>
+                      <span className="text-xs font-black text-emerald-400 italic">0.90+</span>
+                   </div>
+                   <div className="flex justify-between items-center p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 italic">Disparity Index</span>
+                      <span className="text-xs font-black text-rose-500 italic">LOW</span>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EXCEL STYLE DATA TABLE ── */}
+      <section className="py-40 px-6 bg-[#050816]">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+            <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase">Raw Intelligence <span className="text-slate-600">Matrix</span></h3>
+            <div className="flex items-center gap-6 w-full md:w-auto">
+               <div className="flex items-center gap-3 bg-[#0B1023] border border-white/10 rounded-2xl px-6 py-3 flex-grow md:flex-none">
+                  <Search className="w-5 h-5 text-slate-500" />
+                  <input type="text" placeholder="Search matrix..." className="bg-transparent border-none focus:outline-none text-sm font-bold text-slate-300 w-full md:w-64 placeholder:text-slate-600 italic" />
+               </div>
+               <button className="p-4 bg-[#0B1023] border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all">
+                  <RefreshCw className="w-5 h-5" />
+               </button>
+            </div>
+          </div>
           
-          {/* AI Insights Panel */}
-          <div className="space-y-8">
-            <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">AI Forensics</h2>
-            <div className="grid gap-4">
+          <div className="rounded-[40px] border border-white/5 bg-[#0B1023]/30 overflow-hidden backdrop-blur-3xl shadow-4xl transform-gpu">
+             <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
+                   <thead>
+                      <tr className="bg-white/[0.04] border-b border-white/5">
+                         {['ID', 'Timestamp', 'Group', 'Outcome', 'Profit', 'Credit Score', 'Stability'].map((head, i) => (
+                           <th key={i} className="px-10 py-6 font-black uppercase text-[11px] tracking-[0.2em] text-slate-500 italic">{head}</th>
+                         ))}
+                      </tr>
+                   </thead>
+                   <tbody className="divide-y divide-white/5 font-mono text-[12px] text-slate-300">
+                      {[1, 2, 3, 4, 5, 6].map((row) => (
+                        <tr key={row} className="hover:bg-indigo-600/[0.03] transition-colors group">
+                           <td className="px-10 py-6 text-indigo-400 font-black">#AUD-{1000 + row}</td>
+                           <td className="px-10 py-6 font-bold text-slate-500">2026-04-12 14:32:0{row}</td>
+                           <td className="px-10 py-6 group-hover:text-white transition-colors uppercase font-black tracking-tight">{row % 2 === 0 ? 'Group A' : 'Group B'}</td>
+                           <td className="px-10 py-6">
+                              <span className={`px-4 py-1.5 rounded-xl font-black uppercase text-[9px] tracking-widest ${row % 3 === 0 ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+                                 {row % 3 === 0 ? 'Denied' : 'Approved'}
+                              </span>
+                           </td>
+                           <td className="px-10 py-6 italic font-black text-indigo-100">$ {row * 1250}.00</td>
+                           <td className="px-10 py-6">
+                              <div className="flex items-center gap-4">
+                                <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                   <div className={`h-full ${row > 3 ? 'bg-indigo-500' : 'bg-emerald-500'} w-[${40 + (row*10)}%] shadow-[0_0_10px_white]`} />
+                                </div>
+                                <span className="font-black italic">{600 + (row * 20)}</span>
+                              </div>
+                           </td>
+                           <td className="px-10 py-6">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[10px] font-black uppercase text-emerald-500">Nominal</span>
+                              </div>
+                           </td>
+                        </tr>
+                      ))}
+                   </tbody>
+                </table>
+             </div>
+             <div className="p-10 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6">
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Displaying forensic instances 1–6 of 12,450</p>
+                <div className="flex gap-4">
+                   <button className="px-8 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all italic">Previous Table</button>
+                   <button className="px-8 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all italic">Next Table</button>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI INSIGHTS & BIAS FORENSICS ── */}
+      <section className="py-40 px-6 bg-gradient-to-b from-[#050816] to-[#0A0D20]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20">
+          
+          <div className="space-y-12">
+            <div className="space-y-4">
+               <h2 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter leading-none">AI Insight <br /> <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Forensics</span></h2>
+               <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Automated reasoning for complex data patterns.</p>
+            </div>
+            
+            <div className="grid gap-6">
               {[
-                { title: "Outliers Detected", val: "142 Records", desc: "Anomalous patterns found in Income field.", icon: <Search /> },
-                { title: "Data Imbalance", val: "Critical", desc: "Significant underrepresentation of Minority Group B.", icon: <ShieldAlert /> },
-                { title: "Feature Importance", val: "High Variance", desc: "Age contributing 45% to decision skew.", icon: <Activity /> },
-                { title: "Top Correlations", val: "0.89 Score", desc: "Gender strongly correlated with status outcome.", icon: <TrendingUp /> }
+                { title: "Variable Correlations", val: "0.89 Index", desc: "Gender strongly correlated with binary status outcome.", icon: <Shuffle className="w-6 h-6" /> },
+                { title: "Anomaly Detection", val: "142 Signal", desc: "Outlier patterns identified in Income distribution.", icon: <Search className="w-6 h-6" /> },
+                { title: "Class Imbalance", val: "Critical", desc: "Significant underrepresentation of Minority Group B.", icon: <ShieldAlert className="w-6 h-6" /> },
+                { title: "Feature Importance", val: "High Variance", desc: "Age contributes 45% to decision weighting skew.", icon: <TrendingUp className="w-6 h-6" /> }
               ].map((insight, i) => (
-                <div key={i} className="p-6 rounded-3xl bg-[#0F172A] border border-white/5 flex items-start gap-6 hover:border-indigo-500/30 transition-all">
-                  <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 shrink-0">
+                <div key={i} className="p-8 rounded-[40px] bg-[#0B1023] border border-white/5 flex items-start gap-8 hover:border-indigo-500/30 transition-all shadow-xl group">
+                  <div className="w-16 h-16 bg-white/[0.02] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 shrink-0 group-hover:scale-110 group-hover:bg-indigo-600/10 transition-all duration-500">
                     {insight.icon}
                   </div>
                   <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <h4 className="text-sm font-black uppercase italic tracking-wider text-white">{insight.title}</h4>
-                      <span className="text-[10px] font-bold text-indigo-400 px-2 py-0.5 bg-indigo-500/10 rounded-full">{insight.val}</span>
+                    <div className="flex justify-between items-center mb-2">
+                       <h4 className="text-lg font-black uppercase italic tracking-tighter text-white leading-none">{insight.title}</h4>
+                       <span className="text-[10px] font-black tracking-widest text-indigo-400 px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">{insight.val}</span>
                     </div>
-                    <p className="text-xs text-slate-500 leading-relaxed font-bold tracking-tight">{insight.desc}</p>
+                    <p className="text-sm text-slate-500 leading-relaxed font-bold tracking-tight italic">{insight.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Bias Analysis & Gauge */}
-          <div className="p-10 rounded-[40px] bg-[#0F172A] border border-white/10 shadow-3xl text-center space-y-10">
-            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-indigo-400">Fairness Metrics Audit</h3>
+          <div className="p-16 rounded-[60px] bg-[#0B1023] border border-white/10 shadow-4xl text-center space-y-16 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-indigo-500/[0.03] to-transparent pointer-events-none" />
+            <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 relative z-10 italic">Scientific Fairness Audit</h3>
             
-            <div className="relative inline-flex flex-col items-center">
-              <div className="w-64 h-32 overflow-hidden relative">
-                <div className="w-64 h-64 border-[16px] border-white/5 rounded-full relative">
-                  <div className="absolute top-0 left-0 w-full h-full border-[16px] border-indigo-500/50 rounded-full clip-path-half" style={{ transform: 'rotate(45deg)' }} />
+            <div className="relative inline-flex flex-col items-center z-10">
+              <div className="w-80 h-40 overflow-hidden relative">
+                <div className="w-80 h-80 border-[24px] border-white/5 rounded-full relative">
+                  <div className="absolute top-0 left-0 w-full h-full border-[24px] border-indigo-500/50 rounded-full clip-path-half" style={{ transform: 'rotate(45deg)' }} />
                 </div>
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-24 bg-white origin-bottom scale-y-100 rounded-full shadow-[0_0_20px_white]" style={{ transform: 'rotate(25deg)' }} />
+                {/* Needle */}
+                <motion.div 
+                  initial={{ rotate: -90 }}
+                  whileInView={{ rotate: 25 }}
+                  transition={{ duration: 2, ease: "circOut" }}
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-32 bg-white origin-bottom rounded-full shadow-[0_0_30px_white]"
+                />
               </div>
-              <div className="mt-4">
-                <p className="text-5xl font-black text-white italic leading-none">0.82</p>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-2">Fairness Gauge Meter</p>
+              <div className="mt-8 space-y-2">
+                <p className="text-7xl font-black text-white italic leading-none tracking-tighter">0.82</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-500">Fairness Confidence Gauge</p>
               </div>
             </div>
 
-            <div className="grid gap-3 pt-6">
+            <div className="grid gap-4 pt-10 relative z-10 text-left">
               {[
                 { name: "Demographic Parity", score: "0.78", status: "Fair" },
-                { name: "Equal Opportunity", score: "0.85", status: "Excellent" },
-                { name: "Disparate Impact", score: "0.82", status: "Good" }
+                { name: "Equal Opportunity", score: "0.85", status: "Optimal" },
+                { name: "Disparate Impact", score: "0.82", status: "Stable" }
               ].map((metric, i) => (
-                <div key={i} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl">
-                   <span className="text-[10px] font-black uppercase italic text-slate-400">{metric.name}</span>
+                <div key={i} className="flex justify-between items-center p-6 bg-white/[0.03] rounded-[30px] border border-white/5 hover:bg-white/[0.06] transition-all group/stat">
                    <div className="flex items-center gap-4">
-                      <span className="text-lg font-black text-white italic">{metric.score}</span>
-                      <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-lg">{metric.status}</span>
+                      <div className="w-2 h-2 rounded-full bg-indigo-500 group-hover/stat:scale-150 transition-transform" />
+                      <span className="text-[11px] font-black uppercase italic tracking-widest text-slate-400">{metric.name}</span>
+                   </div>
+                   <div className="flex items-center gap-6">
+                      <span className="text-2xl font-black text-white italic tracking-tighter">{metric.score}</span>
+                      <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-4 py-1.5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">{metric.status}</span>
                    </div>
                 </div>
               ))}
             </div>
+            
+            <button className="w-full py-6 bg-white/5 border border-white/10 rounded-[30px] text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 hover:border-indigo-500/30 transition-all flex items-center justify-center gap-4 group/btn relative z-10 italic">
+               View Comprehensive Audit Report <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform" />
+            </button>
           </div>
 
         </div>
       </section>
 
-      {/* ── FEATURES GRID ── */}
-      <section className="py-24 px-6 bg-[#070B1A]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20 space-y-4">
-            <h2 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none">Everything you need for <br /> <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Responsible AI</span></h2>
+      {/* ── PREMIUM FEATURES SECTION ── */}
+      <section className="py-40 px-6 bg-[#050816]">
+        <div className="max-w-7xl mx-auto space-y-24">
+          <div className="text-center space-y-6">
+            <h2 className="text-6xl md:text-[9rem] font-black text-white italic tracking-tighter uppercase leading-[0.8] select-none opacity-90">
+               Responsible <br /> <span className="text-indigo-500">AI Ecosystem</span>
+            </h2>
+            <p className="text-slate-500 text-xl font-bold italic tracking-tight uppercase">Everything required for technical algorithmic governance.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[
-              { t: "Smart Dataset Profiling", d: "Automatic schema detection and data quality scoring.", i: <Database /> },
-              { t: "6 Fairness Metrics", d: "Demographic Parity, Equal Opportunity, Disparate Impact and more.", i: <Activity /> },
-              { t: "Gemini AI Explanation", d: "Natural language insights into why bias exists.", i: <Sparkles /> },
-              { t: "Visual Dashboard", d: "PowerBI style interactive data visualizations.", i: <BarChart3 /> },
-              { t: "PDF Bias Reports", d: "Professional enterprise-ready audit documents.", i: <FileText /> },
-              { t: "Explainable AI", d: "LIME/SHAP visual explanations for model decisions.", i: <Brain /> },
-              { t: "Real-time Mitigation", d: "On-the-fly bias correction and data re-weighting.", i: <Zap /> },
-              { t: "Data Anonymization", d: "Protect sensitive features while maintaining utility.", i: <ShieldCheck /> },
-              { t: "Intersectional Bias", d: "Audit bias across multiple sensitive features at once.", i: <Users /> },
-              { t: "Synthetic Dataset", d: "Generate bias-free training data automatically.", i: <Cpu /> },
-              { t: "Multi-Model Support", d: "Audit XGBoost, Random Forest, Neural Networks.", i: <Layers /> },
-              { t: "API Scanning", d: "Connect your existing inference endpoints.", i: <Globe /> },
-              { t: "Custom Thresholds", d: "Define your own fairness tolerance levels.", i: <Filter /> },
-              { t: "Bias Score Monitoring", d: "Track bias drift over time in production.", i: <TrendingUp /> }
+              { t: "Smart Dataset Profiling", d: "Autonomous schema extraction and data health scoring.", i: <Database /> },
+              { t: "6 Fairness Metrics", d: "Demographic Parity, Equal Opportunity, Disparate Impact audit.", i: <Activity /> },
+              { t: "Gemini AI Explanations", d: "Neural reasoning for bias clusters using Google Intelligence.", i: <Sparkles /> },
+              { t: "Visual Dashboard", d: "PowerBI style analytics for high-fidelity data forensics.", i: <BarChart3 /> },
+              { t: "PDF Bias Reports", d: "Enterprise-ready documentation for regulatory readiness.", i: <FileText /> },
+              { t: "Explainable AI (XAI)", d: "Decision causality visualization via LIME and SHAP logic.", i: <Brain /> },
+              { t: "Real-Time Mitigation", d: "On-the-fly threshold correction and data re-weighting.", i: <Zap /> },
+              { t: "Data Anonymization", d: "High-utility masking for sensitive feature protection.", i: <ShieldCheck /> },
+              { t: "Intersectional Bias", d: "Audit bias across nested sensitive attribute combinations.", i: <Users /> },
+              { t: "Synthetic Data Gen.", d: "Autonomous generation of bias-free training repositories.", i: <Cpu /> },
+              { t: "Multi-Model Support", d: "Cross-platform audit for XGBoost, RF, and Neural Nets.", i: <Layers /> },
+              { t: "API Scanning", d: "Live inference monitoring for production endpoints.", i: <Globe /> },
+              { t: "Custom Thresholds", d: "Tailored fairness tolerance for specific industry regulations.", i: <Filter /> },
+              { t: "Bias Monitoring", d: "Continuous drift tracking for governance integrity.", i: <TrendingUp /> }
             ].map((f, i) => (
-              <div key={i} className="p-8 rounded-[40px] bg-[#0F172A] border border-white/5 hover:border-indigo-500/40 hover:translate-y-[-10px] transition-all group">
-                <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition-transform">
+              <div key={i} className="group p-10 rounded-[50px] bg-[#0B1023] border border-white/5 hover:border-indigo-500/40 hover:translate-y-[-12px] transition-all shadow-xl shadow-black/40">
+                <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                   {f.i}
                 </div>
-                <h3 className="text-lg font-black uppercase text-white italic tracking-tighter leading-none mb-3">{f.t}</h3>
-                <p className="text-xs text-slate-500 font-bold leading-relaxed">{f.d}</p>
+                <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4">{f.t}</h3>
+                <p className="text-[12px] text-slate-500 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-tight">{f.d}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── SYSTEM ARCHITECTURE ── */}
-      <section className="py-24 px-6 bg-[#090D25]/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20 space-y-4">
-             <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">System Architecture</h2>
-             <p className="text-slate-500">Robust end-to-end pipeline for enterprise bias auditing.</p>
+      {/* ── SYSTEM ARCHITECTURE VIZ ── */}
+      <section className="py-40 px-6 bg-[#0B1023]/20 border-y border-white/5 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+        <div className="max-w-7xl mx-auto space-y-24 relative z-10">
+          <div className="text-center space-y-4">
+             <h2 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter">System Architecture</h2>
+             <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Distributed Audit Pipeline Engineering.</p>
           </div>
           
-          <div className="flex flex-col md:flex-row items-stretch gap-4">
+          <div className="flex flex-col lg:flex-row items-stretch gap-6">
              {[
-               { layer: "Frontend Layer", tech: ["Next.js", "React", "Tailwind"], color: "border-indigo-500/30" },
-               { layer: "AI Layer", tech: ["Bias Detection Engine", "Fairness Metrics", "Explainable AI"], color: "border-purple-500/30" },
-               { layer: "Backend Layer", tech: ["FastAPI", "Pandas", "Scikit-learn"], color: "border-cyan-500/30" },
-               { layer: "Cloud Layer", tech: ["Google Cloud", "Docker", "API Gateway"], color: "border-emerald-500/30" }
+               { layer: "Frontend Layer", tech: ["Next.js 14", "React", "TailwindCSS"], icon: <LayoutGrid className="w-6 h-6" />, color: "border-indigo-500/30" },
+               { layer: "AI Layer", tech: ["Bias Detection Engine", "Explainable AI (XAI)", "Gemini Reasoning"], icon: <Brain className="w-6 h-6" />, color: "border-purple-500/30" },
+               { layer: "Backend Layer", tech: ["FastAPI", "Pandas", "Scikit-learn"], icon: <Database className="w-6 h-6" />, color: "border-cyan-500/30" },
+               { layer: "Cloud Layer", tech: ["Google Cloud Platform", "Docker Containerization", "API Gateway"], icon: <Globe className="w-6 h-6" />, color: "border-emerald-500/30" }
              ].map((block, i) => (
-               <div key={i} className={`flex-1 p-10 rounded-[50px] bg-[#0F172A] border-2 ${block.color} text-center space-y-6 flex flex-col justify-center`}>
-                  <h4 className="text-xs font-black uppercase tracking-[0.3em] text-white opacity-40">{block.layer}</h4>
-                  <div className="space-y-2">
-                     {block.tech.map((t, j) => (
-                       <p key={j} className="text-lg font-black italic tracking-tighter text-white">{t}</p>
-                     ))}
+               <div key={i} className={`flex-1 p-12 rounded-[60px] bg-[#0B1023] border-t-4 ${block.color} text-left space-y-10 flex flex-col justify-between shadow-2xl group hover:-translate-y-4 transition-all`}>
+                  <div className="space-y-6">
+                    <div className="p-4 bg-white/5 rounded-2xl w-fit text-slate-400 group-hover:text-white transition-colors">
+                      {block.icon}
+                    </div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 italic">{block.layer}</h4>
+                    <div className="space-y-4">
+                       {block.tech.map((t, j) => (
+                         <div key={j} className="flex items-center gap-3">
+                            <div className="w-1 h-1 rounded-full bg-indigo-500" />
+                            <p className="text-lg font-black italic tracking-tighter text-white uppercase">{t}</p>
+                         </div>
+                       ))}
+                    </div>
+                  </div>
+                  <div className="pt-10 flex justify-end">
+                     <ArrowRight className="w-5 h-5 text-slate-700 group-hover:text-indigo-500 transition-colors" />
                   </div>
                </div>
              ))}
@@ -474,13 +579,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TECHNOLOGY STACK ── */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 mb-10">Powering the Future of Ethical AI</p>
-          <div className="flex flex-wrap justify-center gap-4 lg:gap-8 opacity-40 hover:opacity-100 transition-opacity">
-            {['Next.js', 'React', 'Tailwind', 'Python', 'FastAPI', 'Pandas', 'Scikit-learn', 'Docker', 'Google Cloud', 'Gemini AI'].map((tech, i) => (
-              <span key={i} className="px-6 py-3 bg-[#0F172A] border border-white/5 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 whitespace-nowrap">
+      {/* ── TECHNOLOGY STACK BADGES ── */}
+      <section className="py-24 px-6 border-b border-white/5 bg-[#050816]">
+        <div className="max-w-7xl mx-auto text-center space-y-12">
+          <p className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-600 mb-10">Powering Autonomous Algorithmic Fairness</p>
+          <div className="flex flex-wrap justify-center gap-6 opacity-30 hover:opacity-100 transition-all duration-700 transform-gpu">
+            {['Next.js', 'React', 'TailwindCSS', 'Python', 'FastAPI', 'Pandas', 'Scikit-learn', 'Docker', 'Google Cloud', 'Gemini AI'].map((tech, i) => (
+              <span key={i} className="px-10 py-5 bg-[#0B1023] border border-white/10 rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] text-white whitespace-nowrap shadow-xl hover:border-indigo-500/30 hover:bg-white/5 transition-all cursor-crosshair italic">
                 {tech}
               </span>
             ))}
@@ -489,39 +594,54 @@ export default function LandingPage() {
       </section>
 
       {/* ── TEAM SECTION ── */}
-      <section className="py-24 px-6 bg-[#070B1A]">
+      <section className="py-40 px-6 bg-[#050816]">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-20 space-y-4">
-             <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter">Meet the Team</h2>
+          <div className="text-center mb-24 space-y-6">
+             <h2 className="text-5xl md:text-[7rem] font-black text-white italic uppercase tracking-tighter leading-none select-none opacity-90">Experience <br /> <span className="text-indigo-500">The Vision</span></h2>
+             <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Design & Engineering at Synapse Squad Hub.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-             <div className="p-10 rounded-[50px] bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 text-center space-y-4">
-                <div className="w-24 h-24 bg-white/10 rounded-full mx-auto flex items-center justify-center text-4xl mb-4">👨‍💻</div>
-                <h4 className="text-2xl font-black text-white italic">Anish Kumar Raj</h4>
-                <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Lead Developer & AI Engineer</p>
+          <div className="flex flex-col md:flex-row gap-10">
+             <div className="p-12 rounded-[60px] bg-gradient-to-br from-indigo-600/20 to-[#0B1023] border border-indigo-500/30 text-center space-y-6 flex-1 shadow-4xl group">
+                <div className="w-32 h-32 bg-white/5 rounded-full mx-auto flex items-center justify-center text-5xl mb-6 border border-white/10 group-hover:scale-110 transition-transform shadow-2xl">👨‍💻</div>
+                <div className="space-y-1">
+                  <h4 className="text-3xl font-black text-white italic uppercase tracking-tighter">Anish Kumar Raj</h4>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 italic font-black">Lead Developer & AI Engineer</p>
+                </div>
+                <div className="flex justify-center gap-4 pt-4">
+                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Github className="w-5 h-5" /></div>
+                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Twitter className="w-5 h-5" /></div>
+                </div>
              </div>
-             <div className="p-10 rounded-[50px] bg-[#0F172A] border border-white/5 text-center space-y-4 flex flex-col justify-center">
-                <p className="text-sm font-bold text-slate-400 leading-relaxed italic uppercase tracking-tighter">
-                  Dedicated to building algorithmic governance through decentralized fairness metrics.
+             
+             <div className="p-12 rounded-[60px] bg-[#0B1023] border border-white/10 text-center space-y-10 flex flex-col justify-center flex-1 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-white/[0.01] pointer-events-none" />
+                <p className="text-sm font-bold text-slate-400 leading-relaxed italic uppercase tracking-tighter relative z-10 select-none">
+                  "Revolutionizing algorithmic governance through decentralized fairness metrics and autonomous reasoning."
                 </p>
-                <div className="pt-4">
-                   <p className="text-lg font-black text-white italic">Synapse Squad Hub</p>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Google Solution Challenge 2026</p>
+                <div className="pt-10 border-t border-white/5 relative z-10">
+                   <p className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">Synapse Squad Hub</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-2">Google Solution Challenge 2026</p>
                 </div>
              </div>
           </div>
         </div>
       </section>
 
-      {/* ── SUSTENANCE / CTA ── */}
-      <section className="py-40 text-center relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[600px] bg-indigo-600/10 blur-[200px] rounded-full" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10 space-y-12">
-           <h3 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-[0.85]">Ready to Eliminate <br /> <span className="text-indigo-500">AI Bias?</span></h3>
-           <Link href="/upload" className="inline-flex items-center gap-4 px-12 py-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[30px] font-black uppercase tracking-widest shadow-[0_20px_60px_rgba(79,70,229,0.4)] transition-all hover:scale-110 active:scale-95 text-sm">
-             Deploy FairAI Platform <ArrowRight className="w-6 h-6" />
-           </Link>
+      {/* ── FINAL PRODUCT CTA ── */}
+      <section className="py-60 text-center relative overflow-hidden bg-[#050816]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[800px] bg-indigo-600/10 blur-[240px] rounded-full pointer-events-none" />
+        <div className="max-w-5xl mx-auto px-6 relative z-10 space-y-16">
+           <div className="space-y-6">
+              <h3 className="text-7xl md:text-[12rem] font-black italic uppercase tracking-tighter text-white leading-[0.75] select-none">Start Your <br /> <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent italic">Fair AI</span> Audit</h3>
+              <p className="text-slate-500 text-xl font-black uppercase tracking-widest italic pt-10">The professional standard for responsive data intelligence.</p>
+           </div>
+           
+           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+              <Link href="/upload" className="group relative px-16 py-8 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[40px] font-black uppercase tracking-[0.3em] shadow-[0_30px_80px_rgba(79,70,229,0.4)] transition-all hover:scale-110 active:scale-95 text-sm flex items-center gap-6 italic">
+                Launch Enterprise Platform <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
+              </Link>
+           </div>
         </div>
       </section>
 

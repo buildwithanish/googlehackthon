@@ -22,7 +22,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 z-[100] w-full px-6 py-4 font-outfit">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-[#0F172A]/60 backdrop-blur-2xl border border-white/5 rounded-[30px] px-6 md:px-10 h-20 flex justify-between items-center shadow-2xl relative overflow-hidden group">
+        <div className="bg-[#0B1023]/60 backdrop-blur-2xl border border-white/5 rounded-[30px] px-6 md:px-10 h-20 flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
           
           {/* Internal Glow Effect */}
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
