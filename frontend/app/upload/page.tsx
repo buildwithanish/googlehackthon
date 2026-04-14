@@ -2,9 +2,48 @@
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadDataset } from "@/lib/api";
-import { UploadCloud, FileType, CheckCircle2, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { UploadCloud, FileType, CheckCircle2, AlertCircle, Play, Database, Sparkles, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+
+const DEMO_DATASETS = [
+  {
+    tag: "Financial Services",
+    name: "sample_bias_dataset.csv",
+    rows: 500, cols: 5,
+    columns: ["gender", "age", "income", "education", "loan_approved"],
+    sensitive: "gender",
+    bias: "Gender Bias in Loan Approvals",
+    color: "from-violet-500 to-purple-600",
+    bgColor: "bg-violet-500/5 border-violet-500/20",
+    tagColor: "bg-violet-500/10 text-violet-400",
+    description: "Pre-built dataset showing significant gender disparity in loan decisions. Perfect for demo.",
+  },
+  {
+    tag: "HR & Recruitment",
+    name: "hiring_dataset.csv",
+    rows: 500, cols: 6,
+    columns: ["gender", "age", "experience", "education", "salary", "hired"],
+    sensitive: "gender",
+    bias: "Age & Gender Bias in Hiring",
+    color: "from-blue-500 to-cyan-500",
+    bgColor: "bg-blue-500/5 border-blue-500/20",
+    tagColor: "bg-blue-500/10 text-blue-400",
+    description: "Simulates discriminatory patterns in resume screening and job selection.",
+  },
+  {
+    tag: "Healthcare",
+    name: "healthcare_dataset.csv",
+    rows: 500, cols: 6,
+    columns: ["gender", "age", "income", "diagnosis", "treatment", "outcome"],
+    sensitive: "gender",
+    bias: "Demographic Treatment Disparities",
+    color: "from-emerald-500 to-teal-500",
+    bgColor: "bg-emerald-500/5 border-emerald-500/20",
+    tagColor: "bg-emerald-500/10 text-emerald-400",
+    description: "Shows unequal medical treatment outcomes based on patient demographics.",
+  },
+];
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -19,12 +58,15 @@ export default function UploadPage() {
       setFile(selectedFile);
       setLoading(true);
       setError("");
+      setPreview(null);
       try {
         const data = await uploadDataset(selectedFile);
         setPreview(data);
         localStorage.setItem("dataset_info", JSON.stringify(data));
+        localStorage.removeItem("demo_mode");
       } catch (err: any) {
-        setError(err.response?.data?.detail || "Failed to upload file. Check API server.");
+        const msg = err?.response?.data?.detail || err?.message || "Failed to reach API server. Please ensure the backend is running.";
+        setError(msg);
       } finally {
         setLoading(false);
       }
@@ -37,116 +79,195 @@ export default function UploadPage() {
     maxFiles: 1,
   });
 
+  const runDemo = (demo: typeof DEMO_DATASETS[0]) => {
+    localStorage.setItem("dataset_info", JSON.stringify({
+      filename: demo.name,
+      shape: { rows: demo.rows, cols: demo.cols },
+      columns: demo.columns,
+      sensitive_column_hints: [demo.sensitive],
+      preview: [],
+    }));
+    localStorage.setItem("demo_mode", demo.name);
+    router.push("/dashboard");
+  };
+
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-900">Dataset Upload</h1>
-        <p className="mt-2 text-gray-500">Upload your CSV dataset for FAIR assessment.</p>
-      </div>
-
-      <div 
-        {...getRootProps()} 
-        className={`border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-colors ${
-          isDragActive ? "border-indigo-500 bg-indigo-50" : "border-gray-300 bg-white hover:border-indigo-400 hover:bg-gray-50"
-        }`}
-      >
-        <input {...getInputProps()} />
-        <UploadCloud className={`mx-auto h-16 w-16 mb-4 ${isDragActive ? "text-indigo-500" : "text-gray-400"}`} />
-        <p className="text-xl font-medium text-gray-700">Drag & drop your CSV file here</p>
-        <p className="text-gray-500 mt-2">or click to browse from your computer</p>
-      </div>
-
-      {loading && (
-        <div className="mt-8 text-center text-indigo-600 font-medium">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
-          Processing Dataset...
-        </div>
-      )}
-
-      {error && (
-        <div className="mt-8 bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3">
-          <AlertCircle className="shrink-0" />
-          <p>{error}</p>
-        </div>
-      )}
-
-      {preview && !loading && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-12">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <div>
-                <h3 className="font-bold text-lg flex items-center gap-2">
-                  <FileType className="text-indigo-600" /> {preview.filename}
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  {preview.shape.rows} Rows • {preview.shape.cols} Columns
-                </p>
-              </div>
-              <button 
-                onClick={() => router.push("/dashboard")}
-                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow transition-transform hover:-translate-y-0.5 flex items-center gap-2"
-              >
-                Analyze Bias <CheckCircle2 className="w-5 h-5" />
-              </button>
+    <div className="min-h-screen bg-slate-950 text-white">
+      {/* Header */}
+      <div className="border-b border-white/5 bg-slate-900/50 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto px-4 py-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm px-4 py-1.5 rounded-full font-semibold mb-5">
+              <Database className="w-4 h-4" />
+              Dataset Upload
             </div>
-            
-            <div className="p-6 overflow-x-auto">
-              <h4 className="font-medium mb-4">Data Preview</h4>
-              <table className="w-full text-sm text-left">
-                <thead className="bg-gray-100 text-gray-600 uppercase">
-                  <tr>
-                    {preview.columns.slice(0, 8).map((col: string) => (
-                      <th key={col} className="px-4 py-3 border-b">{col}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {preview.preview.slice(0, 5).map((row: any, i: number) => (
-                    <tr key={i} className="border-b hover:bg-gray-50">
+            <h1 className="text-4xl font-black text-white">Analyze Your Dataset</h1>
+            <p className="mt-3 text-slate-400 text-lg max-w-xl">
+              Upload a CSV file to detect bias across demographic groups. Supports gender, age, income, education, and location attributes.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
+        {/* Drop Zone */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <div
+            {...getRootProps()}
+            className={`relative border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all ${
+              isDragActive
+                ? "border-indigo-500 bg-indigo-500/5 shadow-2xl shadow-indigo-500/10"
+                : "border-white/10 bg-white/[0.02] hover:border-indigo-500/50 hover:bg-indigo-500/[0.03]"
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className={`inline-flex p-5 rounded-2xl mb-5 transition-all ${isDragActive ? "bg-indigo-500/20" : "bg-white/5"}`}>
+              <UploadCloud className={`h-10 w-10 transition-colors ${isDragActive ? "text-indigo-400" : "text-slate-500"}`} />
+            </div>
+            <h2 className="text-2xl font-bold text-white">
+              {isDragActive ? "Drop your CSV file here!" : "Drag & drop your CSV file"}
+            </h2>
+            <p className="mt-2 text-slate-500">or click to select from your computer</p>
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-all">
+              <Sparkles className="w-4 h-4" />
+              Browse Files
+            </div>
+            <p className="mt-4 text-xs text-slate-600">CSV format only · Max file size: 10MB</p>
+          </div>
+        </motion.div>
+
+        {/* Loading */}
+        <AnimatePresence>
+          {loading && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="text-center py-8">
+              <div className="w-10 h-10 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-indigo-400 font-medium">Uploading and processing dataset...</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Error */}
+        <AnimatePresence>
+          {error && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300"
+            >
+              <AlertCircle className="shrink-0 w-5 h-5 text-red-400" />
+              <div className="flex-1">
+                <p className="font-semibold">Upload Failed</p>
+                <p className="text-sm mt-0.5 text-red-400">{error}</p>
+                <p className="text-sm mt-1 text-slate-500">Tip: Try the Demo Mode below — no backend needed!</p>
+              </div>
+              <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Success Preview */}
+        <AnimatePresence>
+          {preview && !loading && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden"
+            >
+              <div className="p-5 border-b border-white/5 bg-white/[0.03] flex justify-between items-center">
+                <div>
+                  <h3 className="font-bold text-white flex items-center gap-2">
+                    <FileType className="text-indigo-400 w-5 h-5" />
+                    {preview.filename}
+                  </h3>
+                  <p className="text-slate-400 text-sm mt-0.5">
+                    {preview.shape.rows} rows · {preview.shape.cols} columns
+                    {preview.sensitive_column_hints?.length > 0 && (
+                      <span className="ml-2 text-indigo-400 font-medium">
+                        · Detected: {preview.sensitive_column_hints.join(", ")}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-all"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Analyze Bias
+                </button>
+              </div>
+
+              <div className="p-5 overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead>
+                    <tr>
                       {preview.columns.slice(0, 8).map((col: string) => (
-                        <td key={col} className="px-4 py-3 text-gray-700 truncate max-w-[150px]">
-                          {row[col]?.toString()}
-                        </td>
+                        <th key={col} className="px-3 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-white/5">
+                          {col}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              {preview.columns.length > 8 && (
-                <p className="text-center text-sm text-gray-500 mt-4 italic">Showing first 8 columns. Data truncated.</p>
-              )}
+                  </thead>
+                  <tbody>
+                    {preview.preview.slice(0, 6).map((row: any, i: number) => (
+                      <tr key={i} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                        {preview.columns.slice(0, 8).map((col: string) => (
+                          <td key={col} className="px-3 py-2.5 text-slate-300 truncate max-w-[140px]">
+                            {row[col]?.toString()}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Demo Mode Section ── */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="relative rounded-2xl border border-white/5 bg-white/[0.02] px-8 py-10 overflow-hidden">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm px-4 py-1.5 rounded-full font-semibold mb-5">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                Demo Mode — No Upload Required
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">Try Live Demo Datasets</h2>
+              <p className="text-slate-400 mb-8 max-w-xl">
+                Select a pre-built dataset with intentional biases. Ideal for hackathon demos and judges.
+              </p>
+
+              <div className="grid md:grid-cols-3 gap-5">
+                {DEMO_DATASETS.map((demo, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => runDemo(demo)}
+                    className={`group relative overflow-hidden p-6 rounded-2xl border ${demo.bgColor} cursor-pointer transition-all hover:-translate-y-1 hover:shadow-xl`}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${demo.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
+                    <span className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full mb-4 ${demo.tagColor}`}>
+                      {demo.tag}
+                    </span>
+                    <h3 className="text-lg font-bold text-white mb-1">{demo.name}</h3>
+                    <p className="text-sm text-slate-500 mb-1">{demo.rows} rows · {demo.cols} columns</p>
+                    <p className="text-xs text-slate-600 mb-5">{demo.description}</p>
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-white transition-colors">
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${demo.tagColor}`}>⚠ {demo.bias}</span>
+                    </div>
+                    <button className={`mt-5 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r ${demo.color} text-white opacity-80 group-hover:opacity-100 transition-all shadow-lg`}>
+                      <Play className="w-4 h-4" />
+                      Run Demo Analysis
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
-      )}
-
-      {/* Demo Mode Section */}
-      <div className="mt-16 pt-10 border-t border-gray-200">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Try Demo Mode</h2>
-          <p className="mt-2 text-gray-500">Don't have a dataset? Use our pre-configured enterprise datasets to see FairAI in action.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { tag: "HR & Recruitment", name: "sample_bias_dataset.csv", rows: 500, bias: "Age & Gender Bias", color: "bg-blue-50 text-blue-700 border-blue-200" },
-            { tag: "Financial Services", name: "loan_dataset.csv", rows: 500, bias: "Income & Gender Bias", color: "bg-green-50 text-green-700 border-green-200" },
-            { tag: "Healthcare", name: "healthcare_dataset.csv", rows: 500, bias: "Age & Gender Treatment Bias", color: "bg-purple-50 text-purple-700 border-purple-200" },
-          ].map((demo, i) => (
-            <div key={i} className={`p-6 rounded-2xl border ${demo.color} transition-transform hover:-translate-y-1 cursor-pointer shadow-sm`} onClick={() => {
-              localStorage.setItem("dataset_info", JSON.stringify({ filename: demo.name, shape: { rows: demo.rows, cols: 5 }, columns: ["gender", "age", "income", "education", "loan_approved"], preview: [] }));
-              localStorage.setItem("demo_mode", demo.name);
-              router.push("/dashboard");
-            }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-2 opacity-80">{demo.tag}</div>
-              <h3 className="text-lg font-bold mb-1">{demo.name}</h3>
-              <p className="text-sm opacity-90 mb-4">{demo.rows} Rows • Intentional {demo.bias}</p>
-              <button className="w-full py-2 bg-white/50 hover:bg-white border rounded-lg font-semibold text-sm transition-colors">
-                Run Demo Analysis
-              </button>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
