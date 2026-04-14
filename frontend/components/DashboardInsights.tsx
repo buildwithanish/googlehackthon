@@ -231,7 +231,7 @@ export default function DashboardInsights() {
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                         <ShieldCheck className="w-20 h-20" />
                     </div>
-                    <QualityGauge score={metrics.quality_score} label="INTEGRITY SCORE" />
+                    <QualityGauge score={metrics.quality_score} label="DATA QUALITY SCORE" />
                     <div className="mt-8 grid grid-cols-2 gap-4">
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
                             <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Duplicates</p>
@@ -283,18 +283,19 @@ export default function DashboardInsights() {
 
             {/* ── MAIN DASHBOARD: CHARTS & GRIDS ── */}
             <div className="xl:col-span-9 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {[
-                        { label: "Detected Schema", val: Object.keys(metrics.column_types || {}).length, icon: <Shuffle className="w-4 h-4" /> },
-                        { label: "Anomalies", val: Object.keys(metrics.outliers || {}).length, icon: <AlertTriangle className="w-4 h-4" /> },
-                        { label: "Neural Confidence", val: "High", icon: <CheckCircle2 className="w-4 h-4" /> }
+                        { label: "Total Records", val: metrics.total_rows || "0", icon: <Database /> },
+                        { label: "Total Columns", val: Object.keys(metrics.column_types || {}).length || "0", icon: <LayoutGrid /> },
+                        { label: "Missing Values", val: metrics.missing_values || "0", icon: <AlertTriangle /> },
+                        { label: "Stability Index", val: "Optimal", icon: <CheckCircle2 /> }
                     ].map((card, i) => (
                         <div key={i} className="p-6 rounded-[30px] bg-slate-900 border border-white/5 flex items-center justify-between group hover:bg-white/[0.04] transition-all shadow-xl">
                             <div>
                                 <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">{card.label}</p>
-                                <p className="text-2xl font-black italic">{card.val as React.ReactNode}</p>
+                                <p className="text-xl font-black italic">{card.val as React.ReactNode}</p>
                             </div>
-                            <div className="w-12 h-12 rounded-2xl bg-white/5 group-hover:bg-indigo-500/20 flex items-center justify-center transition-all">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-indigo-500/20 flex items-center justify-center transition-all text-slate-400 group-hover:text-indigo-400">
                                 {card.icon}
                             </div>
                         </div>
