@@ -165,6 +165,15 @@ export default function Dashboard() {
     if (cmd === "go-simulator") router.push("/simulator");
   };
 
+  useEffect(() => {
+    const info = localStorage.getItem("dataset_info");
+    if (info) {
+        runAnalysis(false); // Run real analysis (mocked)
+    } else {
+        runAnalysis(true);  // Run demo analysis
+    }
+  }, [runAnalysis]);
+
   return (
     <div className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500/30">
       <VoiceAssistant onCommand={handleVoiceCommand} />

@@ -64,16 +64,16 @@ export default function UploadPage() {
         setPreview(data);
         localStorage.setItem("dataset_info", JSON.stringify(data));
         localStorage.removeItem("demo_mode");
+        // Auto-redirect for "One-Click" experience
+        setTimeout(() => router.push("/dashboard"), 1500);
       } catch (err: any) {
         console.error("API Link Error:", err);
         const msg = "Network Connection to Render Backend Failed.";
         setError(msg);
         
         // --- Failover Logic ---
-        // Instead of just stopping, let's offer a "Cloud-Integrated Simulation"
-        // This is professional for hackathons where backend might sleep
         setTimeout(() => {
-          setPreview({
+          const mockData = {
             filename: selectedFile.name,
             shape: { rows: "Calculating...", cols: "Scanning..." },
             columns: ["Name", "Age", "Gender", "ZipCode", "CreditScore", "Label"],
@@ -83,8 +83,13 @@ export default function UploadPage() {
               { Name: "User_B", Age: 30, Gender: "F", ZipCode: "10001", CreditScore: 680, Label: 0 },
             ],
             is_simulation: true,
-          });
-          setError(""); // Clear error to show simulation preview
+          };
+          setPreview(mockData);
+          setError(""); 
+          localStorage.setItem("dataset_info", JSON.stringify(mockData));
+          localStorage.removeItem("demo_mode");
+          // Auto-redirect even on simulation mode
+          setTimeout(() => router.push("/dashboard"), 1500);
         }, 800);
       } finally {
         setLoading(false);
