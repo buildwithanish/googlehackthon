@@ -400,8 +400,7 @@ export default function Dashboard() {
         {/* ── Results ── */}
         <AnimatePresence mode="wait">
           {!loading && results && (
-            <>
-              <motion.div key={results.run_id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-8">
+            <motion.div key={results.run_id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-8">
 
               {/* Scenario Tag */}
               <div className="flex items-center justify-between flex-wrap gap-4">
@@ -597,9 +596,9 @@ export default function Dashboard() {
                       Full AI Report →
                     </Link>
                   </div>
-                </motion.div>
-              {/* ── Help Guide ── */}
-              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5">
+                
+                {/* ── Help Guide ── */}
+                <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5">
                 <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-indigo-400" />
                   Understanding Your Fairness Audit
@@ -622,8 +621,8 @@ export default function Dashboard() {
                     <p className="text-xs text-slate-500 leading-relaxed">Follow the "Remediation Roadmap" below to fix detected biases using our recommended algorithms.</p>
                   </div>
                 </div>
-              </motion.div>
-            </>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
