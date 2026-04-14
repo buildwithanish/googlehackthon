@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { Search, RotateCcw, Filter, ChevronLeft, ChevronRight, Hash, Type, AlertCircle, BarChart3, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
