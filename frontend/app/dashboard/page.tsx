@@ -400,7 +400,8 @@ export default function Dashboard() {
         {/* ── Results ── */}
         <AnimatePresence mode="wait">
           {!loading && results && (
-            <motion.div key={results.run_id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-8">
+            <>
+              <motion.div key={results.run_id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-8">
 
               {/* Scenario Tag */}
               <div className="flex items-center justify-between flex-wrap gap-4">
@@ -622,7 +623,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </motion.div>
-            </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>
