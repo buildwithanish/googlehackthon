@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatSupport from "@/components/ChatSupport";
 import BackendWakeup from "@/components/BackendWakeup";
+import MouseGlow from "@/components/MouseGlow";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -43,6 +44,7 @@ export default function RootLayout({
             <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-[0.03]" />
         </div>
 
+        <MouseGlow />
         <BackendWakeup />
         <Navbar />
         
