@@ -26,6 +26,7 @@ export default function LandingPage() {
     { icon: <ShieldCheck className="w-6 h-6" />, title: "80% Rule Compliance", desc: "Checks Disparate Impact against the legal 80% rule used in employment and lending cases.", color: "from-emerald-500 to-green-500" },
     { icon: <TrendingUp className="w-6 h-6" />, title: "Visual Dashboard", desc: "Real-time charts — gauge, bar, pie, and comparison charts built with Recharts.", color: "from-orange-500 to-amber-500" },
     { icon: <FileDigit className="w-6 h-6" />, title: "PDF Bias Report", desc: "Export a professional compliance report with all metrics, charts, and AI explanations.", color: "from-indigo-500 to-blue-500" },
+    { name: "Explainable AI (XAI)", icon: <Zap className="w-6 h-6" />, title: "Explainable AI (XAI)", desc: "Interactive SHAP charts that explain which features drove the machine learning model's biased decisions.", color: "from-yellow-500 to-orange-500" },
   ];
 
   const techStack = [
@@ -44,8 +45,10 @@ export default function LandingPage() {
   ];
 
   const teamMembers = [
-    { name: "Anish", role: "Lead Developer & AI Engineer", skills: ["Full-Stack", "ML", "DevOps"] },
-    { name: "Synapse Squad Hub", role: "Hackathon Team", skills: ["Problem Solving", "Innovation"] },
+    { name: "Anish Raj", role: "Lead Developer & AI Engineer (Leader)", email: "anishkumar9905287@gmail.com", skills: ["Full-Stack", "ML", "DevOps"] },
+    { name: "Amrit Anand", role: "Frontend Developer & UI/UX", email: "rounakjha122@gmail.com", skills: ["React", "UI/UX", "Tailwind"] },
+    { name: "Subham Sharma", role: "Backend Developer & Data Science", email: "subhamsharma765688@gmail.com", skills: ["Python", "FastAPI", "Pandas"] },
+    { name: "Kapil Vishwakarma", role: "AI Researcher & Analyst", email: "kapilbhai758@gmail.com", skills: ["Fairness AI", "Testing", "Research"] },
   ];
 
   return (
@@ -383,7 +386,8 @@ export default function LandingPage() {
                     {member.name.charAt(0)}
                   </div>
                   <h3 className="text-xl font-bold text-white">{member.name}</h3>
-                  <p className="text-slate-400 mt-1 mb-4">{member.role}</p>
+                  <p className="text-indigo-300 font-semibold mt-1 mb-1">{member.role}</p>
+                  <p className="text-slate-400 text-sm mb-4">{member.email}</p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {member.skills.map((skill, j) => (
                       <span key={j} className="px-3 py-1 text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
