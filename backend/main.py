@@ -327,6 +327,7 @@ async def analyze_bias_endpoint(
             return {
                 "success": True,
                 "metrics": stats,
+                "preview": df.head(50).fillna("").to_dict(orient='records'),
                 "group_rates": {},
                 "ai_report": f"Universal Analysis: Successfully parsed this {stats['domain']}. Integrity check shows a {quality_score:.1f}% quality rating."
             }
@@ -344,6 +345,7 @@ async def analyze_bias_endpoint(
         return {
             "success": True,
             "metrics": metrics, 
+            "preview": df.head(50).fillna("").to_dict(orient='records'),
             "group_rates": rates, 
             "ai_report": ai_report,
             "run_id": f"UA-{os.urandom(3).hex().upper()}"

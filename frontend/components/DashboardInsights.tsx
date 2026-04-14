@@ -6,7 +6,7 @@ import {
   TrendingUp, Brain, Download, RefreshCw, Play, ShieldAlert, ShieldCheck,
   Shuffle, Zap, Layers, Sparkles, Search, ArrowRight, Info, Filter,
   Calendar, Database, MousePointer2, Settings, MessageSquare, DownloadCloud,
-  LayoutGrid, Trash2, Maximize2
+  LayoutGrid, Trash2, Maximize2, Table as TableIcon, FileText, Presentation
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
@@ -52,7 +52,7 @@ export default function DashboardInsights() {
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("overview");
+  const [exporting, setExporting] = useState(false);
 
   const runAnalysis = useCallback(async (isDemo = true, nlq?: string) => {
     setLoading(true);
@@ -86,6 +86,7 @@ export default function DashboardInsights() {
                 setResults({
                     success: true,
                     dataset_name: "enterprise_sales_profile.csv",
+                    preview: Array(10).fill({ "Region": "North", "Sales": 12500, "COGS": 8200, "Profit": 4300, "Date": "2024-01-12" }),
                     metrics: {
                         explorer_mode: true,
                         quality_score: 92.4,
@@ -109,6 +110,39 @@ export default function DashboardInsights() {
         setLoading(false);
     }
   }, []);
+
+  const handleExport = async (format: 'pdf' | 'ppt') => {
+    setExporting(true);
+    try {
+        const formData = new FormData();
+        formData.append('data', JSON.stringify({
+            dataset_name: results.dataset_name,
+            metrics: results.metrics?.explorer_mode ? results.metrics : results.metrics,
+            ai_explanation: results.ai_report,
+            scenario: results.metrics?.domain || "Automated Audit"
+        }));
+
+        const response = await fetch(`${API_URL}/export/${format}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `FairAI_Report_${results.dataset_name?.split('.')[0]}.${format === 'pdf' ? 'pdf' : 'pptx'}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+    } catch (err) {
+        console.error("Export Failed", err);
+    } finally {
+        setExporting(false);
+    }
+  };
 
   useEffect(() => {
     const info = localStorage.getItem("dataset_info");
@@ -170,9 +204,22 @@ export default function DashboardInsights() {
                     <RefreshCw className="w-3.5 h-3.5" /> Re-Scan
                 </button>
                 <div className="h-6 w-[1px] bg-white/10 mx-1" />
-                <button className="px-5 py-3 bg-white text-black hover:bg-slate-200 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-2">
-                    <DownloadCloud className="w-3.5 h-3.5" /> Export PDF
-                </button>
+                <div className="flex gap-2">
+                   <button 
+                     disabled={exporting}
+                     onClick={() => handleExport('pdf')}
+                     className="px-5 py-3 bg-white text-black hover:bg-slate-200 disabled:opacity-50 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-2"
+                   >
+                       <FileText className="w-3.5 h-3.5" /> PDF
+                   </button>
+                   <button 
+                     disabled={exporting}
+                     onClick={() => handleExport('ppt')}
+                     className="px-5 py-3 bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-50 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all flex items-center gap-2"
+                   >
+                       <Presentation className="w-3.5 h-3.5" /> PPT
+                   </button>
+                </div>
             </div>
         </div>
 
@@ -193,7 +240,7 @@ export default function DashboardInsights() {
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
                             <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Outliers</p>
                             <p className="text-lg font-black text-rose-500">
-                              {Number(Object.values(metrics.outliers || {}).reduce((a: any, b: any) => a + Number(b), 0))}
+                                {Number(Object.values(metrics.outliers || {}).reduce((a: any, b: any) => a + Number(b), 0))}
                             </p>
                         </div>
                     </div>
@@ -322,6 +369,38 @@ export default function DashboardInsights() {
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+
+                {/* ── RAW INTELLIGENCE MATRIX (PREVIEW) ── */}
+                <div className="p-10 rounded-[50px] bg-slate-900 border border-white/5 shadow-2xl relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-xl font-black italic uppercase">Raw Intelligence Matrix</h3>
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1 italic">First 50 instances • Matrix Extraction</p>
+                        </div>
+                        <TableIcon className="w-5 h-5 text-indigo-400 opacity-50" />
+                    </div>
+                    
+                    <div className="overflow-x-auto rounded-[30px] border border-white/5 bg-white/[0.01]">
+                        <table className="w-full text-left text-[10px] font-bold border-collapse">
+                            <thead>
+                                <tr className="bg-white/5 text-slate-400 border-b border-white/5">
+                                    {results.preview && results.preview.length > 0 && Object.keys(results.preview[0]).map(col => (
+                                        <th key={col} className="px-6 py-4 uppercase tracking-tighter whitespace-nowrap">{col}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {results.preview?.map((row: any, i: number) => (
+                                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
+                                        {Object.values(row).map((val: any, j) => (
+                                            <td key={j} className="px-6 py-4 text-slate-300 truncate max-w-[150px]">{String(val)}</td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
