@@ -6,6 +6,17 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// Add an interceptor to improve network error messages
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.message === "Network Error") {
+      error.message = `Network Error: Could not connect to API at ${API_URL}. If on Vercel, ensure NEXT_PUBLIC_API_URL is set in dashboard.`;
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const uploadDataset = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
