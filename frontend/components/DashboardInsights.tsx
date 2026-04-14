@@ -322,7 +322,7 @@ export default function DashboardInsights() {
                       
                       {/* PowerBI Grid for Multiple Charts if in Explorer Mode */}
                       <div className={isExplorer ? "grid grid-cols-1 md:grid-cols-2 gap-8" : "h-80 relative z-10"}>
-                          {(isExplorer ? Object.entries(results.metrics?.distributions || {}).slice(0, 4) : [['Insights', chartData]]).map(([title, dataPart]: [string, any], idx) => (
+                          {(isExplorer ? Object.entries(results.metrics?.distributions || {}) : [['Insights', chartData]] as [string, any][]).slice(0, 4).map(([title, dataPart], idx) => (
                              <div key={idx} className={isExplorer ? "h-60" : "h-full"}>
                                 {isExplorer && <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{title}</p>}
                                 <ResponsiveContainer width="100%" height="100%">
