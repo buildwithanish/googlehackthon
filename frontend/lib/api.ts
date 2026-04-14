@@ -5,7 +5,7 @@ const API_URL = rawApiUrl.replace(/\/+$/, ''); // Remove trailing slashes
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 30000, // 30 seconds timeout to allow Render to wake up
+  timeout: 120000, // 120 seconds timeout to allow Render to wake up
 });
 
 // Step 2: Automatic Retry Logic (3 Retries)

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import { useEffect } from "react";
+import { pingHealth } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatSupport from "@/components/ChatSupport";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   title: "FairAI – Bias Detection Platform",
@@ -22,6 +25,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    // Keep backend awake (Every 5 minutes)
+    const interval = setInterval(() => {
+      pingHealth();
+      console.log("[FairAI] Keeping backend engine awake...");
+    }, 1000 * 60 * 5);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
