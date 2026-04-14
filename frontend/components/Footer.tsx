@@ -1,7 +1,8 @@
+"use client";
 import Link from "next/link";
 import { 
   Brain, GitBranch, Shield, Heart, FileText, HelpCircle, 
-  Linkedin, Twitter, Globe, ArrowUpRight, Zap, Target
+  MessageSquare, Github, Globe, ArrowUpRight, Zap, Target
 } from "lucide-react";
 
 export default function Footer() {
@@ -31,8 +32,8 @@ export default function Footer() {
             </p>
             <div className="flex justify-center lg:justify-start gap-5">
               {[
-                { icon: <Twitter className="w-5 h-5" />, href: "#" },
-                { icon: <Linkedin className="w-5 h-5" />, href: "#" },
+                { icon: <MessageSquare className="w-5 h-5" />, href: "#" },
+                { icon: <Github className="w-5 h-5" />, href: "https://github.com/buildwithanish/googlehackthon" },
                 { icon: <GitBranch className="w-5 h-5" />, href: "https://github.com/buildwithanish/googlehackthon" },
                 { icon: <Globe className="w-5 h-5" />, href: "https://anishnova.tech" },
               ].map((social, i) => (
