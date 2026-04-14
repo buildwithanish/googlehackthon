@@ -73,18 +73,7 @@ const STATIC_METRICS = [
 ];
 
 export default function MetricsPage() {
-  const [metrics, setMetrics] = useState(STATIC_METRICS);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    getFairnessMetrics()
-      .then((res) => {
-        if (res.metrics?.length > 0) setMetrics(res.metrics);
-      })
-      .catch(() => {}) // use static fallback
-      .finally(() => setLoading(false));
-  }, []);
+  const metrics = STATIC_METRICS;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
