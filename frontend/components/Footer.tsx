@@ -12,7 +12,7 @@ const GithubIcon = (props: any) => (
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 border-t border-white/5 pt-24 pb-12 overflow-hidden font-outfit">
+    <footer className="bg-[#070B1A] border-t border-white/5 pt-24 pb-12 overflow-hidden font-outfit">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-20 text-center md:text-left">
           

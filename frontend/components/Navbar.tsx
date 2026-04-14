@@ -14,14 +14,15 @@ export default function Navbar() {
     { name: "Upload", href: "/upload" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Simulator", href: "/simulator" },
-    { name: "Ethical AI", href: "/ethics" },
+    { name: "Metrics", href: "/metrics" },
+    { name: "AI Report", href: "/report" },
     { name: "Governance", href: "/governance" }
   ];
 
   return (
     <nav className="fixed top-0 z-[100] w-full px-6 py-4 font-outfit">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[30px] px-6 md:px-10 h-20 flex justify-between items-center shadow-2xl relative overflow-hidden group">
+        <div className="bg-[#0F172A]/60 backdrop-blur-2xl border border-white/5 rounded-[30px] px-6 md:px-10 h-20 flex justify-between items-center shadow-2xl relative overflow-hidden group">
           
           {/* Internal Glow Effect */}
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -32,7 +33,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-black text-2xl tracking-tighter uppercase italic">FAIRAI</span>
-              <span className="text-[8px] font-black tracking-[0.2em] text-indigo-400 uppercase italic">Bias Console</span>
+              <span className="text-[8px] font-black tracking-[0.2em] text-indigo-400 uppercase italic">Algorithmic Governance</span>
             </div>
           </Link>
 
@@ -45,7 +46,7 @@ export default function Navbar() {
                 className={cn(
                   "px-5 py-2.5 rounded-xl text-[10px] uppercase font-black tracking-widest transition-all italic",
                   pathname === item.href
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                    ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/20"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -57,9 +58,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/upload"
-              className="px-6 py-3 bg-white text-black hover:bg-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-white/5 flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-2 border border-white/10"
             >
-              <LayoutGrid className="w-4 h-4" /> Deploy Audit
+              <Zap className="w-4 h-4" /> Run Analysis
             </Link>
           </div>
 
