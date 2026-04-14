@@ -3,7 +3,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Brain, FileDigit, BarChart3, ShieldCheck, Database, Zap, ArrowRight,
-  GitBranch, Play, TrendingUp, Star, ChevronRight
+  GitBranch, Play, TrendingUp, Star, ChevronRight, Activity, Lock, Search, 
+  Eye, Layers, Settings, Users, MessageSquare, Network, Globe, Fingerprint, 
+  Cpu, CheckCircle
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -20,13 +22,26 @@ export default function LandingPage() {
   const router = useRouter();
 
   const features = [
-    { icon: <Database className="w-6 h-6" />, title: "Smart Dataset Profiling", desc: "Auto-detect sensitive columns, missing values, and data distributions with one click.", color: "from-blue-500 to-cyan-500" },
-    { icon: <BarChart3 className="w-6 h-6" />, title: "5 Fairness Metrics", desc: "Demographic Parity, Equal Opportunity, Disparate Impact, Equalized Odds, and a composite Fairness Score.", color: "from-violet-500 to-purple-500" },
-    { icon: <Brain className="w-6 h-6" />, title: "Gemini AI Explanation", desc: "Google Gemini analyzes your metrics and generates plain-language bias explanations with mitigation steps.", color: "from-pink-500 to-rose-500" },
-    { icon: <ShieldCheck className="w-6 h-6" />, title: "80% Rule Compliance", desc: "Checks Disparate Impact against the legal 80% rule used in employment and lending cases.", color: "from-emerald-500 to-green-500" },
-    { icon: <TrendingUp className="w-6 h-6" />, title: "Visual Dashboard", desc: "Real-time charts — gauge, bar, pie, and comparison charts built with Recharts.", color: "from-orange-500 to-amber-500" },
-    { icon: <FileDigit className="w-6 h-6" />, title: "PDF Bias Report", desc: "Export a professional compliance report with all metrics, charts, and AI explanations.", color: "from-indigo-500 to-blue-500" },
-    { name: "Explainable AI (XAI)", icon: <Zap className="w-6 h-6" />, title: "Explainable AI (XAI)", desc: "Interactive SHAP charts that explain which features drove the machine learning model's biased decisions.", color: "from-yellow-500 to-orange-500" },
+    { id: 1, icon: <Database className="w-6 h-6" />, title: "Smart Dataset Profiling", desc: "Auto-detect sensitive columns, missing values, and data distributions with one click.", color: "from-blue-500 to-cyan-500" },
+    { id: 2, icon: <BarChart3 className="w-6 h-6" />, title: "5 Fairness Metrics", desc: "Demographic Parity, Equal Opportunity, Disparate Impact, Equalized Odds, and a composite Fairness Score.", color: "from-violet-500 to-purple-500" },
+    { id: 3, icon: <Brain className="w-6 h-6" />, title: "Gemini AI Explanation", desc: "Google Gemini analyzes your metrics and generates plain-language bias explanations with mitigation steps.", color: "from-pink-500 to-rose-500" },
+    { id: 4, icon: <ShieldCheck className="w-6 h-6" />, title: "80% Rule Compliance", desc: "Checks Disparate Impact against the legal 80% rule used in employment and lending cases.", color: "from-emerald-500 to-green-500" },
+    { id: 5, icon: <TrendingUp className="w-6 h-6" />, title: "Visual Dashboard", desc: "Real-time charts — gauge, bar, pie, and comparison charts built with Recharts.", color: "from-orange-500 to-amber-500" },
+    { id: 6, icon: <FileDigit className="w-6 h-6" />, title: "PDF Bias Report", desc: "Export a professional compliance report with all metrics, charts, and AI explanations.", color: "from-indigo-500 to-blue-500" },
+    { id: 7, icon: <Zap className="w-6 h-6" />, title: "Explainable AI (XAI)", desc: "Interactive SHAP charts that explain which features drove the machine learning model's biased decisions.", color: "from-yellow-500 to-orange-500" },
+    { id: 8, icon: <Activity className="w-6 h-6" />, title: "Real-Time Mitigation", desc: "Actionable recommendations processed in real-time as your model re-trains on the stream.", color: "from-teal-500 to-emerald-500" },
+    { id: 9, icon: <Lock className="w-6 h-6" />, title: "Data Anonymization", desc: "Automatically mask PII and sensitive intersections before it hits your models.", color: "from-slate-500 to-gray-500" },
+    { id: 10, icon: <Layers className="w-6 h-6" />, title: "Intersectionality", desc: "Detect complex biases that span multiple sensitive traits (e.g. Black Women).", color: "from-fuchsia-500 to-pink-500" },
+    { id: 11, icon: <Cpu className="w-6 h-6" />, title: "Synthetic Data Gen", desc: "Leverage AI to synthetically upsample minority groups while preserving feature variance.", color: "from-blue-600 to-indigo-600" },
+    { id: 12, icon: <Network className="w-6 h-6" />, title: "Multi-Model Support", desc: "Native integrations for XGBoost, Random Forest, PyTorch, and TensorFlow.", color: "from-purple-600 to-indigo-600" },
+    { id: 13, icon: <Search className="w-6 h-6" />, title: "API Scanning", desc: "Hooks directly into your live API endpoints to scan real-world traffic inference bias.", color: "from-cyan-500 to-blue-500" },
+    { id: 14, icon: <Settings className="w-6 h-6" />, title: "Custom Thresholds", desc: "Define your own business-specific fairness thresholds to trigger live alerts.", color: "from-gray-500 to-slate-500" },
+    { id: 15, icon: <Users className="w-6 h-6" />, title: "Role-Based Access", desc: "Full enterprise granular access control for legal, data science, and product teams.", color: "from-orange-500 to-red-500" },
+    { id: 16, icon: <MessageSquare className="w-6 h-6" />, title: "NLP Bias Detection", desc: "Check language models and datasets for toxic or historically biased phrasing.", color: "from-sky-500 to-indigo-500" },
+    { id: 17, icon: <Fingerprint className="w-6 h-6" />, title: "Adversarial Debiasing", desc: "Use GAN architectures to learn feature representations that hide protected attributes.", color: "from-stone-500 to-neutral-500" },
+    { id: 18, icon: <CheckCircle className="w-6 h-6" />, title: "Compliance Auditing", desc: "Generate instant EU AI Act and GDPR compliant audit trails of data usage.", color: "from-green-500 to-teal-500" },
+    { id: 19, icon: <Globe className="w-6 h-6" />, title: "Historical Tracking", desc: "Log and visualize equity metrics over months of deployment to avoid model drift.", color: "from-indigo-500 to-blue-500" },
+    { id: 20, icon: <Eye className="w-6 h-6" />, title: "Visual Importance", desc: "Dynamic tree and permutation importance to see exactly what shapes your output.", color: "from-rose-500 to-pink-500" }
   ];
 
   const techStack = [
@@ -256,25 +271,31 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.03, y: -5 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.4, ease: "easeOut" as const }}
-                className="group relative p-7 rounded-2xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer overflow-hidden"
+                transition={{ delay: (i % 4) * 0.08, duration: 0.4, ease: "easeOut" as const }}
+                className="group relative p-7 rounded-2xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition-all cursor-pointer overflow-hidden flex flex-col justify-between"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${f.color} text-white mb-5 shadow-lg`}>
-                  {f.icon}
+                <div className={`absolute inset-0 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                <div>
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${f.color} text-white mb-5 shadow-lg relative`}
+                  >
+                    {f.icon}
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors duration-300">{f.title}</h3>
+                  <p className="text-slate-400 leading-relaxed text-sm">{f.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{f.title}</h3>
-                <p className="text-slate-400 leading-relaxed">{f.desc}</p>
-                <div className="mt-4 flex items-center gap-1 text-indigo-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn more <ChevronRight className="w-4 h-4" />
-                </div>
+                <Link href={`/features#feature-${f.id}`} className="mt-6 flex items-center gap-1 text-indigo-400 text-sm font-bold opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300">
+                  <span className="group-hover:underline">Explore Feature</span> <ChevronRight className="w-4 h-4" />
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -381,21 +402,32 @@ export default function LandingPage() {
 
             <div className="flex flex-wrap justify-center gap-8">
               {teamMembers.map((member, i) => (
-                <div key={i} className="p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm max-w-xs w-full">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl font-black text-white mx-auto mb-4">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05, translateY: -10 }}
+                  transition={{ delay: i * 0.1, duration: 0.4, type: "spring", stiffness: 200 }}
+                  className="p-8 rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-transparent backdrop-blur-md hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-indigo-500/20 max-w-xs w-full transition-all group"
+                >
+                  <motion.div 
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.8 }}
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl font-black text-white mx-auto mb-4 shadow-lg shadow-indigo-500/30 group-hover:from-purple-500 group-hover:to-pink-500"
+                  >
                     {member.name.charAt(0)}
-                  </div>
-                  <h3 className="text-xl font-bold text-white">{member.name}</h3>
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors">{member.name}</h3>
                   <p className="text-indigo-300 font-semibold mt-1 mb-1">{member.role}</p>
                   <p className="text-slate-400 text-sm mb-4">{member.email}</p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {member.skills.map((skill, j) => (
-                      <span key={j} className="px-3 py-1 text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                      <span key={j} className="px-3 py-1 text-xs font-semibold text-white bg-indigo-500/20 shadow-[inset_0_0_10px_rgba(99,102,241,0.2)] border border-indigo-500/30 rounded-full group-hover:bg-indigo-500/40 group-hover:border-indigo-400/50 transition-all">
                         {skill}
                       </span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
