@@ -64,15 +64,15 @@ async def upload_dataset(file: UploadFile = File(...)):
         
         # Handle missing values & adapt categorical
         for col in df.columns:
-            if df[col].dtype == object:
-                # fill missing categoricals
-                df[col] = df[col].fillna("Unknown").astype(str)
-            else:
+            if pd.api.types.is_numeric_dtype(df[col]):
                 # fill numeric with median
                 if not df[col].isnull().all():
                     df[col] = df[col].fillna(df[col].median())
                 else:
                     df[col] = df[col].fillna(0)
+            else:
+                # fill missing categoricals
+                df[col] = df[col].fillna("Unknown").astype(str)
                     
         # Step 11: Auto Target Detection
         target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y']
