@@ -27,9 +27,10 @@ export const uploadDataset = async (file: File) => {
   return response.data;
 };
 
-export const analyzeBias = async (file: File, targetCol: string, sensitiveCol: string) => {
+export const analyzeBias = async (targetCol: string, sensitiveCol: string, file?: File, fileId?: string) => {
   const formData = new FormData();
-  formData.append('file', file);
+  if (file) formData.append('file', file);
+  if (fileId) formData.append('file_id', fileId);
   formData.append('target_col', targetCol);
   formData.append('sensitive_col', sensitiveCol);
   

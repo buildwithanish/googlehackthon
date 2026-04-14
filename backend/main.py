@@ -43,27 +43,100 @@ def read_root():
         "developer": "Anish | Synapse Squad Hub"
     }
 
+TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp_uploads")
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+@app.post("/upload_dataset")
+async def upload_dataset(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        
+        # Validation: Check for required columns
+        required_columns = ["gender", "age", "income", "education", "credit_score", "loan_amount", "loan_approved"]
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        
+        if missing_columns:
+            return {
+                "error": f"Missing required columns: {', '.join(missing_columns)}.",
+                "hint": "Ensure your CSV contains: gender, age, income, education, credit_score, loan_amount, loan_approved."
+            }
+
+        # Save file for later analysis
+        file_id = f"ds_{os.urandom(4).hex()}"
+        file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
+        with open(file_path, "wb") as f:
+            f.write(contents)
+
+        # Data Preview & Stats
+        preview = df.head(50).fillna("").to_dict(orient='records')
+        stats = {
+            "rows": len(df),
+            "cols": len(df.columns),
+            "column_types": {col: str(dtype) for col, dtype in df.dtypes.items()},
+            "missing_values": df.isnull().sum().to_dict(),
+            "target_detected": "loan_approved" if "loan_approved" in df.columns else df.columns[-1]
+        }
+        
+        return {
+            "file_id": file_id,
+            "filename": file.filename,
+            "preview": preview,
+            "columns": list(df.columns),
+            "shape": {"rows": len(df), "cols": len(df.columns)},
+            "stats": stats,
+            "sensitive_column_hints": [col for col in df.columns if col.lower() in ["gender", "age", "race", "ethnicity", "religion"]]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Upload processing failed: {str(e)}")
+
+@app.post("/analyze_bias", response_model=AnalysisResponse)
+async def analyze_bias_endpoint(
+    file_id: str = Form(None),
+    file: UploadFile = File(None),
+    sensitive_col: str = Form(...),
+    target_col: str = Form(...),
+    gemini_api_key: str = Form(None)
+):
+    try:
+        df = None
+        if file_id:
+            file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+            else:
+                 raise HTTPException(status_code=404, detail="Session expired. Please re-upload.")
+        elif file:
+            contents = await file.read()
+            df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        else:
+             raise HTTPException(status_code=400, detail="No dataset provided.")
+
+        metrics, rates = calculate_fairness_metrics(df, sensitive_col, target_col)
+        
+        ai_report = None
+        if gemini_api_key:
+            ai_report = generate_bias_report(metrics, rates, sensitive_col, target_col, gemini_api_key)
+            
+        return {
+            "metrics": metrics, 
+            "group_rates": rates, 
+            "ai_report": ai_report,
+            "run_id": f"FA-{os.urandom(3).hex().upper()}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
 @app.post("/analyze", response_model=AnalysisResponse)
-async def analyze_dataset(
+async def analyze_dataset_generic(
     file: UploadFile = File(...),
     sensitive_feature: str = Form(...),
     target_variable: str = Form(...),
     prediction_variable: str = Form(None),
     gemini_api_key: str = Form(None)
 ):
-    try:
-        contents = await file.read()
-        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
-        
-        metrics, rates = calculate_fairness_metrics(df, sensitive_feature, target_variable, prediction_variable)
-        
-        ai_report = None
-        if gemini_api_key:
-            ai_report = generate_bias_report(metrics, rates, sensitive_feature, target_variable, gemini_api_key)
-            
-        return {"metrics": metrics, "group_rates": rates, "ai_report": ai_report}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+    # This is an alias for analyze_bias_endpoint to maintain backward compatibility
+    return await analyze_bias_endpoint(file, sensitive_feature, target_variable, gemini_api_key)
 
 @app.post("/simulate")
 async def simulate_bias(

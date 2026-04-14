@@ -98,6 +98,8 @@ function IntersectionalTable({ data }: { data: any }) {
     );
 }
 
+import { analyzeBias } from "@/lib/api";
+
 export default function Dashboard() {
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -111,33 +113,51 @@ export default function Dashboard() {
     
     const infoStr = localStorage.getItem("dataset_info");
     const info = infoStr ? JSON.parse(infoStr) : null;
-    const filename = info?.filename || (isDemo ? "sample_bias_dataset.csv" : "uploaded_dataset.csv");
 
-    setTimeout(() => {
-        // Dynamic analysis based on real uploaded data
-        const mockData = {
-          run_id: `FA-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
-          scenario_name: `Bias Check: ${filename}`,
-          dataset_name: filename,
-          metrics: {
-            fairness_score: Math.floor(Math.random() * 30) + 50, // 50-80 range for realism
-            demographic_parity_difference: 0.15 + (Math.random() * 0.1),
-            equalized_odds_difference: 0.10 + (Math.random() * 0.05),
-            disparate_impact: 0.65 + (Math.random() * 0.15),
-            bias_alert: true,
-          },
-          ai_explanation: `Complete Fairness Scan of '${filename}' identified potential algorithmic disparities. The primary sensitive attribute detected was '${info?.sensitive_column_hints?.[0] || "Gender"}'. While the model maintains a baseline accuracy, the ${info?.sensitive_column_hints?.[0] || "protected"} groups show a statistically significant deviation in positive outcome rates, triggering a Tier-2 Compliance Alert. RECOMMENDATION: Apply Adversarial Debiasing.`,
-          group_rates: info?.sensitive_column_hints?.[0] === "Age" 
-            ? { "Under 35": 42, "35-50": 68, "Over 50": 55 }
-            : { "Male": 68, "Female": 42, "Other": 45 },
-          generated_at: new Date().toLocaleTimeString(),
-          is_real_data: !isDemo
-        };
-        
-        setResults(mockData);
-        setRunCount(prev => prev + 1);
+    try {
+        if (!isDemo && info?.file_id) {
+            // REAL ANALYSIS on uploaded data
+            const res = await analyzeBias(
+                info.stats?.target_detected || "loan_approved",
+                info.sensitive_column_hints?.[0] || "gender",
+                undefined,
+                info.file_id
+            );
+            setResults({
+                ...res,
+                scenario_name: `Audit: ${info.filename}`,
+                dataset_name: info.filename,
+                generated_at: new Date().toLocaleTimeString()
+            });
+        } else {
+            // Demo fallback with simulation
+            setTimeout(() => {
+                const filename = info?.filename || "sample_bias_dataset.csv";
+                setResults({
+                    run_id: `FA-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                    scenario_name: `Demo Audit: ${filename}`,
+                    dataset_name: filename,
+                    metrics: {
+                        fairness_score: Math.floor(Math.random() * 30) + 50,
+                        demographic_parity_difference: 0.18,
+                        equalized_odds_difference: 0.12,
+                        disparate_impact: 0.72,
+                        bias_alert: true,
+                    },
+                    ai_explanation: "This is a pre-calculated demo report for simulation purposes.",
+                    group_rates: { "Male": 68, "Female": 42, "Other": 45 },
+                    generated_at: new Date().toLocaleTimeString(),
+                });
+                setLoading(false);
+            }, 1500);
+            return;
+        }
+    } catch (err: any) {
+        console.error("Analysis Failed:", err);
+    } finally {
         setLoading(false);
-    }, 2000);
+        setRunCount(prev => prev + 1);
+    }
   }, []);
 
   const downloadReport = async (format: 'pdf' | 'ppt') => {
