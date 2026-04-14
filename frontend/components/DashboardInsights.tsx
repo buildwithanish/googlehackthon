@@ -106,6 +106,7 @@ export default function DashboardInsights() {
     const info = infoStr ? JSON.parse(infoStr) : null;
 
     try {
+        console.log(`[FairAI] Starting analysis for ${info?.filename || 'demo'}...`);
         if (!isDemo && info?.file_id) {
             const tempTarget = info.target_column || info.stats?.target_detected || "loan_approved";
             const tempSensitive = info.sensitive_column_hints?.[0] || "gender";
@@ -114,9 +115,20 @@ export default function DashboardInsights() {
                 tempTarget,
                 tempSensitive,
                 undefined,
-                info.file_id
+                info.file_id,
+                process.env.NEXT_PUBLIC_GEMINI_API_KEY
             );
             
+            if (!res.success) {
+                console.error("[FairAI] Analysis Engine Error:", res.error);
+                setResults({
+                    error: res.error,
+                    message: res.message
+                });
+                return;
+            }
+
+            console.log("[FairAI] Analysis complete. Metrics loaded.");
             setResults({
                 ...res,
                 scenario_name: `Audit: ${info.filename}`,
@@ -125,9 +137,11 @@ export default function DashboardInsights() {
             });
         } else {
             // Demo fallback
+            console.log("[FairAI] Running in DEMO mode.");
             setTimeout(() => {
                 const filename = info?.filename || "sample_bias_dataset.csv";
                 setResults({
+                    success: true,
                     run_id: `FA-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                     scenario_name: `Demo Audit: ${filename}`,
                     dataset_name: filename,
@@ -143,11 +157,13 @@ export default function DashboardInsights() {
                     generated_at: new Date().toLocaleTimeString(),
                 });
                 setLoading(false);
+                console.log("[FairAI] Demo results injected.");
             }, 1000);
             return;
         }
     } catch (err: any) {
-        console.error("Analysis Failed:", err);
+        console.error("[FairAI] Analysis Execution Crash:", err);
+        setResults({ error: "System Crash", message: err.message });
     } finally {
         setLoading(false);
     }
@@ -202,6 +218,23 @@ export default function DashboardInsights() {
 
   if (!results) return null;
 
+  if (results.error) {
+    return (
+        <div className="p-12 rounded-[40px] bg-rose-500/5 border border-rose-500/20 text-center mt-12">
+            <h3 className="text-2xl font-black text-white mb-2">{results.error}</h3>
+            <p className="text-slate-400 mb-8">{results.message}</p>
+            <button onClick={() => runAnalysis(false)} className="mx-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-indigo-600/30">
+                Retry Analysis
+            </button>
+        </div>
+    );
+  }
+
+  // Pre-process chart data safely
+  const chartData = results.metrics?.insights_mode 
+    ? (Object.entries(results.metrics.distributions || {}).slice(0, 1).map(([_, v]) => 
+        Object.entries(v as any).map(([nk, nv]) => ({name: nk, val: nv}))).flat())
+    : (Object.entries(results.group_rates || {}).map(([k, v]) => ({ name: k, val: v })));
   return (
       <div className="space-y-10 mt-12 w-full animate-in fade-in zoom-in duration-500">
           
@@ -268,21 +301,27 @@ export default function DashboardInsights() {
                           </h3>
                       </div>
                       <div className="h-80">
-                          <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={results.metrics?.insights_mode ? Object.entries(results.metrics.distributions || {}).slice(0, 1).map(([_, v]) => Object.entries(v as any).map(([nk, nv]) => ({name: nk, val: nv}))).flat() : Object.entries(results.group_rates || {}).map(([k, v]) => ({ name: k, val: v }))}>
-                                  <defs>
-                                      <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                          <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
-                                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.2}/>
-                                      </linearGradient>
-                                  </defs>
-                                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11, fontWeight: '700' }} />
-                                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
-                                  <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '16px' }} />
-                                  <Bar dataKey="val" fill="url(#barGradient)" radius={[10, 10, 0, 0]} />
-                              </BarChart>
-                          </ResponsiveContainer>
+                          {chartData && chartData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={chartData}>
+                                    <defs>
+                                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.2}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11, fontWeight: '700' }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                                    <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '16px' }} />
+                                    <Bar dataKey="val" fill="url(#barGradient)" radius={[10, 10, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                          ) : (
+                            <div className="h-full flex items-center justify-center text-slate-500 font-bold uppercase tracking-widest text-xs">
+                                No sufficient data for visualization
+                            </div>
+                          )}
                       </div>
                   </div>
 

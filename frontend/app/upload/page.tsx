@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import DatasetViewer from "@/components/DatasetViewer";
 import DashboardInsights from "@/components/DashboardInsights";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const DEMO_DATASETS = [
 
@@ -58,33 +59,43 @@ export default function UploadPage() {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setLoading(true);
-      setError("");
-      setPreview(null);
-      setShowInsights(false);
-      try {
-        const data = await uploadDataset(selectedFile);
-        
-        if (data.error) {
-           setError(data.error);
-           setPreview(null);
-           return;
-        }
+    if (!selectedFile) return;
 
-        setPreview(data);
-        localStorage.setItem("dataset_info", JSON.stringify(data));
-        localStorage.removeItem("demo_mode");
-        // We will pass the ACTUAL file to the next step via localStorage or a global state
-        // For now, we'll store the object and handle the file upload during analysis
-      } catch (err: any) {
-        console.error("API Error:", err);
-        const actualError = err.response?.data?.detail || err.message || "Unknown error";
-        setError(`Processing failed: ${actualError}`);
-      } finally {
-        setLoading(false);
+    // Step 7: Size Validation
+    if (selectedFile.size > 100 * 1024 * 1024) {
+      setError("File is too large (>100MB). Frontend processing is limited. Please use a smaller sample or chunked analysis.");
+      return;
+    }
+
+    setFile(selectedFile);
+    setLoading(true);
+    setError("");
+    setPreview(null);
+    setShowInsights(false);
+    
+    console.log(`[FairAI] Processing upload: ${selectedFile.name} (${selectedFile.size} bytes)`);
+
+    try {
+      const data = await uploadDataset(selectedFile);
+      
+      // Step 1: Safe API Response Handle
+      if (!data.success) {
+         console.warn("[FairAI] Backend rejected file:", data.error);
+         setError(`${data.error}: ${data.message || 'Check CSV format'}`);
+         setPreview(null);
+         return;
       }
+
+      console.log("[FairAI] Upload successful, file_id:", data.file_id);
+      setPreview(data);
+      localStorage.setItem("dataset_info", JSON.stringify(data));
+      localStorage.removeItem("demo_mode");
+    } catch (err: any) {
+      console.error("[FairAI] Global Upload Crash:", err);
+      const actualError = err.response?.data?.detail || err.message || "Network Error";
+      setError(`Processing failed: ${actualError}`);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -258,16 +269,20 @@ export default function UploadPage() {
               </div>
 
               {/* Grid Component */}
-              <DatasetViewer 
-                data={preview.preview} 
-                columns={preview.columns} 
-                stats={preview.stats} 
-                fileId={preview.file_id}
-              />
+              <ErrorBoundary fallbackMessage="Preview system failed for this dataset. You can still try Bias Analysis.">
+                <DatasetViewer 
+                    data={preview.preview || []} 
+                    columns={preview.columns || []} 
+                    stats={preview.stats} 
+                    fileId={preview.file_id}
+                />
+              </ErrorBoundary>
               
               {/* Display Results directly below */}
               {showInsights && (
-                  <DashboardInsights />
+                  <ErrorBoundary>
+                    <DashboardInsights />
+                  </ErrorBoundary>
               )}
             </motion.div>
           )}

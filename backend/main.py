@@ -87,17 +87,23 @@ async def get_dataset_profile(file_id: str):
 @app.post("/upload_dataset")
 async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     try:
-        # 1. Save file locally first (high performance chunked write)
+        # Step 7: Data Validation
+        if not file.filename.endswith('.csv'):
+            return {"success": False, "error": "Invalid file format", "message": "Please upload a CSV file."}
+            
         file_id = f"ds_{os.urandom(4).hex()}"
         file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
         
+        # Step 6: Handle Large Files (Chunked Write)
+        filesize = 0
         with open(file_path, "wb") as buffer:
             while chunk := await file.read(1024 * 1024): # 1MB chunks
                 buffer.write(chunk)
-                
-        # 2. Instant Preview (Read only first 100 rows using polars/pandas)
-        # Using polars for faster scanning of large files
-        df_preview = pl.read_csv(file_path, n_rows=100)
+                filesize += len(chunk)
+        
+        # Step 2: Limit Response Size (50 rows)
+        # Using polars for high performance scanning
+        df_preview = pl.read_csv(file_path, n_rows=50)
         
         # 3. Auto Detection Logic
         columns = df_preview.columns
@@ -111,21 +117,28 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
         background_tasks.add_task(profile_dataset_task, file_path, file_id)
         
         return {
+            "success": True,
             "file_id": file_id,
             "filename": file.filename,
             "preview": df_preview.to_dicts(),
             "columns": columns,
+            "filesize_bytes": filesize,
             "shape": {"rows": "Calculating...", "cols": len(columns)},
             "sensitive_column_hints": detected_sensitive,
             "target_column": detected_target,
             "analysis_ready": True if detected_target != "unknown" and detected_sensitive else False
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"In pill-speed upload failed: {str(e)}")
+        print(f"UPLOAD CRASH: {str(e)}")
+        return {
+            "success": False, 
+            "error": "Dataset upload failed", 
+            "message": str(e)
+        }
 
 from bias_detection.shap_explainer import get_shap_explanations
 
-@app.post("/analyze_bias", response_model=AnalysisResponse)
+@app.post("/analyze_bias")
 async def analyze_bias_endpoint(
     file_id: str = Form(None),
     file: UploadFile = File(None),
@@ -138,18 +151,23 @@ async def analyze_bias_endpoint(
         if file_id:
             file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
             if os.path.exists(file_path):
+                # Step 6: Memory Protection (Use Polars for analysis if possible, but Pandas required for current metrics lib)
+                # Optimization: Read only required columns if possible
                 df = pd.read_csv(file_path)
             else:
-                 raise HTTPException(status_code=404, detail="Session expired. Please re-upload.")
+                 return {"success": False, "error": "Session expired", "message": "Please re-upload your file."}
         elif file:
             contents = await file.read()
             df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
         else:
-             raise HTTPException(status_code=400, detail="No dataset provided.")
+             return {"success": False, "error": "No data", "message": "No dataset provided for analysis."}
 
-        # Handle Insights Mode (Step 6)
+        # Step 7: Row/Col Count Validation
+        if len(df) < 2:
+            return {"success": False, "error": "Insufficient data", "message": "Dataset must have at least 2 rows."}
+
+        # Handle Insights Mode
         if not sensitive_col or sensitive_col == "none" or not target_col or target_col == "none" or sensitive_col not in df.columns or target_col not in df.columns:
-            # Dataset Insights Mode
             numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
             stats = {
                 "insights_mode": True,
@@ -158,6 +176,7 @@ async def analyze_bias_endpoint(
                 "summary": df.describe().to_dict()
             }
             return {
+                "success": True,
                 "metrics": stats,
                 "group_rates": {},
                 "ai_report": "This dataset does not contain a valid decision variable or sensitive attribute for fairness analysis. Switched to General Insights Mode."
@@ -174,13 +193,19 @@ async def analyze_bias_endpoint(
             ai_report = generate_bias_report(metrics, rates, sensitive_col, target_col, gemini_api_key)
             
         return {
+            "success": True,
             "metrics": metrics, 
             "group_rates": rates, 
             "ai_report": ai_report,
             "run_id": f"FA-{os.urandom(3).hex().upper()}"
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        print(f"ANALYSIS CRASH: {str(e)}")
+        return {
+            "success": False, 
+            "error": "Dataset analysis failed", 
+            "message": "Verify your column names and data types."
+        }
 
 @app.post("/analyze", response_model=AnalysisResponse)
 async def analyze_dataset_generic(
