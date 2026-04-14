@@ -7,11 +7,11 @@ from fairlearn.metrics import (
 )
 
 def calculate_fairness_metrics(df, sensitive_feature, target_variable, prediction_variable=None):
-    \"\"\"
+    """
     Calculate fairness metrics given a target variable and an optional prediction variable.
     If no prediction variable is provided, we simulate one by adding slight noise to target
     just for the sake of demonstration in a hackathon prototype if not running a full model.
-    \"\"\"
+    """
     # For a prototype dashboard, if there is no AI model prediction uploaded,
     # we can analyze the base dataset bias (historical bias).
     
