@@ -330,10 +330,10 @@ export default function FeaturesPage() {
               <Zap className="w-4 h-4" /> Complete Feature Reference
             </div>
             <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-white via-indigo-200 to-purple-300 text-transparent bg-clip-text leading-tight mb-5">
-              20 Powerful Features
+              Enterprise Fairness Ecosystem
             </h1>
             <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
-              Every feature in FairAI is designed to give data teams, compliance officers, and business leaders everything they need to build, audit, and deploy fair AI systems.
+              FairAI covers the full lifecycle of responsible AI—from data profiling to regulatory-grade compliance reporting and ethical governance.
             </p>
           </motion.div>
         </div>

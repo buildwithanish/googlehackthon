@@ -226,25 +226,35 @@ export default function Dashboard() {
     }, delay);
   };
 
-  const downloadReport = () => {
+  const downloadReport = (format: 'pdf' | 'docx' | 'json' | 'ppt') => {
     if (!results) return;
-    const report = {
+    
+    const reportData = {
       run_id: results.run_id,
       generated: new Date().toISOString(),
       scenario: results.scenario_name,
       dataset: results.dataset_info,
       fairness_score: results.metrics.fairness_score,
-      bias_level: results.summary?.level,
       metrics: results.metrics,
       group_details: results.group_details,
       ai_explanation: results.ai_explanation,
-      recommendations: results.ai_recommendations,
+      ai_recommendations: results.ai_recommendations,
+      summary: results.summary,
     };
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `fairai_report_${results.run_id}.json`;
-    a.click();
+
+    if (format === 'pdf') {
+       import('@/lib/report-generator').then(m => m.generateProfessionalPDF(reportData));
+    } else if (format === 'docx') {
+       import('@/lib/report-generator').then(m => m.generateProfessionalWord(reportData));
+    } else if (format === 'ppt') {
+       import('@/lib/report-generator').then(m => m.generateProfessionalPPT(reportData));
+    } else {
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `fairai_report_${results.run_id}.json`;
+      a.click();
+    }
   };
 
   const biasAlerts = results?.metrics?.bias_alert;
@@ -299,19 +309,24 @@ export default function Dashboard() {
                 {loading ? "Analyzing..." : results ? "Re-Run New Analysis" : "Run Demo Analysis"}
               </button>
               {results && (
-                <>
-                  <button
-                    onClick={downloadReport}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl font-semibold text-sm hover:bg-white/10 transition-all"
-                  >
-                    <Download className="w-4 h-4" />
-                    Export Report
-                  </button>
+                <div className="flex gap-2">
+                  <div className="relative group">
+                    <button className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl font-semibold text-sm hover:bg-white/10 transition-all">
+                      <Download className="w-4 h-4" />
+                      Download Report
+                    </button>
+                    <div className="absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all p-2 z-50">
+                      <button onClick={() => downloadReport('pdf')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">PDF Audit Report</button>
+                      <button onClick={() => downloadReport('docx')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">Word Document</button>
+                      <button onClick={() => downloadReport('ppt')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">PowerPoint Slide</button>
+                      <button onClick={() => downloadReport('json')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">Raw JSON Data</button>
+                    </div>
+                  </div>
                   <Link href="/report" className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600/20 border border-indigo-500/20 text-indigo-300 rounded-xl font-semibold text-sm hover:bg-indigo-600/30 transition-all">
                     <Brain className="w-4 h-4" />
                     AI Report
                   </Link>
-                </>
+                </div>
               )}
               {!dataInfo && (
                 <Link href="/upload" className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl font-semibold text-sm hover:bg-white/10 transition-all">
