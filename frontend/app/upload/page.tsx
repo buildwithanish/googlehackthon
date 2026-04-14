@@ -151,6 +151,36 @@ export default function UploadPage() {
                     <p className="mt-6 text-xs text-slate-600 font-bold uppercase tracking-wider">CSV format · Max 50MB · Encrypted Transfer</p>
                 </div>
 
+                {/* Loading / Error States */}
+                <AnimatePresence mode="wait">
+                  {loading && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12 mt-8">
+                      <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
+                      <p className="text-indigo-400 font-black uppercase tracking-widest text-xs">Analyzing & Profiling Data...</p>
+                    </motion.div>
+                  )}
+
+                  {error && !loading && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 p-8 rounded-3xl bg-rose-500/5 border border-rose-500/20 text-rose-300 shadow-2xl shadow-rose-500/10">
+                      <div className="flex items-start gap-4">
+                        <div className="p-4 bg-rose-500/20 rounded-2xl">
+                            <AlertCircle className="w-8 h-8 text-rose-400" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-2xl font-black text-white tracking-tight">Dataset Processing Error</h3>
+                            <p className="text-rose-400/80 mt-2 text-lg font-medium">{error}</p>
+                            <p className="mt-4 text-sm text-slate-500">Ensure the CSV is properly formatted and does not contain unsupported characters.</p>
+                            <div className="mt-8 flex items-center gap-3">
+                                <button onClick={() => { setError(""); setFile(null); }} className="px-6 py-3 bg-rose-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg shadow-rose-500/20 uppercase tracking-widest">
+                                    Try Another File
+                                </button>
+                            </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Demo Mode Section */}
                 <div className="mt-12 relative rounded-3xl border border-white/5 bg-white/[0.02] px-8 py-10 overflow-hidden">
                     <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
@@ -195,36 +225,6 @@ export default function UploadPage() {
                 </div>
             </motion.div>
         )}
-
-        {/* Loading / Error States */}
-        <AnimatePresence mode="wait">
-          {loading && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-24">
-              <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-indigo-400 font-black uppercase tracking-widest text-xs">Analyzing & Profiling Data...</p>
-            </motion.div>
-          )}
-
-          {error && !loading && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-3xl bg-rose-500/5 border border-rose-500/20 text-rose-300 shadow-2xl shadow-rose-500/10">
-              <div className="flex items-start gap-4">
-                <div className="p-4 bg-rose-500/20 rounded-2xl">
-                    <AlertCircle className="w-8 h-8 text-rose-400" />
-                </div>
-                <div className="flex-1">
-                    <h3 className="text-2xl font-black text-white tracking-tight">Dataset Processing Error</h3>
-                    <p className="text-rose-400/80 mt-2 text-lg font-medium">{error}</p>
-                    <p className="mt-4 text-sm text-slate-500">Ensure the CSV is properly formatted and does not contain unsupported characters.</p>
-                    <div className="mt-8 flex items-center gap-3">
-                        <button onClick={() => { setError(""); setFile(null); }} className="px-6 py-3 bg-rose-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg shadow-rose-500/20 uppercase tracking-widest">
-                            Try Another File
-                        </button>
-                    </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Excel-Style Preview */}
         <AnimatePresence>
