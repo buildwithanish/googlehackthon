@@ -243,7 +243,7 @@ export default function DashboardInsights() {
                         <div key={i} className="p-6 rounded-[30px] bg-slate-900 border border-white/5 flex items-center justify-between group hover:bg-white/[0.04] transition-all shadow-xl">
                             <div>
                                 <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">{card.label}</p>
-                                <p className="text-2xl font-black italic">{card.val}</p>
+                                <p className="text-2xl font-black italic">{card.val as React.ReactNode}</p>
                             </div>
                             <div className="w-12 h-12 rounded-2xl bg-white/5 group-hover:bg-indigo-500/20 flex items-center justify-center transition-all">
                                 {card.icon}

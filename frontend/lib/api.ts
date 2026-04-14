@@ -54,13 +54,14 @@ export const uploadDataset = async (file: File) => {
   return response.data;
 };
 
-export const analyzeBias = async (targetCol: string, sensitiveCol: string, file?: File, fileId?: string, geminiApiKey?: string) => {
+export const analyzeBias = async (targetCol: string, sensitiveCol: string, file?: File, fileId?: string, geminiApiKey?: string, nlqQuery?: string) => {
   const formData = new FormData();
   if (file) formData.append('file', file);
   if (fileId) formData.append('file_id', fileId);
   formData.append('target_col', targetCol);
   formData.append('sensitive_col', sensitiveCol);
   if (geminiApiKey) formData.append('gemini_api_key', geminiApiKey);
+  if (nlqQuery) formData.append('nlq_query', nlqQuery);
   
   const response = await api.post('/analyze_bias', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
