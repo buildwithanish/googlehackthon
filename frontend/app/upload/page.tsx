@@ -129,12 +129,12 @@ export default function UploadPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { tag: "HR & Recruitment", name: "hiring_dataset.csv", rows: 500, bias: "Age & Gender Bias", color: "bg-blue-50 text-blue-700 border-blue-200" },
+            { tag: "HR & Recruitment", name: "sample_bias_dataset.csv", rows: 500, bias: "Age & Gender Bias", color: "bg-blue-50 text-blue-700 border-blue-200" },
             { tag: "Financial Services", name: "loan_dataset.csv", rows: 500, bias: "Income & Gender Bias", color: "bg-green-50 text-green-700 border-green-200" },
             { tag: "Healthcare", name: "healthcare_dataset.csv", rows: 500, bias: "Age & Gender Treatment Bias", color: "bg-purple-50 text-purple-700 border-purple-200" },
           ].map((demo, i) => (
             <div key={i} className={`p-6 rounded-2xl border ${demo.color} transition-transform hover:-translate-y-1 cursor-pointer shadow-sm`} onClick={() => {
-              localStorage.setItem("dataset_info", JSON.stringify({ filename: demo.name, shape: { rows: demo.rows, cols: 6 }, columns: ["gender", "age", "status"], preview: [] }));
+              localStorage.setItem("dataset_info", JSON.stringify({ filename: demo.name, shape: { rows: demo.rows, cols: 5 }, columns: ["gender", "age", "income", "education", "loan_approved"], preview: [] }));
               localStorage.setItem("demo_mode", demo.name);
               router.push("/dashboard");
             }}>

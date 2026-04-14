@@ -1,71 +1,50 @@
-# 🎙️ FairAI 3-Minute Hackathon Demo Script
+# FairAI - Hackathon Demo Video Script (3 Minutes)
 
-**Total Estimated Time:** 3:00 mins
-**Speaker:** Confident, professional, yet energetic.
-**Screen Recording:** Ensure browser zoom is at 110% for clear visibility of metrics.
+**Total Time: ~3:00 Minutes**
 
----
+## 1. Introduction & The Problem (0:00 - 0:40)
 
-### [0:00 - 0:30] 1. The Hook & Problem Statement
-*Visual: Start on the FairAI Landing Page.*
+**(Visuals: Title Slide - "FairAI: Unbiased AI Decision Platform")**
 
 **Speaker:**
-"Imagine getting denied for a life-saving loan or a dream job—not because of your qualifications, but because of a mathematical algorithm.
+"Hi everyone, I'm Anish from Team Synapse Squad Hub. Today we're thrilled to present FairAI. 
+In our increasingly automated world, AI systems manage everything from medical diagnosing to hiring decisions. But here is the problem: these systems are often trained on historically biased data. This leads to unfair, sometimes devastating decisions that penalize marginalized groups. A biased algorithm deciding who gets a loan or a job is unacceptable. But how can developers detect and fix this bias when AI is such a 'black box'?"
 
-Today, AI models are black boxes making critical decisions in healthcare, finance, and recruitment. But as we know, relying on biased historical data results in algorithms that discriminate based on race, gender, or age. 
+**(Visuals: Screen showing headlines about AI bias in hiring/loans)**
 
-We built **FairAI** to fix this. FairAI is a Responsible AI Governance platform that seamlessly detects, explains, and mitigates bias in any machine learning system."
+## 2. Our Solution: FairAI (0:40 - 1:10)
 
----
-
-### [0:30 - 1:15] 2. Dataset Upload & Demo Mode
-*Visual: Click "Upload Dataset". Show the drag-and-drop UI, then click "Try Demo Mode" for the `loan_dataset.csv`.*
+**(Visuals: Transition to FairAI architecture diagram or landing page)**
 
 **Speaker:**
-"Let me show you how it works. Our platform allows Data Scientists and Auditors to drag and drop their assessment datasets for instant processing.
+"Enter FairAI. FairAI is a comprehensive, production-ready bias detection platform. It instantly audits machine learning datasets and models for unfairness using industry-standard metrics like Demographic Parity and Disparate Impact. More importantly, we integrate Google Gemini AI to not just identify the bias, but to explain it in plain language and offer concrete mitigation steps. Let me show you how it works."
 
-For this demo, let’s use the 'Financial Services' loan approval dataset containing 5000 records. We want to ensure this algorithm isn't discriminating against female applicants.
+## 3. The Demo (1:10 - 2:30)
 
-With one click, our Fairlearn-powered backend calculates the core metrics and generates an interactive, enterprise-grade Fairness Dashboard."
-
----
-
-### [1:15 - 2:00] 3. Decoding Bias (Dashboard & Metrics)
-*Visual: The Dashboard loads. Hover over the Bar Charts, pie charts, and Fairness Gauge.*
+**(Visuals: Screen recording of the FairAI Web App - Upload Page)**
 
 **Speaker:**
-"Here is the FairAI Dashboard. The first thing you'll notice is the automated Bias Alert and the comprehensive Fairness Score. 
+"This is our web portal. Let's say we are a financial institution testing our loan approval dataset. If we don't have our real data ready, we can use our built-in 'Demo Mode' which contains pre-loaded datasets with intentional biases."
 
-Our ML engine evaluates three major legal and ethical metrics:
-1. **Demographic Parity:** Does everyone get a relatively equal chance?
-2. **Equal Opportunity:** Are qualified candidates treated identically?
-3. **Disparate Impact:** We rigorously check the EEOC’s 80% Rule.
-
-As you can see in the heatmap and performance charts, the model mathematically failed the 80% Rule, showing a severe Disparate Impact against women earning below median income. The bias is undeniable."
-
----
-
-### [2:00 - 2:30] 4. Explainable AI & Mitigation (Gemini Integration)
-*Visual: Click on "Generate Explainable AI Report" or navigate to the AI Governance Policy Screen.*
+**(Visuals: Clicks on 'Financial Services Loan Dataset' Demo Button, routing to Dashboard)**
 
 **Speaker:**
-"Identifying bias is only half the battle. Explaining it to stakeholders and fixing it is the real challenge. 
+"Our platform seamlessly uploads the dataset to our FastAPI backend. Once we select our Target (Loan Approved) and Sensitive attribute (Gender or Income), the Bias Detection Engine gets to work."
 
-This is where FairAI shines. We integrated **Google Gemini 1.5** deep into our architecture to act as a fractional Ethics Officer. 
-
-By passing the raw mathematical matrices to Gemini, FairAI instantly generates a human-readable Explainable AI report. It translates 'Disparate Impact of 0.64' into plain English, and even provides 5 automated, industry-standard mitigation strategies—like Adversarial Debiasing or Threshold Optimization—tailored specifically for this model."
-
----
-
-### [2:30 - 3:00] 5. Conclusion & The Vision
-*Visual: Show the Governance Risk Radar chart (if applicable) or return to the Hero screen.*
+**(Visuals: Dashboard populates with gauge charts and bar charts)**
 
 **Speaker:**
-"To wrap up: FairAI brings complete Model Registries, Compliance Audits, and Real-Time Bias Monitoring into one unified SaaS platform. 
+"Instantly, we see our Fairness Score. We get a high bias alert because our data fails the 80% rule for Disparate Impact. Our interactive charts clearly show precisely how one group is favored over another over prediction distributions."
 
-We aren't just identifying bias; we are giving institutions the tools to easily comply with the EU AI Act and build trust with their users.
+**(Visuals: Scroll down to AI Explanation and Report buttons)**
 
-We are Team Synapse Squad Hub, and this is FairAI—putting the 'Responsible' back in Artificial Intelligence. Thank you."
+**Speaker:**
+"Next, instead of making developers guess how to fix it, we query Google Gemini. Gemini analyzes the statistical variance and outputs a human-readable Fairness Explanation, and lists 5 actionable mitigation strategies—such as reweighting samples or applying fairness algorithms. Finally, compliance teams can export a professional PDF Bias Report with a single click."
 
----
-*(End of presentation)*
+## 4. Impact & Conclusion (2:30 - 3:00)
+
+**(Visuals: Switch to Team/Impact Slide)**
+
+**Speaker:**
+"FairAI bridges the gap between complex AI ethics and practical development. By making it this simple to detect, explain, and mitigate biases, we empower companies to build responsible AI that works fairly for everyone, reducing legal risks and fostering trust.
+Thank you for watching our demo. Together, we can ensure AI makes the world better, not more biased."

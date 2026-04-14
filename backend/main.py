@@ -285,6 +285,24 @@ def get_fairness_metrics_info():
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# DEMO DATASET ENDPOINT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/demo_dataset", tags=["Dataset"])
+def get_demo_dataset():
+    """Returns a generated demo dataset as CSV."""
+    data = {
+        "gender": ["Male", "Female", "Male", "Female", "Male", "Female"],
+        "age": [25, 30, 45, 35, 50, 40],
+        "income": [50000, 60000, 80000, 70000, 90000, 75000],
+        "education": ["Bachelors", "Masters", "PhD", "Bachelors", "Masters", "PhD"],
+        "loan_approved": [1, 0, 1, 0, 1, 1],
+    }
+    df = pd.DataFrame(data)
+    csv = df.to_csv(index=False)
+    return Response(content=csv, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=sample_bias_dataset.csv"})
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # AI EXPLANATION ENDPOINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
