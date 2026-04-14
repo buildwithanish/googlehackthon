@@ -35,7 +35,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // ── Fairness Gauge ──────────────────────────────────────────────────────────
 function FairnessGauge({ score }: { score: number }) {
-  const clampedScore = Math.max(0, Math.min(100, score));
+  const validScore = typeof score === 'number' && !isNaN(score) ? score : 0;
+  const clampedScore = Math.max(0, Math.min(100, validScore));
   const angle = (clampedScore / 100) * 180 - 90;
   const color = clampedScore >= 80 ? "#22c55e" : clampedScore >= 60 ? "#f59e0b" : "#ef4444";
   const label = clampedScore >= 80 ? "LOW BIAS" : clampedScore >= 60 ? "MODERATE" : "HIGH BIAS";
@@ -283,19 +284,19 @@ export default function Dashboard() {
                 {/* ── KPI Grid ── */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="md:col-span-1 p-8 rounded-[40px] bg-slate-900 border border-white/5 flex flex-col justify-center">
-                        <FairnessGauge score={results.metrics.fairness_score} />
+                        <FairnessGauge score={results.metrics?.fairness_score || 0} />
                     </div>
                     
                     <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6">
                         {[
-                            { label: "Dem. Parity", value: results.metrics.demographic_parity_difference, status: "critical", desc: "Max group selection disparity" },
-                            { label: "Disp. Impact", value: results.metrics.disparate_impact, status: "warning", desc: "Selection ratio vs baseline" },
-                            { label: "Equalized Odds", value: results.metrics.equalized_odds_difference, status: "safe", desc: "Model error rate equality" }
+                            { label: "Dem. Parity", value: results.metrics?.demographic_parity_difference, status: "critical", desc: "Max group selection disparity" },
+                            { label: "Disp. Impact", value: results.metrics?.disparate_impact, status: "warning", desc: "Selection ratio vs baseline" },
+                            { label: "Equalized Odds", value: results.metrics?.equalized_odds_difference, status: "safe", desc: "Model error rate equality" }
                         ].map((kpi, i) => (
                             <div key={i} className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all">
                                 <div className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4">{kpi.label}</div>
                                 <div className={`text-4xl font-black mb-3 ${kpi.status === "critical" ? "text-rose-500" : kpi.status === "warning" ? "text-amber-500" : "text-emerald-500"}`}>
-                                    {kpi.value.toFixed(3)}
+                                    {(kpi.value !== undefined && kpi.value !== null) ? Number(kpi.value).toFixed(3) : "0.000"}
                                 </div>
                                 <p className="text-[10px] text-slate-500 font-bold leading-tight group-hover:text-slate-400 transition-colors uppercase">{kpi.desc}</p>
                             </div>
