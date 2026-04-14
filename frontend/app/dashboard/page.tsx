@@ -596,6 +596,8 @@ export default function Dashboard() {
                       Full AI Report →
                     </Link>
                   </div>
+                </motion.div>
+              )}
                 
                 {/* ── Help Guide ── */}
                 <div className="p-8 rounded-2xl bg-white/[0.02] border border-white/5">
