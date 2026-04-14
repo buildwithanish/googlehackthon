@@ -5,16 +5,17 @@ import { MessageCircle, X, Send, Bot, User, Sparkles } from "lucide-react";
 
 const FAQ_DATA = [
   { q: "What is FairAI?", a: "FairAI is an enterprise-grade bias detection and AI governance platform designed to ensure fairness in automated decision systems." },
-  { q: "How do I run a bias audit?", a: "Go to the 'Upload' page to upload your CSV dataset. Select your sensitive feature (e.g., Gender) and target variable (e.g., Loan Approved), then click 'Run Analysis'." },
-  { q: "What metrics are supported?", a: "We support Demographic Parity, Disparate Impact (80% rule), Equal Opportunity, and Intersectional Bias Matrices." },
-  { q: "Can I simulate biased data?", a: "Yes! Use our 'Bias Simulator' to generate synthetic datasets with controlled bias parameters to test your models' robustness." },
-  { q: "How do I get an AI report?", a: "After running an audit, our Gemini AI engine automatically generates a full explanation and remediation roadmap. You can export this as a PDF or PPT." },
+  { q: "FairAI kya hai?", a: "FairAI ek advanced platform hai jo AI systems mein bias (pakshpaat) ko detect karne aur usse theek karne ke liye banaya gaya hai." },
+  { q: "How to run audit?", a: "Upload your CSV, select features, and click 'Run Analysis'." },
+  { q: "Audit kaise kare?", a: "Apna CSV upload karein, sensitive features choose karein aur 'Run Analysis' pe click karein." },
+  { q: "Is software safe?", a: "Yes, we prioritize data privacy and ethics." },
+  { q: "Kya ye safe hai?", a: "Ji haan, hum data privacy aur ethics ko sabse zyada mahatva dete hain." },
 ];
 
 export default function ChatSupport() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'bot', content: "Hello! I'm the FairAI Support Assistant. How can I help you ensure your AI systems are ethical and unbiased today?" }
+    { role: 'bot', content: "Hello! I'm the FairAI Support Assistant. How can I help you ensure your AI systems are ethical and unbiased today? / Namaste! Main aapki kaise madad kar sakta hoon?" }
   ]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,18 +35,19 @@ export default function ChatSupport() {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
 
-    // Simple matching engine
+    // Multi-Language Response Engine
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      let response = "I'm not quite sure about that. Try asking about bias detection, metrics, or report generation!";
+      let response = "I'm not quite sure about that. Try asking about bias detection, metrics, or report generation! / Mujhe iske baare mein zyada pata nahi hai. Kripya bias detection ya report ke baare mein puchein.";
       
       const match = FAQ_DATA.find(item => lowerText.includes(item.q.toLowerCase()) || item.q.toLowerCase().includes(lowerText));
+      
       if (match) {
         response = match.a;
-      } else if (lowerText.includes("hello") || lowerText.includes("hi")) {
-        response = "Hi there! Ready to build fairer AI?";
-      } else if (lowerText.includes("help")) {
-        response = "I can help you navigate the Dashboard, explain Fairness Metrics, or guide you through the Bias Simulator!";
+      } else if (lowerText.includes("hello") || lowerText.includes("hi") || lowerText.includes("namaste")) {
+        response = "Hi! Ready to build fairer AI? / Namaste! Kya aap unbiased AI banane ke liye taiyaar hain?";
+      } else if (lowerText.includes("kaise") || lowerText.includes("kya") || lowerText.includes("theek")) {
+        response = "Hum aapko metrics, bias detection aur reports generate karne mein madad kar sakte hain. Dashboard check karein!";
       }
 
       setMessages(prev => [...prev, { role: 'bot', content: response }]);
@@ -54,12 +56,12 @@ export default function ChatSupport() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Moved Up to bottom-28 */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-8 right-8 z-[60] p-4 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-600/40 border border-indigo-400/20"
+        className="fixed bottom-32 right-8 z-[60] p-4 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-600/40 border border-indigo-400/20"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
       </motion.button>
