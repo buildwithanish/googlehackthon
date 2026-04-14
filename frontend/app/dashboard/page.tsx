@@ -177,9 +177,9 @@ export default function Dashboard() {
                <Brain className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black bg-gradient-to-r from-white via-white to-slate-500 bg-clip-text text-transparent uppercase tracking-tight">FairAI Governance Console</h1>
+              <h1 className="text-xl font-black bg-gradient-to-r from-white via-white to-slate-500 bg-clip-text text-transparent uppercase tracking-tight">FairAI Bias Detection Console</h1>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-2 py-0.5 rounded">Antigravity V3</span>
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-2 py-0.5 rounded">Core Engine V3</span>
                 <span className="text-slate-600 text-[10px] font-bold">Prod-ID: SYN-SYS-2026</span>
               </div>
             </div>
@@ -229,10 +229,10 @@ export default function Dashboard() {
                 <div className="p-6 bg-indigo-500/10 rounded-full mb-8">
                     <ShieldAlert className="w-16 h-16 text-indigo-500" />
                 </div>
-                <h2 className="text-4xl font-black italic mb-4">NO AUDIT DATA DETECTED</h2>
+                <h2 className="text-4xl font-black italic mb-4 uppercase">Bias Engine Idle</h2>
                 <p className="text-slate-500 max-w-lg mx-auto font-medium leading-relaxed mb-10 text-lg">
-                    The governance platform is currently idle. Connect your dataset or run our 
-                    <span className="text-indigo-400"> Antigravity Demo Engine</span> to witness the fairness audit pipeline in action.
+                    The platform is ready to scan for algorithmic bias. Connect your live dataset or run our 
+                    <span className="text-indigo-400"> Core Bias Detection Engine</span> to identify disparities now.
                 </p>
                 <div className="flex gap-4">
                     <button onClick={() => runAnalysis()} className="px-10 py-5 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/30 transition-all flex items-center gap-4">
