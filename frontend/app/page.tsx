@@ -147,10 +147,10 @@ export default function LandingPage() {
             className="mt-16 flex justify-center gap-12 flex-wrap"
           >
             {[
-              { val: "5+", label: "Fairness Metrics" },
-              { val: "3", label: "Demo Datasets" },
+              { val: "20+", label: "Features" },
+              { val: "6", label: "Demo Scenarios" },
               { val: "Gemini AI", label: "Powered By" },
-              { val: "100%", label: "Open Source" },
+              { val: "5", label: "Fairness Metrics" },
             ].map((s, i) => (
               <div key={i} className="text-center">
                 <div className="text-3xl font-black text-white">{s.val}</div>
