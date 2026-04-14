@@ -61,9 +61,8 @@ export default function UploadPage() {
     const selectedFile = acceptedFiles[0];
     if (!selectedFile) return;
 
-    // Step 7: Size Validation
     if (selectedFile.size > 100 * 1024 * 1024) {
-      setError("File is too large (>100MB). Frontend processing is limited. Please use a smaller sample or chunked analysis.");
+      setError("File is too large (>100MB). Frontend processing is limited.");
       return;
     }
 
@@ -73,29 +72,31 @@ export default function UploadPage() {
     setPreview(null);
     setShowInsights(false);
     
-    console.log(`[FairAI] Processing upload: ${selectedFile.name} (${selectedFile.size} bytes)`);
-
     try {
+      // Step 1: Uploading
+      console.log("[FairAI] Step 1: Uploading...");
       const data = await uploadDataset(selectedFile);
       
-      // Step 1: Safe API Response Handle
       if (!data.success) {
-         console.warn("[FairAI] Backend rejected file:", data.error);
-         setError(`${data.error}: ${data.message || 'Check CSV format'}`);
-         setPreview(null);
+         setError(`${data.error}: ${data.message}`);
+         setLoading(false);
          return;
       }
 
-      console.log("[FairAI] Upload successful, file_id:", data.file_id);
       setPreview(data);
       localStorage.setItem("dataset_info", JSON.stringify(data));
-      localStorage.removeItem("demo_mode");
+
+      // Step 12: Auto-Trigger Analysis
+      console.log("[FairAI] Step 2: Running Automated Intelligence Scan...");
+      // The analysis state is handled inside the DashboardInsights component once it mounts,
+      // but we force it to show now.
+      setShowInsights(true);
+      
     } catch (err: any) {
-      console.error("[FairAI] Global Upload Crash:", err);
-      const actualError = err.response?.data?.detail || err.message || "Network Error";
-      setError(`Processing failed: ${actualError}`);
+      setError(`Pipeline Error: ${err.message || "Connection Failed"}`);
     } finally {
-      setLoading(false);
+      // We keep loading true for a bit longer to simulate pipeline depth
+      setTimeout(() => setLoading(false), 500);
     }
   }, []);
 
@@ -167,7 +168,12 @@ export default function UploadPage() {
                   {loading && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-12 mt-8">
                       <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
-                      <p className="text-indigo-400 font-black uppercase tracking-widest text-xs">Analyzing & Profiling Data...</p>
+                      <p className="text-indigo-400 font-black uppercase tracking-widest text-[10px]">
+                        {preview ? "Scanning Domain & Bias Metrics..." : "Transmitting Data to AI Engine..."}
+                      </p>
+                      <p className="text-slate-500 text-[9px] font-bold mt-2 uppercase tracking-widest">
+                        {preview ? "Generating PowerBI Dashboard • XAI Profiling" : "Verifying CSV Integrity • Matrix Extraction"}
+                      </p>
                     </motion.div>
                   )}
 

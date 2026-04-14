@@ -315,61 +315,71 @@ export default function DashboardInsights() {
                       </div>
                       <div className="flex items-center justify-between mb-10 relative z-10">
                           <h3 className="text-lg font-black italic flex items-center gap-3 tracking-widest text-white uppercase">
-                              <BarChart2 className="w-5 h-5 text-indigo-400" /> {isExplorer ? "FEATURE DISTRIBUTIONS" : "BIAS DISPARITY PROFILER"}
+                              <BarChart2 className="w-5 h-5 text-indigo-400" /> {isExplorer ? "FEATURE CLUSTERING" : "BIAS DISPARITY PROFILER"}
                           </h3>
                           {isExplorer && <div className="text-[9px] font-black text-slate-500 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest">Global Density View</div>}
                       </div>
-                      <div className="h-80 relative z-10">
-                          {chartData && chartData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartData}>
-                                    <defs>
-                                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
-                                            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 10, fontWeight: '800' }} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 10 }} />
-                                    <Tooltip 
-                                        cursor={{ fill: 'rgba(255,255,255,0.03)' }} 
-                                        contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '10px' }} 
-                                    />
-                                    <Bar dataKey="val" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                          ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center space-y-4">
-                                <div className="p-4 bg-white/5 rounded-2xl">
-                                    <Layers className="w-8 h-8 opacity-20" />
-                                </div>
-                                <p className="font-bold uppercase tracking-[0.2em] text-[10px]">Insufficient Variance for Charting</p>
-                            </div>
-                          )}
+                      
+                      {/* PowerBI Grid for Multiple Charts if in Explorer Mode */}
+                      <div className={isExplorer ? "grid grid-cols-1 md:grid-cols-2 gap-8" : "h-80 relative z-10"}>
+                          {(isExplorer ? Object.entries(results.metrics?.distributions || {}).slice(0, 4) : [['Insights', chartData]]).map(([title, dataPart]: [string, any], idx) => (
+                             <div key={idx} className={isExplorer ? "h-60" : "h-full"}>
+                                {isExplorer && <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{title}</p>}
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={isExplorer ? Object.entries(dataPart).map(([n,v]) => ({name: n, val: v})) : dataPart}>
+                                        <defs>
+                                            <linearGradient id={`barGradient-${idx}`} x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor={idx % 2 ? "#8b5cf6" : "#6366f1"} stopOpacity={0.8}/>
+                                                <stop offset="95%" stopColor={idx % 2 ? "#d946ef" : "#8b5cf6"} stopOpacity={0.3}/>
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 9, fontWeight: '800' }} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 9 }} />
+                                        <Tooltip 
+                                            cursor={{ fill: 'rgba(255,255,255,0.03)' }} 
+                                            contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '10px' }} 
+                                        />
+                                        <Bar dataKey="val" fill={`url(#barGradient-${idx})`} radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                             </div>
+                          ))}
                       </div>
+                      
+                      {!chartData?.length && !isExplorer && (
+                        <div className="h-full flex flex-col items-center justify-center text-slate-500 text-center space-y-4">
+                            <div className="p-4 bg-white/5 rounded-2xl">
+                                <Layers className="w-8 h-8 opacity-20" />
+                            </div>
+                            <p className="font-bold uppercase tracking-[0.2em] text-[10px]">Insufficient Variance for Charting</p>
+                        </div>
+                      )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                      <div className="p-8 rounded-[40px] bg-indigo-600/5 border border-indigo-500/20 shadow-lg">
+                      <div className="p-8 rounded-[40px] bg-indigo-600/5 border border-indigo-500/20 shadow-lg relative overflow-hidden">
                           <h4 className="text-[10px] font-black italic tracking-widest mb-6 flex items-center gap-2 text-indigo-400 uppercase">
-                              <Layers className="w-4 h-4" /> {isExplorer ? "Multi-Column Intelligence" : "INTERSECTIONAL MATRIX"}
+                              <Shuffle className="w-4 h-4" /> {isExplorer ? "Correlation Heat-Signature" : "INTERSECTIONAL MATRIX"}
                           </h4>
                           {isExplorer ? (
-                              <div className="space-y-4">
-                                  {results.metrics?.distributions ? Object.entries(results.metrics.distributions).slice(0, 6).map(([k, v]) => (
-                                      <div key={k} className="group overflow-hidden rounded-xl bg-white/[0.02] border border-white/5 p-3 hover:bg-white/[0.04] transition-all">
-                                          <div className="flex justify-between items-center mb-2">
-                                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{k}</span>
-                                              <span className="text-[9px] font-mono text-indigo-400">{results.metrics?.column_types?.[k] || "mix"}</span>
-                                          </div>
-                                          <div className="flex gap-1 h-1">
-                                              {Object.values(v as any).map((val: any, idx) => (
-                                                  <div key={idx} style={{ width: `${(val / results.metrics?.explorer_mode ? results.stats?.rows : 100) * 100}%` }} className="h-full bg-indigo-500/40 rounded-full" />
-                                              ))}
-                                          </div>
+                              <div className="grid grid-cols-4 gap-2">
+                                  {results.metrics?.correlations && Object.entries(results.metrics.correlations).slice(0, 16).map(([k, v]: [string, any]) => (
+                                      <div key={k} className="flex flex-col items-center gap-1">
+                                          <div 
+                                            className="w-full h-8 rounded-lg border border-white/5 transition-transform hover:scale-110" 
+                                            style={{ 
+                                                backgroundColor: `rgba(99, 102, 241, ${Math.abs(Object.values(v)[0] as number)})`,
+                                                opacity: 0.3 + (Math.abs(Object.values(v)[0] as number) * 0.7)
+                                            }}
+                                            title={`${k} correlation`}
+                                          />
+                                          <span className="text-[7px] text-slate-500 font-bold uppercase truncate w-full text-center">{k.substring(0,6)}</span>
                                       </div>
-                                  )) : <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center py-10">Building profile...</p>}
+                                  ))}
+                                  {(!results.metrics?.correlations || Object.keys(results.metrics.correlations).length === 0) && (
+                                      <p className="col-span-4 text-[9px] text-slate-500 font-bold uppercase tracking-widest text-center py-10 opacity-50 italic">Scalar variance too low for heat signature</p>
+                                  )}
                               </div>
                           ) : (
                              <IntersectionalTable data={results} />
