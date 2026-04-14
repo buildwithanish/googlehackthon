@@ -1,97 +1,100 @@
-# FairAI – Bias Detection and Fairness Analysis Platform
+# FairAI — Enterprise-Grade Bias Detection & AI Governance Platform
 
-FairAI is a powerful dataset and machine learning model bias detection platform. It evaluates demographic parity, disparate impact, and equal opportunity while using **Google Gemini AI** to automatically generate bias explanations and mitigation suggestions.
+![FairAI Banner](https://img.shields.io/badge/FairAI-Enterprise--Ready-indigo?style=for-the-badge&logo=googlecloud&logoColor=white)
+![Google Cloud](https://img.shields.io/badge/Built%20With-Google%20Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
+![Gemini AI](https://img.shields.io/badge/AI-Gemini%201.5%20Pro-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
 
-## Hackathon Prototype Features
-- 📊 **Dataset Upload & Preview**: Upload CSVs and select sensitive vs target features.
-- ⚖️ **Fairness Metrics Detection**: Calculates Demographic Parity, Equal Opportunity, and Disparate Impact Ratio.
-- 📈 **Bias Visualizations**: Beautiful interactive Bar and Pie charts powered by Plotly.
-- 🤖 **AI-Generated Insights**: Integration with Google Gemini for bias explanations and mitigation recommendations.
-- 👨‍💻 **Team Member Section**: Dedicated showcase in the UI.
-
-## Technology Stack
-- **Frontend / Dashboard**: Streamlit
-- **Backend / API**: FastAPI (Available via `backend/main.py`)
-- **Core ML Calculation**: Scikit-learn, Fairlearn, Pandas, NumPy
-- **Generative AI Integration**: Google Gemini API (`gemini-1.5-flash`)
-- **Data Visualization**: Plotly, Streamlit
-
-## Team Members
-- Amrit Anand (rounakjha122@gmail.com)
-- Kapil Vishwakarma (kapilbhai758@gmail.com)
-- Subham Sharma (subhamsharma765688@gmail.com)
-- Anish Raj (Leader) (anishkumar9905287@gmail.com)
-
-## Folder Structure
-```text
-fairai/
- ├ frontend/                # Potential future React implementation
- ├ backend/
- │ └ main.py                # FastAPI backend endpoints
- ├ bias_detection/
- │ ├ __init__.py
- │ ├ metrics.py             # Fairness metrics logic
- │ └ ai_explainer.py        # Google Gemini Integration
- ├ dashboard/               # Alternative location for frontend
- ├ requirements.txt         # Dependencies
- ├ app.py                   # Main Streamlit Dashboard (Entrypoint)
- └ README.md                # Project documentation
-```
-
-## How to Run Locally
-
-### 1. Requirements
-Ensure you have Python 3.9+ installed.
-
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Setup Gemini API Card
-You will need a Google Gemini API Key. You can get one from Google AI Studio. 
-You can either input the API key in the UI or set it as an environment variable:
-```bash
-# Windows
-set GEMINI_API_KEY="your-api-key"
-# Mac/Linux
-export GEMINI_API_KEY="your-api-key"
-```
-
-### 4. Run the Platform
-The easiest way is to launch the Streamlit frontend. It processes the Python backend directly for this quick prototype:
-```bash
-streamlit run app.py
-```
-
-*To run the standalone FastAPI backend for API integrations:*
-```bash
-uvicorn backend.main:app --reload
-```
-
-## Cloud Deployment Instructions
-
-### Streamlit Cloud (Recommended for Hackathons)
-1. Push this repository to a public GitHub repo.
-2. Go to [share.streamlit.io](https://share.streamlit.io/)
-3. Connect your GitHub and select the repository.
-4. Set main file path as `app.py`.
-5. Enter your `GEMINI_API_KEY` into the Streamlit Cloud "Secrets" in advanced settings.
-6. Click Deploy.
-
-### Google Cloud Run Implementation
-1. Create a `Dockerfile`:
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 8501
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
-```
-2. Build and Push the image to GCP Artifact Registry.
-3. Deploy to **Cloud Run**, expose port 8501, and pass `GEMINI_API_KEY` via Environment Variables.
+**FairAI** is a production-grade governance platform designed to detect, analyze, and mitigate bias in machine learning datasets and automated decision-making systems. Built for the **Google Solution Challenge 2026**, it leverages Google Cloud's robust infrastructure and Gemini AI to provide regulatory-grade transparency and ethical AI oversight.
 
 ---
-Built with ❤️ for the Hackathon by our Team.
+
+## 🚀 Key Features
+
+### 1. **Dynamic Bias Profiling**
+- **Automated Scanning**: Upload any CSV dataset to instantly identify bias across protected attributes (Gender, Age, Race, Location).
+- **Comprehensive Metrics**: Real-time calculation of **Demographic Parity**, **Equalized Odds**, and **Disparate Impact Ratio**.
+
+### 2. **Gemini-Powered AI Explainer**
+- **Root Cause Analysis**: Context-aware explanations of *why* bias exists in your data.
+- **Remediation Roadmap**: Step-by-step mitigation strategies (Reweighing, Adversarial Debiasing, Calibrated Equal Odds) generated specifically for your scenario.
+
+### 3. **Enterprise Compliance Reporting**
+- **Regulatory-Ready Exports**: Generate professional **PDF Audit Reports**, **Word Documentation**, and **PowerPoint Slides** for executive stakeholders.
+- **Fail-Safe Processing**: Hybrid cloud failover mechanism ensures the platform remains operational even during high-traffic periods.
+
+### 4. **Modern Visualization Dashboard**
+- **High-Fidelity Charts**: Interactive Recharts-powered distribution analysis and fairness scoring.
+- **Scenario Simulation**: Test your governance logic with built-in industry scenarios (Hiring Bias, Loan Approval, Healthcare Equity).
+
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: TailwindCSS & Framer Motion (Glassmorphism UI)
+- **Visualization**: Recharts & Lucide Icons
+- **Reporting**: jsPDF & docx.js
+
+### **Cloud & AI (Google Solution Challenge Integration)**
+- **Google Cloud Run**: Scalable containerized deployment.
+- **Google Gemini 1.5 Pro**: Advanced LLM for bias explanation and remediation strategies.
+- **Google Vertex AI**: Future-ready pipeline integration for large-scale model auditing.
+
+### **Backend**
+- **FastAPI**: High-performance Python backend.
+- **Data Science**: Fairlearn, Scikit-learn, Pandas, NumPy.
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js (v18+)
+- Python (v3.10+)
+- Google Cloud Project with Gemini API enabled.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/buildwithanish/googlehackthon.git
+cd googlehackthon
+```
+
+### 2. Frontend Setup
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+# Add your NEXT_PUBLIC_API_URL and GEMINI_API_KEY
+npm run dev
+```
+
+### 3. Backend Setup
+```bash
+cd ..
+# Create a virtual environment
+python -m venv venv
+source venv/bin/activate # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
+
+---
+
+## 📈 Roadmap
+- [ ] **NextAuth Integration**: Secure user-specific audit histories.
+- [ ] **Vertex AI Pipeline**: Real-time monitoring of live prediction endpoints.
+- [ ] **Global Bias Benchmarks**: Compare your model against industry-standard fairness datasets.
+
+---
+
+## 🛡️ License & Credits
+Developed by **AnishNova Technologies** for the **Google Solution Challenge 2026**.
+Powered by **Google Gemini** and **Cloud Infrastructure**.
+
+---
+
+### **Contact**
+For enterprise inquiries or collaboration:  
+📧 **Email**: buildwithanish@example.com  
+🌐 **Website**: [FairAI Enterprise](https://fairai.anishnova.tech)

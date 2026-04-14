@@ -127,7 +127,7 @@ export const generateProfessionalWord = async (data: any) => {
             rows: [
               new TableRow({
                 children: ["Metric", "Value", "Status"].map(h => 
-                  new TableCell({ children: [new Paragraph({ text: h, bold: true })] })
+                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: h, bold: true })] })] })
                 ),
               }),
               new TableRow({
