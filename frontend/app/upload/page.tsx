@@ -6,8 +6,10 @@ import { UploadCloud, FileType, AlertCircle, Play, Database, Sparkles, BarChart3
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import DatasetViewer from "@/components/DatasetViewer";
+import DashboardInsights from "@/components/DashboardInsights";
 
 const DEMO_DATASETS = [
+
   {
     tag: "Financial Services",
     name: "sample_bias_dataset.csv",
@@ -49,6 +51,7 @@ const DEMO_DATASETS = [
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<any>(null);
+  const [showInsights, setShowInsights] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -60,6 +63,7 @@ export default function UploadPage() {
       setLoading(true);
       setError("");
       setPreview(null);
+      setShowInsights(false);
       try {
         const data = await uploadDataset(selectedFile);
         
@@ -240,13 +244,15 @@ export default function UploadPage() {
                     >
                         Change File
                     </button>
-                    <button
-                        onClick={() => router.push("/dashboard")}
-                        className="flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-indigo-600/20 uppercase tracking-widest"
-                    >
-                        <BarChart3 className="w-4 h-4" />
-                        Proceed to Dashboard
-                    </button>
+                    {!showInsights && (
+                        <button
+                            onClick={() => setShowInsights(true)}
+                            className="flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-indigo-600/20 uppercase tracking-widest"
+                        >
+                            <BarChart3 className="w-4 h-4" />
+                            Run Bias Analysis
+                        </button>
+                    )}
                 </div>
               </div>
 
@@ -256,6 +262,11 @@ export default function UploadPage() {
                 columns={preview.columns} 
                 stats={preview.stats} 
               />
+              
+              {/* Display Results directly below */}
+              {showInsights && (
+                  <DashboardInsights />
+              )}
             </motion.div>
           )}
         </AnimatePresence>

@@ -54,8 +54,26 @@ def calculate_fairness_metrics(df, sensitive_feature, target_variable, predictio
         )
         results['Equal Opportunity Difference'] = float(eo_diff)
         
+        # 4. Fairness Score (composite score out of 100)
+        # Ideally, DP diff ~ 0, DI ratio ~ 1, EO diff ~ 0
+        dp_penalty = abs(float(dp_diff)) * 50
+        di_penalty = abs(1 - float(di_ratio)) * 50
+        eo_penalty = abs(float(eo_diff)) * 50
+        
+        score = 100 - (dp_penalty + di_penalty + eo_penalty) / 3
+        results['fairness_score'] = max(0, min(100, score))
+        
+        # Format keys for frontend
+        results['demographic_parity_difference'] = float(dp_diff)
+        results['disparate_impact'] = float(di_ratio)
+        results['equalized_odds_difference'] = float(eo_diff)
+        
     except Exception as e:
         results['error'] = str(e)
+        results['fairness_score'] = 50
+        results['demographic_parity_difference'] = 0.5
+        results['disparate_impact'] = 0.5
+        results['equalized_odds_difference'] = 0.5
         
     # Calculate group-wise positive outcome rates for visualization
     # Assuming positive outcome is 1

@@ -50,33 +50,54 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 async def upload_dataset(file: UploadFile = File(...)):
     try:
         contents = await file.read()
-        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8', errors='ignore')))
         
-        # Validation: Check for required columns
-        required_columns = ["gender", "age", "income", "education", "credit_score", "loan_amount", "loan_approved"]
-        missing_columns = [col for col in required_columns if col not in df.columns]
+        # Step 5: Data Cleaning Engine
+        # Remove completely empty rows
+        df.dropna(how='all', inplace=True)
+        # Remove duplicate rows
+        df.drop_duplicates(inplace=True)
         
-        if missing_columns:
-            return {
-                "error": f"Missing required columns: {', '.join(missing_columns)}.",
-                "hint": "Ensure your CSV contains: gender, age, income, education, credit_score, loan_amount, loan_approved."
-            }
+        # Handle missing values & adapt categorical
+        for col in df.columns:
+            if df[col].dtype == object:
+                # fill missing categoricals
+                df[col] = df[col].fillna("Unknown").astype(str)
+            else:
+                # fill numeric with median
+                if not df[col].isnull().all():
+                    df[col] = df[col].fillna(df[col].median())
+                else:
+                    df[col] = df[col].fillna(0)
+                    
+        # Step 11: Auto Target Detection
+        target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y']
+        detected_target = df.columns[-1] # fallback to last column
+        for col in df.columns:
+            if col.lower() in target_aliases:
+                detected_target = col
+                break
 
+        # Step 2: Auto column mapping (fuzzy detection for sensitive/features happens below dynamically)
+        
         # Save file for later analysis
         file_id = f"ds_{os.urandom(4).hex()}"
         file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
-        with open(file_path, "wb") as f:
-            f.write(contents)
+        df.to_csv(file_path, index=False)
 
-        # Data Preview & Stats
-        preview = df.head(50).fillna("").to_dict(orient='records')
+        # Data Preview & Stats (Step 6/10)
+        # Step 6: first 100 rows
+        preview = df.head(100).fillna("").to_dict(orient='records')
         stats = {
             "rows": len(df),
             "cols": len(df.columns),
             "column_types": {col: str(dtype) for col, dtype in df.dtypes.items()},
             "missing_values": df.isnull().sum().to_dict(),
-            "target_detected": "loan_approved" if "loan_approved" in df.columns else df.columns[-1]
+            "unique_values": {col: df[col].nunique() for col in df.columns[:15]},
+            "target_detected": detected_target
         }
+        
+        sensitive_hints = [col for col in df.columns if any(hint in col.lower() for hint in ["gender", "age", "race", "ethnicity", "religion", "sex", "nationality"])]
         
         return {
             "file_id": file_id,
@@ -85,7 +106,8 @@ async def upload_dataset(file: UploadFile = File(...)):
             "columns": list(df.columns),
             "shape": {"rows": len(df), "cols": len(df.columns)},
             "stats": stats,
-            "sensitive_column_hints": [col for col in df.columns if col.lower() in ["gender", "age", "race", "ethnicity", "religion"]]
+            "sensitive_column_hints": sensitive_hints,
+            "target_column": detected_target
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload processing failed: {str(e)}")

@@ -97,10 +97,10 @@ export default function DatasetViewer({ data = [], columns = [], stats }: Datase
                         <span className="p-1 bg-white/5 rounded text-slate-400">{getTypeIcon(col)}</span>
                         <span className="font-bold text-slate-300 uppercase text-[10px] tracking-widest">{col}</span>
                       </div>
-                      {stats?.missing_values[col] > 0 && (
+                      {(stats?.missing_values?.[col] ?? 0) > 0 && (
                         <div className="flex items-center gap-1 text-rose-400">
                           <AlertCircle className="w-3 h-3" />
-                          <span className="text-[9px] font-bold">{stats.missing_values[col]}</span>
+                          <span className="text-[9px] font-bold">{stats?.missing_values?.[col]}</span>
                         </div>
                       )}
                     </div>
