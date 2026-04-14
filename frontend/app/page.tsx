@@ -1,21 +1,21 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import {
   Brain, FileDigit, BarChart3, ShieldCheck, Database, Zap, ArrowRight,
-  GitBranch, Play, TrendingUp, Users, Lock, Globe, Star, ChevronRight
+  GitBranch, Play, TrendingUp, Star, ChevronRight
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
   const router = useRouter();
 
-  const fadeUpVariants = {
+  const fadeUpVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" },
+      transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" as const },
     }),
   };
 
