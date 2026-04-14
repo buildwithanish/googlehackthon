@@ -438,10 +438,10 @@ export default function Dashboard() {
                 </div>
                 <div className="md:col-span-2 grid grid-cols-2 gap-4">
                   {[
-                    { label: "Demographic Parity", value: results.metrics.demographic_parity_difference?.toFixed(3), status: results.metrics.demographic_parity_difference > 0.1 ? "bad" : "good", icon: <TrendingUp className="w-5 h-5" />, hint: "Ideal: < 0.10" },
-                    { label: "Equalized Odds", value: results.metrics.equalized_odds_difference?.toFixed(3), status: results.metrics.equalized_odds_difference > 0.1 ? "bad" : "good", icon: <Activity className="w-5 h-5" />, hint: "Ideal: < 0.10" },
-                    { label: "Disparate Impact", value: results.metrics.disparate_impact?.toFixed(3), status: results.metrics.disparate_impact < 0.8 ? "bad" : "good", icon: <BarChart2 className="w-5 h-5" />, hint: "80% rule: ≥ 0.80" },
-                    { label: "Bias Status", value: results.metrics.bias_alert ? "HIGH" : "LOW", status: results.metrics.bias_alert ? "bad" : "good", icon: results.metrics.bias_alert ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />, hint: results.summary?.level },
+                    { label: "Demographic Parity", value: results.metrics.demographic_parity_difference?.toFixed(3), status: results.metrics.demographic_parity_difference > 0.1 ? "bad" : "good", icon: <TrendingUp className="w-5 h-5" />, hint: "Ideal: < 0.10", desc: "Measures selection rate difference between groups." },
+                    { label: "Equalized Odds", value: results.metrics.equalized_odds_difference?.toFixed(3), status: results.metrics.equalized_odds_difference > 0.1 ? "bad" : "good", icon: <Activity className="w-5 h-5" />, hint: "Ideal: < 0.10", desc: "Checks if model is equally accurate for all groups." },
+                    { label: "Disparate Impact", value: results.metrics.disparate_impact?.toFixed(3), status: results.metrics.disparate_impact < 0.8 ? "bad" : "good", icon: <BarChart2 className="w-5 h-5" />, hint: "80% rule: ≥ 0.80", desc: "The ratio of positive rates (Legal standard)." },
+                    { label: "Bias Status", value: results.metrics.bias_alert ? "HIGH" : "LOW", status: results.metrics.bias_alert ? "bad" : "good", icon: results.metrics.bias_alert ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />, hint: results.summary?.level, desc: "Overall risk level of the current model." },
                   ].map((m, i) => {
                     const isGood = m.status === "good";
                     return (
@@ -451,7 +451,8 @@ export default function Dashboard() {
                         <div className={`inline-flex p-2 rounded-lg mb-3 ${isGood ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>{m.icon}</div>
                         <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{m.label}</p>
                         <p className={`text-2xl font-black mt-1 ${isGood ? "text-emerald-400" : "text-red-400"}`}>{m.value}</p>
-                        <p className="text-slate-600 text-xs mt-1">{m.hint}</p>
+                        <p className="text-slate-500 text-[10px] mt-1 line-clamp-1">{m.desc}</p>
+                        <p className="text-slate-600 text-[10px] mt-0.5 font-bold italic">{m.hint}</p>
                       </motion.div>
                     );
                   })}
@@ -582,7 +583,7 @@ export default function Dashboard() {
                     ))}
                   </ul>
                   <div className="mt-6 flex gap-3 flex-wrap">
-                    <button onClick={downloadReport} className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-all">
+                    <button onClick={() => downloadReport('json')} className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-all">
                       <Download className="w-4 h-4" />
                       Download JSON Report
                     </button>
@@ -595,7 +596,31 @@ export default function Dashboard() {
                     </Link>
                   </div>
                 </motion.div>
-              )}
+              {/* ── Help Guide ── */}
+              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5">
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-indigo-400" />
+                  Understanding Your Fairness Audit
+                </h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div>
+                    <h4 className="text-sm font-bold text-white mb-2">🔴 High Risk</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">If your Fairness Score is below 60, your model strongly favors certain demographic groups. Immediate intervention required.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white mb-2">🟢 Low Risk</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">A score above 80 means your model treats different groups almost equally. Great for production!</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white mb-2">📊 80% Rule</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">Legal standard: The selection rate for any group should not be less than 80% of the highest group's rate.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white mb-2">🤖 AI Mitigation</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">Follow the "Remediation Roadmap" below to fix detected biases using our recommended algorithms.</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
