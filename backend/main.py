@@ -43,6 +43,10 @@ def read_root():
         "developer": "Anish | Synapse Squad Hub"
     }
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp_uploads")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
