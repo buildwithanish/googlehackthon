@@ -1,27 +1,49 @@
 import axios from 'axios';
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://fairai-backend.onrender.com';
 const API_URL = rawApiUrl.replace(/\/+$/, ''); // Remove trailing slashes
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 30000, // 30 seconds timeout to allow Render to wake up
 });
 
-// Add an interceptor to improve network error messages
+// Step 2: Automatic Retry Logic (3 Retries)
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const { config, response } = error;
+    
+    // Retry only on network errors or 503/504 Service Unavailable (Render sleeping)
+    if (!config || !config.retryCount) config.retryCount = 0;
+    
+    if (config.retryCount < 3 && (!response || response.status >= 500)) {
+        config.retryCount += 1;
+        console.log(`[FairAI API] Retry attempt #${config.retryCount} for ${config.url}`);
+        
+        // Exponential backoff delay
+        const delay = config.retryCount * 2000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        return api(config);
+    }
+
     if (error.message === "Network Error") {
-      error.message = `Network Error: Could not connect to API at ${API_URL}. 
-      
-Possible Solutions:
-1. Render Backend is Sleeping: Open ${API_URL}/health in your browser to wake it up (takes 30-60s).
-2. Environment Mismatch: If running locally, RESTART your terminal/server to apply .env.local changes.
-3. Local Server Down: Ensure your backend is running at ${API_URL}.`;
+      error.message = `Backend server is waking up or unreachable. Please wait 30-60 seconds and try again. URL: ${API_URL}`;
     }
     return Promise.reject(error);
   }
 );
+
+// Step 4: Health Check Ping
+export const pingHealth = async () => {
+  try {
+    const res = await api.get('/health', { timeout: 5000 });
+    return res.data?.status === "ok";
+  } catch (e) {
+    return false;
+  }
+};
 
 export const uploadDataset = async (file: File) => {
   const formData = new FormData();

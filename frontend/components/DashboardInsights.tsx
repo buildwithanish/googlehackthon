@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { analyzeBias } from "@/lib/api";
+import { analyzeBias, pingHealth } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -102,6 +102,14 @@ export default function DashboardInsights() {
     setLoading(true);
     setResults(null);
     
+    // Step 4: Ping health before analysis
+    if (!isDemo) {
+        const isHealthy = await pingHealth();
+        if (!isHealthy) {
+            console.warn("[FairAI] Backend health check failed. Attempting analysis anyway with retries.");
+        }
+    }
+
     const infoStr = localStorage.getItem("dataset_info");
     const info = infoStr ? JSON.parse(infoStr) : null;
 
