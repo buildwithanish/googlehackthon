@@ -3,30 +3,28 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Menu, X, Zap, ArrowRight, LayoutGrid, ShieldCheck, Activity, BarChart3, FileText, Scale } from "lucide-react";
+import { Brain, Menu, X, Zap, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // User-requested Navigation Items
   const navItems = [
     { name: "Upload", href: "/upload" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Simulator", href: "/simulator" },
     { name: "Metrics", href: "/metrics" },
-    { name: "AI Report", href: "/report" },
-    { name: "Governance", href: "/governance" }
+    { name: "AI Report", href: "/ai-report" }
   ];
 
   return (
-    <nav className="fixed top-0 z-[100] w-full bg-slate-950/80 border-b border-white/5 backdrop-blur-xl">
+    <nav className="fixed top-0 z-[100] w-full bg-slate-950/80 border-b border-white/5 backdrop-blur-xl font-outfit">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
+            <div className="flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-xl shadow-lg shadow-indigo-600/20">
               <Brain className="w-6 h-6 text-white" />
             </div>
             <span className="font-black text-2xl tracking-tighter text-white uppercase italic">
@@ -41,10 +39,10 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-sm font-bold transition-all",
+                  "px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all italic",
                   pathname === item.href
-                    ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                    ? "text-indigo-400 bg-indigo-500/5"
+                    : "text-slate-400 hover:text-white"
                 )}
               >
                 {item.name}
@@ -55,9 +53,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/upload"
-              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2"
+              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2"
             >
-              <Zap className="w-4 h-4" /> Run Analysis
+              <Database className="w-4 h-4" /> Start Analysis
             </Link>
           </div>
 
@@ -77,7 +75,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="lg:hidden bg-slate-900 border-t border-white/5 px-4 pt-3 pb-6 space-y-2 backdrop-blur-xl"
+            className="lg:hidden bg-slate-950 border-t border-white/5 px-4 pt-3 pb-6 space-y-2 backdrop-blur-xl"
           >
             {navItems.map((item) => (
               <Link
@@ -85,9 +83,9 @@ export default function Navbar() {
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "block px-4 py-3 rounded-xl text-sm font-bold",
+                  "block px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest italic",
                   pathname === item.href
-                    ? "bg-indigo-500/10 text-indigo-400"
+                    ? "text-indigo-400 bg-indigo-500/5"
                     : "text-slate-400 hover:text-white"
                 )}
               >
@@ -97,9 +95,9 @@ export default function Navbar() {
             <Link 
               href="/upload" 
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center px-4 py-3 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-sm"
+              className="block w-full text-center px-4 py-4 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-xs"
             >
-              Run Analysis
+              Start Analysis
             </Link>
           </motion.div>
         )}
