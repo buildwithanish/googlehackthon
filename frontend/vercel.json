@@ -1,10 +1,4 @@
 {
   "version": 2,
-  "name": "fairai-frontend",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ]
+  "framework": "nextjs"
 }
