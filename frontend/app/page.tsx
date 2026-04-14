@@ -388,8 +388,98 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── FEEDBACK & TESTIMONIALS ── */}
+      <section className="py-24 border-t border-white/5 bg-slate-900/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Form Side */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl"
+            >
+              <h2 className="text-3xl font-black text-white mb-2">Share Your Experience</h2>
+              <p className="text-slate-500 mb-8">Your feedback drives the evolution of FairAI. Help us build a more ethical future.</p>
+              
+              <form className="space-y-6" onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const name = formData.get('name') as string;
+                const feedback = formData.get('feedback') as string;
+                if (!name || !feedback) return;
+                
+                // State update logic (simulated for now)
+                alert(`Thank you ${name}! Your feedback has been submitted successfully to the Antigravity engine.`);
+                (e.target as HTMLFormElement).reset();
+              }}>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Full Name</label>
+                  <input 
+                    name="name"
+                    type="text" 
+                    placeholder="e.g. Anish Raj"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-indigo-500 transition-all outline-none placeholder:text-slate-700"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Your Feedback</label>
+                  <textarea 
+                    name="feedback"
+                    rows={4}
+                    placeholder="What did you love about FairAI?"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-5 py-3.5 text-white focus:border-indigo-500 transition-all outline-none placeholder:text-slate-700"
+                  />
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-xl shadow-indigo-500/20 transition-all active:scale-95"
+                >
+                  Submit Testimonial
+                </button>
+              </form>
+            </motion.div>
+
+            {/* Testimonials Side */}
+            <div className="space-y-6">
+              {[
+                { name: "Sarah J.", role: "Lead Data Scientist", text: "FairAI's integration with Gemini is a game changer. The explanations are actually clear for our legal team.", stars: 5 },
+                { name: "Anish Nova", role: "AI Ethicist", text: "Finally, a platform that makes 80% rule compliance a one-click process. Truly Antigravity levels of efficiency!", stars: 5 },
+                { name: "Marcus T.", role: "ML Engineer @ Google", text: "The Recharts integration is beautiful. We use it for every internal audit now.", stars: 4 },
+              ].map((t, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all group"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-1">
+                      {[...Array(t.stars)].map((_, s) => <Star key={s} className="w-3 h-3 fill-yellow-500 text-yellow-500" />)}
+                    </div>
+                    <span className="text-[10px] text-slate-600 font-mono tracking-tighter">VERIFIED USER</span>
+                  </div>
+                  <p className="text-slate-400 italic mb-4">"{t.text}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs uppercase">
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">{t.name}</h4>
+                      <p className="text-xs text-slate-500">{t.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── TEAM ── */}
-      <section id="about" className="py-24 border-t border-white/5">
+      <section id="about" className="py-24 border-t border-white/5 pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

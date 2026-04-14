@@ -30,7 +30,7 @@ export default function Navbar() {
               <span className="font-black text-lg bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 FairAI
               </span>
-              <span className="text-xs text-slate-500 font-medium -mt-0.5">Bias Detection</span>
+              <span className="text-[10px] text-indigo-500/80 font-black uppercase tracking-tighter -mt-1">Antigravity Engine</span>
             </div>
           </Link>
 

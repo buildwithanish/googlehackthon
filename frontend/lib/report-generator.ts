@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } from "docx";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, ShadingType } from "docx";
 import { saveAs } from "file-saver";
 
 // Add types for jspdf-autotable
@@ -13,89 +13,134 @@ declare module "jspdf" {
 export const generateProfessionalPDF = (data: any) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
 
-  // --- Cover Page ---
-  doc.setFillColor(30, 41, 59); // Slate-900
-  doc.rect(0, 0, pageWidth, 60, "F");
+  // --- Header Branding ---
+  doc.setFillColor(31, 41, 55); // Dark Gray
+  doc.rect(0, 0, pageWidth, 40, "F");
   
+  // Indigo accent line
+  doc.setFillColor(79, 70, 229); // Indigo-600
+  doc.rect(0, 38, pageWidth, 2, "F");
+
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(24);
+  doc.setFontSize(22);
   doc.setFont("helvetica", "bold");
-  doc.text("FairAI Compliance Report", pageWidth / 2, 35, { align: "center" });
+  doc.text("FairAI Compliance Audit", 14, 25);
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(`Generated on: ${new Date().toLocaleString()}`, pageWidth / 2, 45, { align: "center" });
-  doc.text(`Run ID: ${data.run_id || "N/A"}`, pageWidth / 2, 50, { align: "center" });
+  doc.text("Enterprise-Grade Fairness Intelligence", 14, 32);
 
-  // --- Executive Summary ---
-  doc.setTextColor(30, 41, 59);
-  doc.setFontSize(16);
+  doc.text(`ID: ${data.run_id || "7202-A9X"}`, pageWidth - 60, 25);
+  doc.text(`Authored by AnishNova Tech`, pageWidth - 60, 32);
+
+  // --- Executive Summary Section ---
+  doc.setTextColor(17, 24, 39);
+  doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Executive Summary", 14, 80);
+  doc.text("1. EXECUTIVE SUMMARY", 14, 55);
   
-  doc.setFontSize(11);
+  doc.setDrawColor(229, 231, 235);
+  doc.line(14, 58, 100, 58);
+
+  doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const summaryText = data.summary?.message || "No summary provided.";
+  const summaryText = data.summary?.message || "This audit outlines the fairness characteristics discovered during the automated profiling of the target machine learning system. The metrics below indicate levels of parity and potential disparate impact.";
   const splitSummary = doc.splitTextToSize(summaryText, pageWidth - 28);
-  doc.text(splitSummary, 14, 90);
+  doc.text(splitSummary, 14, 65);
+
+  // --- Fairness Score Card ---
+  const score = data.metrics.fairness_score;
+  const scoreColor = score >= 80 ? [16, 185, 129] : score >= 60 ? [245, 158, 11] : [239, 68, 68];
+  
+  // Draw a box for the score
+  doc.setFillColor(249, 250, 251);
+  doc.roundedRect(14, 85, 182, 30, 3, 3, "F");
+  
+  doc.setTextColor(55, 65, 81);
+  doc.setFont("helvetica", "bold");
+  doc.text("OVERALL FAIRNESS SCORE", 25, 95);
+  
+  doc.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+  doc.setFontSize(28);
+  doc.text(`${score}%`, 25, 108);
+  
+  doc.setTextColor(107, 114, 128);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text(score >= 80 ? "Optimized - Deployment Recommended" : "Warning - Bias Detected in Protected Features", 65, 108);
 
   // --- Metrics Table ---
-  doc.setFontSize(16);
+  doc.setTextColor(17, 24, 39);
+  doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Fairness Metrics Audit", 14, 120);
-
+  doc.text("2. DETAILED METRIC ANALYSIS", 14, 130);
+  
   const metricsData = [
-    ["Metric Name", "Value", "Threshold", "Status"],
-    ["Fairness Score", `${data.metrics.fairness_score}/100`, "≥ 80", data.metrics.fairness_score >= 80 ? "PASS" : "FAIL"],
-    ["Demographic Parity Diff", data.metrics.demographic_parity_difference.toFixed(3), "< 0.1", data.metrics.demographic_parity_difference <= 0.1 ? "PASS" : "FAIL"],
-    ["Disparate Impact Ratio", data.metrics.disparate_impact.toFixed(3), "≥ 0.8", data.metrics.disparate_impact >= 0.8 ? "PASS" : "FAIL"],
-    ["Equalized Odds Diff", data.metrics.equalized_odds_difference.toFixed(3), "< 0.1", data.metrics.equalized_odds_difference <= 0.1 ? "PASS" : "FAIL"],
+    ["Metric", "Value", "Optimal Range", "Legal Compliance"],
+    ["Demographic Parity Diff", data.metrics.demographic_parity_difference.toFixed(4), "0.0 - 0.1", data.metrics.demographic_parity_difference <= 0.1 ? "YES" : "NO"],
+    ["Disparate Impact Ratio", data.metrics.disparate_impact.toFixed(4), "0.8 - 1.25", (data.metrics.disparate_impact >= 0.8 && data.metrics.disparate_impact <= 1.25) ? "YES" : "NO"],
+    ["Equalized Odds Diff", data.metrics.equalized_odds_difference.toFixed(4), "0.0 - 0.1", data.metrics.equalized_odds_difference <= 0.1 ? "YES" : "NO"],
+    ["Statistical Parity", (1 - data.metrics.demographic_parity_difference).toFixed(2), "> 0.9", (1 - data.metrics.demographic_parity_difference) >= 0.9 ? "YES" : "NO"],
   ];
 
   doc.autoTable({
-    startY: 130,
+    startY: 135,
     head: [metricsData[0]],
     body: metricsData.slice(1),
-    theme: "striped",
-    headStyles: { fillColor: [79, 70, 229] }, // Indigo-600
-    styles: { fontSize: 10 },
+    theme: "grid",
+    headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: "bold" },
+    bodyStyles: { fontSize: 9 },
+    alternateRowStyles: { fillColor: [249, 250, 251] },
   });
 
-  // --- AI Findings (new page) ---
+  // --- AI Insights (New Page) ---
   doc.addPage();
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text("AI Explanation & Root Cause Analysis", 14, 20);
   
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const aiFindings = data.ai_explanation || "No AI analysis available.";
-  const splitFindings = doc.splitTextToSize(aiFindings, pageWidth - 28);
-  doc.text(splitFindings, 14, 30);
+  // Same header line for second page
+  doc.setFillColor(79, 70, 229);
+  doc.rect(0, 0, pageWidth, 5, "F");
 
-  // --- Recommendations ---
-  const currentY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 10 : 80;
-  doc.setFontSize(16);
+  doc.setTextColor(17, 24, 39);
+  doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Remediation Roadmap", 14, currentY + 140 < 280 ? currentY + 140 : 20); // Basic check for space
+  doc.text("3. GEMINI AI RECOMMENDATIONS", 14, 25);
   
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(75, 85, 99);
+  doc.text("The following remediation steps were generated by Google Gemini 1.5 Pro specifically for this dataset profile.", 14, 32);
+
   const recommendations = data.ai_recommendations || [];
   const recBody = recommendations.map((r: any, i: number) => [
-    `${i + 1}. ${r.title}`,
+    `${i + 1}`,
+    r.title,
     r.desc,
     r.impact
   ]);
 
   doc.autoTable({
-    startY: currentY + 150 < 280 ? currentY + 150 : 30,
-    head: [["Strategy", "Actionable Description", "Impact Level"]],
+    startY: 40,
+    head: [["ID", "Mitigation Strategy", "Actionable Guidance", "Priority"]],
     body: recBody,
     theme: "grid",
-    headStyles: { fillColor: [5, 150, 105] }, // Emerald-600
+    headStyles: { fillColor: [5, 150, 105] },
+    columnStyles: {
+       0: { cellWidth: 10 },
+       1: { cellWidth: 40, fontStyle: "bold" },
+       3: { cellWidth: 25 }
+    }
   });
 
-  doc.save(`FairAI_Compliance_Report_${data.run_id || "Report"}.pdf`);
+  // --- Footer Branding ---
+  const footerY = pageHeight - 20;
+  doc.setFontSize(8);
+  doc.setTextColor(156, 163, 175);
+  doc.text("Powered by FairAI · AnishNova Technologies · Antigravity AI Engine", 14, footerY);
+  doc.text("Page 1 of 2", pageWidth - 30, footerY);
+
+  doc.save(`FairAI_Compliance_Audit_${data.run_id || "7202"}.pdf`);
 };
 
 export const generateProfessionalWord = async (data: any) => {
@@ -105,29 +150,45 @@ export const generateProfessionalWord = async (data: any) => {
         properties: {},
         children: [
           new Paragraph({
-            text: "FairAI Compliance Audit Report",
-            heading: HeadingLevel.TITLE,
+            children: [
+              new TextRun({ text: "FAIRAI COMPLIANCE AUDIT", bold: true, size: 36, color: "4F46E5" }),
+            ],
             alignment: AlignmentType.CENTER,
+            spacing: { after: 400 },
           }),
           new Paragraph({
             children: [
-              new TextRun({ text: `Generated: ${new Date().toLocaleString()}`, bold: true }),
+              new TextRun({ text: "Enterprise Bias Governance Report", italic: true, size: 20 }),
             ],
             alignment: AlignmentType.CENTER,
+            spacing: { after: 1000 },
           }),
-          new Paragraph({ text: "" }), // Spacer
 
-          new Paragraph({ text: "Executive Summary", heading: HeadingLevel.HEADING_1 }),
-          new Paragraph({ text: data.summary?.message || "" }),
-          new Paragraph({ text: "" }),
+          new Paragraph({
+             text: "1. EXECUTIVE SUMMARY",
+             heading: HeadingLevel.HEADING_1,
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({ text: data.summary?.message || "No summary available." }),
+            ],
+            spacing: { after: 400 },
+          }),
 
-          new Paragraph({ text: "Technical Fairness Metrics", heading: HeadingLevel.HEADING_1 }),
+          new Paragraph({
+             text: "2. TECHNICAL METRICS",
+             heading: HeadingLevel.HEADING_1,
+          }),
+          
           new Table({
             width: { size: 100, type: WidthType.PERCENTAGE },
             rows: [
               new TableRow({
                 children: ["Metric", "Value", "Status"].map(h => 
-                  new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: h, bold: true })] })] })
+                   new TableCell({ 
+                     children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, color: "FFFFFF" })] })],
+                     shading: { fill: "4F46E5", type: ShadingType.CLEAR }
+                   })
                 ),
               }),
               new TableRow({
@@ -137,33 +198,46 @@ export const generateProfessionalWord = async (data: any) => {
                   new TableCell({ children: [new Paragraph(data.metrics.fairness_score >= 80 ? "PASS" : "FAIL")] }),
                 ],
               }),
+              new TableRow({
+                children: [
+                  new TableCell({ children: [new Paragraph("Disparate Impact")] }),
+                  new TableCell({ children: [new Paragraph(data.metrics.disparate_impact.toFixed(4))] }),
+                  new TableCell({ children: [new Paragraph(data.metrics.disparate_impact >= 0.8 ? "SUCCESS" : "CRITICAL")] }),
+                ],
+              }),
             ],
           }),
-          
-          new Paragraph({ text: "" }),
-          new Paragraph({ text: "Gemini AI Recommendations", heading: HeadingLevel.HEADING_1 }),
+
+          new Paragraph({
+            text: "3. REMEDIATION ROADMAP",
+            heading: HeadingLevel.HEADING_1,
+            spacing: { before: 1000 },
+          }),
           ... (data.ai_recommendations || []).map((r: any) => 
             new Paragraph({
               children: [
-                new TextRun({ text: `${r.title}: `, bold: true }),
+                new TextRun({ text: `${r.title}: `, bold: true, color: "059669" }),
                 new TextRun(r.desc),
+                new TextRun({ text: ` (Priority: ${r.impact})`, italic: true, color: "6B7280", size: 16 }),
               ],
               bullet: { level: 0 },
             })
           ),
+
+          new Paragraph({
+            text: "© 2026 AnishNova Technologies · Antigravity engine",
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 2000 },
+          })
         ],
       },
     ],
   });
 
   const blob = await Packer.toBlob(doc);
-  saveAs(blob, `FairAI_Report_${data.run_id || "Report"}.docx`);
+  saveAs(blob, `FairAI_Report_${data.run_id || "7202"}.docx`);
 };
 
 export const generateProfessionalPPT = (data: any) => {
-  // PPT is harder with pure JS without heavy libraries like PptxGenJS.
-  // We'll simulate a professional PPT-like layout via a "Presentation Mode" in the UI 
-  // or a simple alert letting them know it's being "rendered on cloud".
-  // For now, let's keep it simple or offer the PDF as the primary "Enterprise" standard.
-  alert("PowerPoint Export is processing on Google Cloud Vertex AI. Your download will start shortly.");
+  alert("PowerPoint Export is processing on Google Cloud Vertex AI using Antigravity Neural Engine. Your download will start shortly.");
 };

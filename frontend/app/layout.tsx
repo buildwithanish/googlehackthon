@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "FairAI – Bias Detection Platform",
-  description: "Detect and eliminate bias in machine learning systems. Powered by FairAI, AnishNova Technologies, and Google Gemini AI. Antigravity",
+  description: "Powered by FairAI, AnishNova Technologies, and Google Gemini AI. Antigravity",
   openGraph: {
     title: "FairAI – Bias Detection Platform",
     description: "Ensure fairness and detect bias in automated AI decision systems.",
