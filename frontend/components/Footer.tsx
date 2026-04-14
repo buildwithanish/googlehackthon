@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { 
   Brain, GitBranch, Shield, Heart, FileText, HelpCircle, 
-  MessageSquare, Github, Globe, ArrowUpRight, Zap, Target
+  Zap, Activity, Code, Scale
 } from "lucide-react";
 
 export default function Footer() {
@@ -32,10 +32,10 @@ export default function Footer() {
             </p>
             <div className="flex justify-center lg:justify-start gap-5">
               {[
-                { icon: <MessageSquare className="w-5 h-5" />, href: "#" },
-                { icon: <Github className="w-5 h-5" />, href: "https://github.com/buildwithanish/googlehackthon" },
+                { icon: <Activity className="w-5 h-5" />, href: "#" },
+                { icon: <Code className="w-5 h-5" />, href: "https://github.com/buildwithanish/googlehackthon" },
                 { icon: <GitBranch className="w-5 h-5" />, href: "https://github.com/buildwithanish/googlehackthon" },
-                { icon: <Globe className="w-5 h-5" />, href: "https://anishnova.tech" },
+                { icon: <Shield className="w-5 h-5" />, href: "#" },
               ].map((social, i) => (
                 <a key={i} href={social.href} target="_blank" rel="noreferrer" 
                   className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all active:scale-95"
@@ -71,10 +71,10 @@ export default function Footer() {
             <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Governance</h4>
             <ul className="space-y-4">
               {[
-                { name: "Our Mission", href: "/about", icon: <Target className="w-3 h-3" /> },
+                { name: "Our Mission", href: "/about", icon: <Heart className="w-3 h-3" /> },
                 { name: "Privacy Policy", href: "/privacy", icon: <Shield className="w-3 h-3" /> },
                 { name: "Terms of Service", href: "/terms", icon: <FileText className="w-3 h-3" /> },
-                { name: "Ethics Code", href: "/security", icon: <Zap className="w-3 h-3" /> },
+                { name: "Ethics Code", href: "/security", icon: <Scale className="w-3 h-3" /> },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-slate-500 hover:text-indigo-400 text-sm font-semibold transition-all flex items-center justify-center lg:justify-start gap-2">
@@ -90,7 +90,7 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <div className="relative p-8 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-white/5 overflow-hidden group">
               <div className="absolute top-0 right-0 p-2.5 bg-indigo-500/20 text-indigo-400 rounded-bl-2xl">
-                <Globe className="w-4 h-4 animate-spin-slow" />
+                <Shield className="w-4 h-4 animate-spin-slow" />
               </div>
               <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-6 mb-4">Official Submission</h4>
               <div className="space-y-4 text-center lg:text-left">
