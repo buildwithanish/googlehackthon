@@ -406,23 +406,19 @@ async def bias_report(
     summary = get_bias_summary(metrics)
 
     if format.lower() == "markdown":
-        from dashboard.reporting import generate_markdown_report
-        md = generate_markdown_report(metrics, {}, target_col, sensitive_col, file.filename)
+        from backend.report_generator import generate_markdown_report
+        # No ai explanation available in this fast path unless cached, so pass empty
+        md = generate_markdown_report(metrics, {}, target_col, sensitive_col, file.filename, len(df))
         return Response(content=md, media_type="text/markdown",
                         headers={"Content-Disposition": "attachment; filename=fairai_report.md"})
 
-    return {
-        "report": {
-            "filename": file.filename,
-            "target_col": target_col,
-            "sensitive_col": sensitive_col,
-            "n_samples": len(df),
-            "metrics": metrics,
-            "summary": summary,
-            "bias_level": (
-                "HIGH" if metrics["fairness_score"] < 60
-                else "MODERATE" if metrics["fairness_score"] < 80
-                else "LOW"
-            ),
-        }
+    from backend.report_generator import generate_json_report
+    dataset_info = {
+        "filename": file.filename,
+        "target_col": target_col,
+        "sensitive_col": sensitive_col,
+        "n_samples": len(df),
     }
+    json_rep = generate_json_report(metrics, {}, dataset_info)
+    return {"report": json_rep}
+
