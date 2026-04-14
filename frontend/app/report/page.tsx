@@ -84,21 +84,41 @@ export default function AIReportPage() {
     }, 2000);
   };
 
+  const handleDownload = (format: 'pdf' | 'docx' | 'json') => {
+    if (!report) return;
+    
+    const reportData = {
+      run_id: "AI-" + Date.now().toString(36).toUpperCase(),
+      generated: new Date().toISOString(),
+      scenario: "AI Automated Analysis",
+      dataset: report.dataset,
+      fairness_score: report.metrics.fairness_score,
+      metrics: report.metrics,
+      group_details: [], // Optional for AI report
+      ai_explanation: report.explanation,
+      ai_recommendations: report.recommendations,
+      summary: { message: report.summary },
+    };
+
+    if (format === 'pdf') {
+      import('@/lib/report-generator').then(m => m.generateProfessionalPDF(reportData));
+    } else if (format === 'docx') {
+      import('@/lib/report-generator').then(m => m.generateProfessionalWord(reportData));
+    } else {
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "fairai_report.json";
+      a.click();
+    }
+  };
+
   const handleCopy = () => {
     if (!report) return;
     const text = `FairAI BIAS REPORT\n\nDataset: ${report.dataset.filename}\nFairness Score: ${report.metrics.fairness_score}/100\nBias Level: ${report.bias_level}\n\nEXPLANATION:\n${report.explanation}\n\nMITIGATIONS:\n${report.recommendations.map((r: any, i: number) => `${i + 1}. ${r.title}: ${r.desc}`).join("\n")}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleDownload = () => {
-    if (!report) return;
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "fairai_report.json";
-    a.click();
   };
 
   return (
@@ -126,13 +146,17 @@ export default function AIReportPage() {
                       <Copy className="w-4 h-4" />
                       {copied ? "Copied!" : "Copy"}
                     </button>
-                    <button
-                      onClick={handleDownload}
-                      className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl font-semibold text-sm hover:bg-white/10 transition-all"
-                    >
-                      <Download className="w-4 h-4" />
-                      Export JSON
-                    </button>
+                    <div className="relative group">
+                      <button className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-slate-300 rounded-xl font-semibold text-sm hover:bg-white/10 transition-all">
+                        <Download className="w-4 h-4" />
+                        Download
+                      </button>
+                      <div className="absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all p-2 z-50">
+                        <button onClick={() => handleDownload('pdf')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">PDF Audit Report</button>
+                        <button onClick={() => handleDownload('docx')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">Word Document</button>
+                        <button onClick={() => handleDownload('json')} className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors">Raw JSON Data</button>
+                      </div>
+                    </div>
                     <button
                       onClick={() => setReport(null)}
                       className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600/20 border border-indigo-500/20 text-indigo-300 rounded-xl font-semibold text-sm hover:bg-indigo-600/30 transition-all"
@@ -297,7 +321,7 @@ export default function AIReportPage() {
               {/* CTA */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={handleDownload}
+                  onClick={() => handleDownload('json')}
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm transition-all"
                 >
                   <Download className="w-4 h-4" />
