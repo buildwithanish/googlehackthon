@@ -158,7 +158,7 @@ export const generateProfessionalWord = async (data: any) => {
           }),
           new Paragraph({
             children: [
-              new TextRun({ text: "Enterprise Bias Governance Report", italic: true, size: 20 }),
+              new TextRun({ text: "Enterprise Bias Governance Report", italics: true, size: 20 }),
             ],
             alignment: AlignmentType.CENTER,
             spacing: { after: 1000 },
@@ -218,7 +218,7 @@ export const generateProfessionalWord = async (data: any) => {
               children: [
                 new TextRun({ text: `${r.title}: `, bold: true, color: "059669" }),
                 new TextRun(r.desc),
-                new TextRun({ text: ` (Priority: ${r.impact})`, italic: true, color: "6B7280", size: 16 }),
+                new TextRun({ text: ` (Priority: ${r.impact})`, italics: true, color: "6B7280", size: 16 }),
               ],
               bullet: { level: 0 },
             })
