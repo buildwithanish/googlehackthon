@@ -129,6 +129,25 @@ def guess_dataset_domain(columns: list, df: pd.DataFrame):
         return "System Logs/Infrastructure Audit"
     
     return "Universal Intelligence Layer"
+
+def parse_nlq(query: str, columns: list):
+    """Basic Natural Language Query mapper for interactive dashboarding."""
+    q = query.lower()
+    mapping = {"target": None, "sensitive": None}
+    
+    # Try to find columns mentioned in the query
+    found_cols = [col for col in columns if col.lower() in q]
+    
+    if "bias" in q or "fairness" in q:
+        # User wants bias analysis
+        mapping["sensitive"] = found_cols[0] if found_cols else None
+        mapping["target"] = found_cols[1] if len(found_cols) > 1 else None
+    
+    if "distribution" in q or "show" in q or "chart" in q:
+        # User wants a specific distribution
+        mapping["target"] = found_cols[0] if found_cols else None
+        
+    return mapping
     
     return "General Data Intelligence"
 
@@ -217,51 +236,78 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
 async def analyze_bias_endpoint(
     file_id: str = Form(None),
     file: UploadFile = File(None),
-    sensitive_col: str = Form(...),
-    target_col: str = Form(...),
-    gemini_api_key: str = Form(None)
+    target_col: str = Form(None), 
+    sensitive_col: str = Form(None),
+    gemini_api_key: str = Form(None),
+    nlq_query: str = Form(None)
 ):
     try:
+        if not file and not file_id:
+             return {"success": False, "error": "No Data", "message": "Missing dataset."}
+        
+        # Load data
         df = None
         if file_id:
             file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
             if os.path.exists(file_path):
-                # Robust reading for analysis too
                 df = pd.read_csv(file_path, sep=None, engine='python')
                 df.columns = [str(c).strip() for c in df.columns]
             else:
                  return {"success": False, "error": "Session Lost", "message": "File not found on server."}
         elif file:
-            contents = await file.read()
-            df = pd.read_csv(io.StringIO(contents.decode('utf-8', errors='ignore')), sep=None, engine='python')
+            df = pd.read_csv(io.BytesIO(await file.read()), sep=None, engine='python')
             df.columns = [str(c).strip() for c in df.columns]
-        else:
-             return {"success": False, "error": "No Data", "message": "Missing dataset."}
 
-        # Step 1: Remove strict row limit
-        if len(df) == 0:
-            return {"success": False, "error": "Empty Dataset", "message": "CSV contains no rows."}
+        if df is None or len(df) == 0:
+             return {"success": False, "error": "No Data", "message": "Dataset is empty or could not be read."}
+
+        # Step 1: NLQ Mapping Override
+        if nlq_query:
+            mapping = parse_nlq(nlq_query, df.columns.tolist())
+            if mapping["target"]: target_col = mapping["target"]
+            if mapping["sensitive"]: sensitive_col = mapping["sensitive"]
 
         # Step 4: Universal Data Mode (Data Explorer)
-        # If no bias parameters, or only 1 row (too few for metrics), switch to Explorer
         is_explorer = False
-        if len(df) < 5 or not sensitive_col or sensitive_col == "none" or sensitive_col not in df.columns or target_col not in df.columns:
+        if len(df) < 5 or not sensitive_col or sensitive_col == "none" or sensitive_col not in df.columns or (target_col and target_col not in df.columns):
             is_explorer = True
 
         if is_explorer:
             numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
             cat_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+            date_cols = [col for col in df.columns if 'date' in col.lower() or 'time' in col.lower()]
             
+            # Step 2: Quality Score & Outliers
+            missing_pct = df.isnull().mean().mean() * 100
+            duplicate_count = df.duplicated().sum()
+            quality_score = max(0, 100 - (missing_pct * 2) - (min(10, duplicate_count/len(df) * 1000)))
+            
+            outliers = {}
+            for col in numeric_cols[:5]:
+                q1 = df[col].quantile(0.25)
+                q3 = df[col].quantile(0.75)
+                iqr = q3 - q1
+                outlier_count = ((df[col] < (q1 - 1.5 * iqr)) | (df[col] > (q3 + 1.5 * iqr))).sum()
+                outliers[col] = int(outlier_count)
+
             # Smart Analysis: Auto-identify important distributions
             distributions = {}
-            for col in (cat_cols + numeric_cols)[:12]: # Limit to 12 columns
+            # Handle Dates for trend charts
+            for col in date_cols[:2]:
+                try:
+                    df_date = pd.to_datetime(df[col], errors='coerce').dropna()
+                    if not df_date.empty:
+                        distributions[f"Trend: {col}"] = df_date.dt.to_period('M').value_counts().sort_index().head(12).to_dict()
+                        distributions[f"Trend: {col}"] = {str(k): v for k, v in distributions[f"Trend: {col}"].items()}
+                except: continue
+
+            for col in (cat_cols + numeric_cols)[:10]: # Limit for performance
+                if col in distributions: continue
                 if col in cat_cols:
                     distributions[col] = df[col].value_counts().head(5).to_dict()
                 else:
-                    # For numeric, show a simple histogram binning
                     try:
                         distributions[col] = df[col].value_counts(bins=5).to_dict()
-                        # Clean bin names for JSON
                         distributions[col] = {str(k): v for k, v in distributions[col].items()}
                     except:
                         distributions[col] = df[col].head(5).to_dict()
@@ -270,7 +316,10 @@ async def analyze_bias_endpoint(
                 "insights_mode": True,
                 "explorer_mode": True,
                 "domain": guess_dataset_domain(df.columns.tolist(), df),
-                "correlations": df[numeric_cols].corr().to_dict() if len(numeric_cols) > 1 else {},
+                "quality_score": round(quality_score, 1),
+                "duplicates": int(duplicate_count),
+                "outliers": outliers,
+                "correlations": df[numeric_cols].corr().fillna(0).to_dict() if len(numeric_cols) > 1 else {},
                 "distributions": distributions,
                 "summary": df.describe().to_dict(),
                 "column_types": {col: str(df[col].dtype) for col in df.columns}
@@ -279,7 +328,7 @@ async def analyze_bias_endpoint(
                 "success": True,
                 "metrics": stats,
                 "group_rates": {},
-                "ai_report": f"Universal Analysis: Successfully parsed this {stats['domain']}. Displaying general data distribution and profile intelligence."
+                "ai_report": f"Universal Analysis: Successfully parsed this {stats['domain']}. Integrity check shows a {quality_score:.1f}% quality rating."
             }
 
         # Original Bias Metrics logic
