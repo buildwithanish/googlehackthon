@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import { useEffect } from "react";
-import { pingHealth } from "@/lib/api";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatSupport from "@/components/ChatSupport";
+import BackendWakeup from "@/components/BackendWakeup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -25,14 +24,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    // Keep backend awake (Every 5 minutes)
-    const interval = setInterval(() => {
-      pingHealth();
-      console.log("[FairAI] Keeping backend engine awake...");
-    }, 1000 * 60 * 5);
-    return () => clearInterval(interval);
-  }, []);
+
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -40,6 +32,7 @@ export default function RootLayout({
         className={`${inter.className} bg-slate-950 text-white min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
+        <BackendWakeup />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
