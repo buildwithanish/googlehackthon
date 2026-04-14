@@ -48,7 +48,7 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
   const paginatedData = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const getTypeIcon = (col: string) => {
-    const type = stats?.column_types[col]?.toLowerCase() || '';
+    const type = stats?.column_types?.[col]?.toLowerCase() || '';
     if (type.includes('int') || type.includes('float')) return <Hash className="w-3 h-3" />;
     return <Type className="w-3 h-3" />;
   };
@@ -75,7 +75,7 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
           </div>
           <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Records</p>
           <div className="flex items-center gap-2">
-            <p className="text-xl font-bold text-white">{stats?.rows ? stats.rows.toLocaleString() : data.length.toLocaleString()}</p>
+            <p className="text-xl font-bold text-white">{stats?.rows ? stats.rows.toLocaleString() : (data?.length || 0).toLocaleString()}</p>
             {stats?.rows === "Calculating..." && <Loader2 className="w-3 h-3 text-indigo-400 animate-spin" />}
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
             <Type className="w-10 h-10" />
           </div>
           <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Features (Cols)</p>
-          <p className="text-xl font-bold text-indigo-400">{stats?.cols || columns.length}</p>
+          <p className="text-xl font-bold text-indigo-400">{stats?.cols || columns?.length || 0}</p>
         </div>
 
         <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 relative overflow-hidden group">
@@ -94,7 +94,7 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
           </div>
           <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Missing Values</p>
           <p className="text-xl font-bold text-rose-400">
-            {stats?.missing_total !== undefined ? stats.missing_total : stats?.missing_values ? Object.values(stats.missing_values as Record<string, number>).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) : "0"}
+            {stats?.missing_total !== undefined ? stats.missing_total : (stats?.missing_values && typeof stats.missing_values === 'object' ? Object.values(stats.missing_values).reduce((a: any, b: any) => a + (typeof b === 'number' ? b : 0), 0) : "0")}
           </p>
         </div>
 
@@ -139,7 +139,7 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="bg-white/[0.03] border-b border-white/5">
-                {columns.map((col) => (
+                {(columns || []).map((col) => (
                   <th key={col} className="px-5 py-4 min-w-[150px]">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -158,11 +158,11 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((row, i) => (
+              {(paginatedData || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/[0.02] hover:bg-indigo-500/[0.02] transition-colors">
-                  {columns.map((col) => (
+                  {(columns || []).map((col) => (
                     <td key={col} className="px-5 py-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                      {row[col]?.toString()}
+                      {row?.[col]?.toString() ?? ""}
                     </td>
                   ))}
                 </tr>
