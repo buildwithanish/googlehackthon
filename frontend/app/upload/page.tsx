@@ -125,34 +125,37 @@ export default function UploadPage() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  {...getRootProps()}
-                  className={`
-                    group relative p-12 md:p-20 rounded-[50px] border-2 border-dashed transition-all cursor-pointer overflow-hidden
-                    shadow-2xl shadow-indigo-500/5 bg-[#0b1020]/50 backdrop-blur-xl
-                    ${isDragActive ? "border-indigo-500 bg-indigo-500/10" : "border-purple-500/20 hover:border-indigo-400/40 hover:bg-white/[0.02]"}
-                  `}
                 >
-                  <input {...getInputProps()} />
-                  
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  <div className="flex flex-col items-center space-y-8 text-center">
-                    <div className="p-8 bg-indigo-500/10 rounded-[40px] group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-500">
-                      <FileUp className="w-12 h-12 text-indigo-400" />
-                    </div>
+                  <div
+                    {...getRootProps()}
+                    className={`
+                      group relative p-12 md:p-20 rounded-[50px] border-2 border-dashed transition-all cursor-pointer overflow-hidden
+                      shadow-2xl shadow-indigo-500/5 bg-[#0b1020]/50 backdrop-blur-xl
+                      ${isDragActive ? "border-indigo-500 bg-indigo-500/10" : "border-purple-500/20 hover:border-indigo-400/40 hover:bg-white/[0.02]"}
+                    `}
+                  >
+                    <input {...getInputProps()} />
                     
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-black italic uppercase tracking-tight">Drop your CSV here</h3>
-                      <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.25em] leading-relaxed">
-                        UTF-8 • Latin1 • ISO Encodings Supported<br/>
-                        <span className="text-slate-400">Standardizing Matrix extraction logic...</span>
-                      </p>
-                    </div>
+                    {/* Decorative Elements */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    <div className="flex flex-col items-center space-y-8 text-center">
+                      <div className="p-8 bg-indigo-500/10 rounded-[40px] group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-500">
+                        <FileUp className="w-12 h-12 text-indigo-400" />
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-black italic uppercase tracking-tight">Drop your CSV here</h3>
+                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.25em] leading-relaxed">
+                          UTF-8 • Latin1 • ISO Encodings Supported<br/>
+                          <span className="text-slate-400">Standardizing Matrix extraction logic...</span>
+                        </p>
+                      </div>
 
-                    <button className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-[0.1em] hover:bg-indigo-50 hover:shadow-2xl hover:shadow-white/20 transition-all">
-                      Browse Repository
-                    </button>
+                      <button className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-[0.1em] hover:bg-indigo-50 hover:shadow-2xl hover:shadow-white/20 transition-all">
+                        Browse Repository
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ) : (
