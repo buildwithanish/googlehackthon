@@ -47,25 +47,49 @@ def read_root():
 def health_check():
     return {"status": "ok"}
 
-import polars as pl
 from fastapi import BackgroundTasks
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 
 TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp_uploads")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
+def get_shap_explanations(df: pd.DataFrame, target_col: str):
+    """Calculate feature importance as a proxy for SHAP for real-time responsiveness."""
+    try:
+        if target_col not in df.columns:
+            return {}
+        
+        # Prepare data
+        X = df.drop(columns=[target_col]).select_dtypes(include=['number']).fillna(0)
+        y = df[target_col]
+        
+        if X.empty or len(X) < 5:
+            return {}
+
+        # Simple RF Importance
+        model = RandomForestClassifier(n_estimators=50, max_depth=5)
+        model.fit(X, y)
+        
+        importances = dict(zip(X.columns, model.feature_importances_.tolist()))
+        # Sort and return top 10
+        return dict(sorted(importances.items(), key=lambda x: x[1], reverse=True)[:10])
+    except:
+        return {}
+
 def profile_dataset_task(file_path: str, file_id: str):
     """Heavy background task for full dataset profiling."""
     try:
-        # Load with polars for speed
-        df = pl.read_csv(file_path)
+        # Load with pandas
+        df = pd.read_csv(file_path, sep=None, engine='python')
         
         # Calculate full stats
         stats = {
             "rows": len(df),
             "cols": len(df.columns),
-            "missing_values": {col: df[col].null_count() for col in df.columns},
-            "types": {col: str(df[col].dtype) for col in df.columns},
-            "unique_counts": {col: df[col].n_unique() for col in df.columns[:20]}, # Limit for heavy files
+            "missing_values": df.isnull().sum().to_dict(),
+            "column_types": {str(k): str(v) for k, v in df.dtypes.items()},
+            "unique_counts": {col: int(df[col].nunique()) for col in df.columns[:20]}, # Limit for heavy files
         }
         
         # Save profile to disk
