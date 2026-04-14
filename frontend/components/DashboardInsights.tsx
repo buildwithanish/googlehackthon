@@ -188,11 +188,13 @@ export default function DashboardInsights() {
                     <div className="mt-8 grid grid-cols-2 gap-4">
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
                             <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Duplicates</p>
-                            <p className="text-lg font-black">{metrics.duplicates || 0}</p>
+                            <p className="text-lg font-black">{Number(metrics.duplicates || 0)}</p>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
                             <p className="text-[8px] font-black text-slate-500 uppercase mb-1">Outliers</p>
-                            <p className="text-lg font-black text-rose-500">{Object.values(metrics.outliers || {}).reduce((a:any, b:any) => a + Number(b), 0)}</p>
+                            <p className="text-lg font-black text-rose-500">
+                              {Number(Object.values(metrics.outliers || {}).reduce((a: any, b: any) => a + Number(b), 0))}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -205,7 +207,7 @@ export default function DashboardInsights() {
                         <h4 className="text-xs font-black uppercase tracking-widest italic text-indigo-100">AI Explainer</h4>
                     </div>
                     <p className="text-[11px] text-indigo-200/70 font-bold italic leading-relaxed">
-                        "{results.ai_report || "The neural engine is profiling columns to detect latent patterns and decision causality. Stability is high."}"
+                        "{String(results.ai_report || "The neural engine is profiling columns to detect latent patterns and decision causality. Stability is high.")}"
                     </p>
                     <div className="pt-4 flex gap-2">
                         <span className="px-2 py-1 bg-indigo-500/20 rounded text-[7px] font-black uppercase text-indigo-300">Predictive</span>
