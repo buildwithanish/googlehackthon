@@ -119,26 +119,29 @@ export default function UploadPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                {...getRootProps()} 
-                className={`
-                  p-16 rounded-[50px] border-2 border-dashed transition-all cursor-pointer group relative overflow-hidden
-                  ${isDragActive ? "border-indigo-500 bg-indigo-500/5 shadow-2xl" : "border-white/10 hover:border-white/20 hover:bg-white/[0.02]"}
-                `}
               >
-                <input {...getInputProps()} />
-                <div className="flex flex-col items-center space-y-6 text-center">
-                  <div className="p-6 bg-white/5 rounded-[30px] group-hover:bg-indigo-500/10 transition-colors">
-                    <FileUp className="w-10 h-10 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+                <div
+                  {...getRootProps()} 
+                  className={`
+                    p-16 rounded-[50px] border-2 border-dashed transition-all cursor-pointer group relative overflow-hidden
+                    ${isDragActive ? "border-indigo-500 bg-indigo-500/5 shadow-2xl" : "border-white/10 hover:border-white/20 hover:bg-white/[0.02]"}
+                  `}
+                >
+                  <input {...getInputProps()} />
+                  <div className="flex flex-col items-center space-y-6 text-center">
+                    <div className="p-6 bg-white/5 rounded-[30px] group-hover:bg-indigo-500/10 transition-colors">
+                      <FileUp className="w-10 h-10 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black italic mb-2">Drop your CSV here</h3>
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
+                        Supports Universal UTF-8, Latin1, and ISO Encodings<br/>Max File Size: 100MB
+                      </p>
+                    </div>
+                    <button className="px-8 py-3 bg-white text-black rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all shadow-xl">
+                      Browse Files
+                    </button>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-black italic mb-2">Drop your CSV here</h3>
-                    <p className="text-slate-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
-                      Supports Universal UTF-8, Latin1, and ISO Encodings<br/>Max File Size: 100MB
-                    </p>
-                  </div>
-                  <button className="px-8 py-3 bg-white text-black rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all shadow-xl">
-                    Browse Files
-                  </button>
                 </div>
               </motion.div>
             ) : (
