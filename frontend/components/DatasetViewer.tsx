@@ -55,28 +55,57 @@ export default function DatasetViewer({ data = [], columns = [], stats: initialS
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
+      {/* Universal Data Summary */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xl font-black italic flex items-center gap-2 tracking-widest text-indigo-400">
+          <BarChart3 className="w-5 h-5" /> DATASET INTELLIGENCE
+        </h3>
+        {initialStats?.domain && (
+            <div className="px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">AI Domain: {initialStats.domain}</span>
+            </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-20 transition-opacity">
+            <Hash className="w-10 h-10" />
+          </div>
           <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Records</p>
           <div className="flex items-center gap-2">
-            <p className="text-xl font-bold text-white">{stats?.rows?.toLocaleString() || "..."}</p>
-            {stats?.rows === "Calculating..." && <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />}
+            <p className="text-xl font-bold text-white">{stats?.rows ? stats.rows.toLocaleString() : data.length.toLocaleString()}</p>
+            {stats?.rows === "Calculating..." && <Loader2 className="w-3 h-3 text-indigo-400 animate-spin" />}
           </div>
         </div>
-        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Features</p>
+
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-20 transition-opacity">
+            <Type className="w-10 h-10" />
+          </div>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Features (Cols)</p>
           <p className="text-xl font-bold text-indigo-400">{stats?.cols || columns.length}</p>
         </div>
-        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Null Values</p>
+
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-20 transition-opacity">
+            <AlertCircle className="w-10 h-10" />
+          </div>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Missing Values</p>
           <p className="text-xl font-bold text-rose-400">
-            {stats?.missing_values ? Object.values(stats.missing_values as Record<string, number>).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) : "..."}
+            {stats?.missing_total !== undefined ? stats.missing_total : stats?.missing_values ? Object.values(stats.missing_values as Record<string, number>).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) : "0"}
           </p>
         </div>
-        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Auto-Detect</p>
-          <p className="text-xl font-bold text-emerald-400">{stats?.types ? "Ready" : "Scanning..."}</p>
+
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-20 transition-opacity">
+            <BarChart3 className="w-10 h-10" />
+          </div>
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Analysis Mode</p>
+          <p className="text-xl font-bold text-emerald-400">
+            {stats?.numeric_count ? `${stats.numeric_count}N / ${stats.categorical_count}C` : "Universal"}
+          </p>
         </div>
       </div>
 

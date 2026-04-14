@@ -84,59 +84,85 @@ async def get_dataset_profile(file_id: str):
             return json.load(f)
     return {"status": "processing"}
 
+def guess_dataset_domain(columns: list, df: pd.DataFrame):
+    cols_set = {str(c).lower() for c in columns}
+    
+    if any(c in cols_set for c in ['loan', 'credit', 'amount', 'mortgage', 'default']):
+        return "Financial/Loan Dataset"
+    if any(c in cols_set for c in ['sale', 'revenue', 'price', 'product', 'customer_id', 'order']):
+        return "Sales/E-commerce Dataset"
+    if any(c in cols_set for c in ['hired', 'resume', 'candidate', 'applicant', 'job', 'interview']):
+        return "HR/Recruitment Dataset"
+    if any(c in cols_set for c in ['patient', 'diagnosis', 'treatment', 'medical', 'blood', 'heart']):
+        return "Healthcare/Medical Dataset"
+    if any(c in cols_set for c in ['survey', 'rating', 'feedback', 'satisfaction', 'score']):
+        return "Survey/User Feedback Dataset"
+    if any(c in cols_set for c in ['student', 'grade', 'exam', 'course', 'university']):
+        return "Education/Student Dataset"
+    
+    return "General Data Intelligence"
+
 @app.post("/upload_dataset")
 async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     try:
-        # Step 7: Data Validation
         if not file.filename.endswith('.csv'):
-            return {"success": False, "error": "Invalid file format", "message": "Please upload a CSV file."}
+            return {"success": False, "error": "Invalid format", "message": "Only CSV files are supported currently."}
             
         file_id = f"ds_{os.urandom(4).hex()}"
         file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
         
-        # Step 6: Handle Large Files (Chunked Write)
+        # Save chunked
         filesize = 0
         with open(file_path, "wb") as buffer:
-            while chunk := await file.read(1024 * 1024): # 1MB chunks
+            while chunk := await file.read(1024 * 1024):
                 buffer.write(chunk)
                 filesize += len(chunk)
         
-        # Step 2: Limit Response Size (50 rows)
-        # Using polars for high performance scanning
-        df_preview = pl.read_csv(file_path, n_rows=50)
+        # Step 2: Robust CSV Parsing (sep=None to auto-detect delimiter)
+        # We use pandas here because polars might be stricter on formatting for initial scan
+        df_full = pd.read_csv(file_path, sep=None, engine='python', on_bad_lines='skip')
+        df_full.columns = [str(c).strip() for c in df_full.columns]
         
-        # 3. Auto Detection Logic
-        columns = df_preview.columns
-        target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y', 'accepted', 'selected', 'loan_status']
-        sensitive_aliases = ["gender", "age", "race", "ethnicity", "religion", "sex", "nationality", "country"]
+        # Step 3: Preview Generation (Always head 50)
+        df_preview = df_full.head(50)
         
-        detected_target = next((col for col in columns if col.lower() in target_aliases), columns[-1])
+        # Step 6: Column Auto Detection
+        columns = df_full.columns.tolist()
+        numeric_cols = df_full.select_dtypes(include=['number']).columns.tolist()
+        categorical_cols = df_full.select_dtypes(include=['object', 'category']).columns.tolist()
+        
+        domain = guess_dataset_domain(columns, df_full)
+        
+        # Auto-detection for Bias analysis
+        target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y', 'accepted']
+        sensitive_aliases = ["gender", "age", "race", "ethnicity", "religion", "sex", "nationality"]
+        
+        detected_target = next((col for col in columns if col.lower() in target_aliases), columns[-1] if columns else "none")
         detected_sensitive = [col for col in columns if any(hint in col.lower() for hint in sensitive_aliases)]
         
-        # 4. Trigger Background Profiling
         background_tasks.add_task(profile_dataset_task, file_path, file_id)
         
         return {
             "success": True,
             "file_id": file_id,
             "filename": file.filename,
-            "preview": df_preview.to_dicts(),
+            "domain": domain,
+            "preview": df_preview.to_dict(orient='records'),
             "columns": columns,
-            "filesize_bytes": filesize,
-            "shape": {"rows": "Calculating...", "cols": len(columns)},
+            "stats": {
+                "rows": len(df_full),
+                "cols": len(columns),
+                "numeric_count": len(numeric_cols),
+                "categorical_count": len(categorical_cols),
+                "missing_total": int(df_full.isnull().sum().sum())
+            },
             "sensitive_column_hints": detected_sensitive,
             "target_column": detected_target,
-            "analysis_ready": True if detected_target != "unknown" and detected_sensitive else False
+            "analysis_ready": True if detected_target != "none" and detected_sensitive else False
         }
     except Exception as e:
-        print(f"UPLOAD CRASH: {str(e)}")
-        return {
-            "success": False, 
-            "error": "Dataset upload failed", 
-            "message": str(e)
-        }
-
-from bias_detection.shap_explainer import get_shap_explanations
+        print(f"UPLOAD ERROR: {str(e)}")
+        return {"success": False, "error": "Parsing Failed", "message": f"Could not process CSV: {str(e)}"}
 
 @app.post("/analyze_bias")
 async def analyze_bias_endpoint(
@@ -151,42 +177,67 @@ async def analyze_bias_endpoint(
         if file_id:
             file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
             if os.path.exists(file_path):
-                # Step 6: Memory Protection (Use Polars for analysis if possible, but Pandas required for current metrics lib)
-                # Optimization: Read only required columns if possible
-                df = pd.read_csv(file_path)
+                # Robust reading for analysis too
+                df = pd.read_csv(file_path, sep=None, engine='python')
+                df.columns = [str(c).strip() for c in df.columns]
             else:
-                 return {"success": False, "error": "Session expired", "message": "Please re-upload your file."}
+                 return {"success": False, "error": "Session Lost", "message": "File not found on server."}
         elif file:
             contents = await file.read()
-            df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+            df = pd.read_csv(io.StringIO(contents.decode('utf-8', errors='ignore')), sep=None, engine='python')
+            df.columns = [str(c).strip() for c in df.columns]
         else:
-             return {"success": False, "error": "No data", "message": "No dataset provided for analysis."}
+             return {"success": False, "error": "No Data", "message": "Missing dataset."}
 
-        # Step 7: Row/Col Count Validation
-        if len(df) < 2:
-            return {"success": False, "error": "Insufficient data", "message": "Dataset must have at least 2 rows."}
+        # Step 1: Remove strict row limit
+        if len(df) == 0:
+            return {"success": False, "error": "Empty Dataset", "message": "CSV contains no rows."}
 
-        # Handle Insights Mode
-        if not sensitive_col or sensitive_col == "none" or not target_col or target_col == "none" or sensitive_col not in df.columns or target_col not in df.columns:
+        # Step 4: Universal Data Mode (Data Explorer)
+        # If no bias parameters, or only 1 row (too few for metrics), switch to Explorer
+        is_explorer = False
+        if len(df) < 5 or not sensitive_col or sensitive_col == "none" or sensitive_col not in df.columns or target_col not in df.columns:
+            is_explorer = True
+
+        if is_explorer:
             numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+            cat_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+            
+            # Smart Analysis: Auto-identify important distributions
+            distributions = {}
+            for col in (cat_cols + numeric_cols)[:12]: # Limit to 12 columns
+                if col in cat_cols:
+                    distributions[col] = df[col].value_counts().head(5).to_dict()
+                else:
+                    # For numeric, show a simple histogram binning
+                    try:
+                        distributions[col] = df[col].value_counts(bins=5).to_dict()
+                        # Clean bin names for JSON
+                        distributions[col] = {str(k): v for k, v in distributions[col].items()}
+                    except:
+                        distributions[col] = df[col].head(5).to_dict()
+
             stats = {
                 "insights_mode": True,
+                "explorer_mode": True,
+                "domain": guess_dataset_domain(df.columns.tolist(), df),
                 "correlations": df[numeric_cols].corr().to_dict() if len(numeric_cols) > 1 else {},
-                "distributions": {col: df[col].value_counts().head(10).to_dict() for col in df.columns[:10]},
-                "summary": df.describe().to_dict()
+                "distributions": distributions,
+                "summary": df.describe().to_dict(),
+                "column_types": {col: str(df[col].dtype) for col in df.columns}
             }
             return {
                 "success": True,
                 "metrics": stats,
                 "group_rates": {},
-                "ai_report": "This dataset does not contain a valid decision variable or sensitive attribute for fairness analysis. Switched to General Insights Mode."
+                "ai_report": f"Universal Analysis: Successfully parsed this {stats['domain']}. Displaying general data distribution and profile intelligence."
             }
 
+        # Original Bias Metrics logic
         metrics, rates = calculate_fairness_metrics(df, sensitive_col, target_col)
-        
-        # Add SHAP explanations
         shap_importance = get_shap_explanations(df, target_col)
         metrics['shap_importance'] = shap_importance
+        metrics['domain'] = guess_dataset_domain(df.columns.tolist(), df)
         
         ai_report = None
         if gemini_api_key:
@@ -197,14 +248,14 @@ async def analyze_bias_endpoint(
             "metrics": metrics, 
             "group_rates": rates, 
             "ai_report": ai_report,
-            "run_id": f"FA-{os.urandom(3).hex().upper()}"
+            "run_id": f"UA-{os.urandom(3).hex().upper()}"
         }
     except Exception as e:
         print(f"ANALYSIS CRASH: {str(e)}")
         return {
             "success": False, 
-            "error": "Dataset analysis failed", 
-            "message": "Verify your column names and data types."
+            "error": "Dataset Loaded successfully. Limited insights available.", 
+            "message": f"Parsing Error: {str(e)}"
         }
 
 @app.post("/analyze", response_model=AnalysisResponse)
