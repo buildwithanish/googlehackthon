@@ -13,6 +13,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Upload", href: "/upload" },
     { name: "Dashboard", href: "/dashboard" },
+    { name: "Simulator", href: "/simulator" },
     { name: "Metrics", href: "/metrics" },
     { name: "AI Report", href: "/report" },
     { name: "Governance", href: "/governance" },
