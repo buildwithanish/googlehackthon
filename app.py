@@ -108,7 +108,7 @@ with st.sidebar:
 # Sidebar - Team Section
 def render_team_member(name, email, emoji, is_leader=False):
     role_html = f"<span class='team-role'>(Leader)</span>" if is_leader else ""
-    html = f\"\"\"
+    html = f"""
     <div class="team-card">
         <div class="avatar">{emoji}</div>
         <div class="team-info">
@@ -116,7 +116,7 @@ def render_team_member(name, email, emoji, is_leader=False):
             <p class="team-email">{email}</p>
         </div>
     </div>
-    \"\"\"
+    """
     return html
 
 # App Header
@@ -174,34 +174,34 @@ with tab1:
                 # Render Metrics
                 with m1:
                     dp = metrics.get('Demographic Parity Difference', 0)
-                    st.markdown(f\"\"\"
+                    st.markdown(f"""
                     <div class="metric-card">
                         <div class="metric-value">{dp:.4f}</div>
                         <div class="metric-label">Demographic Parity Diff</div>
                         <div style="font-size: 12px; color: gray;">Ideal: 0.0</div>
                     </div>
-                    \"\"\", unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
                     
                 with m2:
                     di = metrics.get('Disparate Impact (Ratio)', 1)
                     color = "red" if di < 0.8 else "green"
-                    st.markdown(f\"\"\"
+                    st.markdown(f"""
                     <div class="metric-card">
                         <div class="metric-value" style="color: {color};">{di:.4f}</div>
                         <div class="metric-label">Disparate Impact Ratio</div>
                         <div style="font-size: 12px; color: gray;">Ideal: > 0.8</div>
                     </div>
-                    \"\"\", unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
                     
                 with m3:
                     eo = metrics.get('Equal Opportunity Difference', 0)
-                    st.markdown(f\"\"\"
+                    st.markdown(f"""
                     <div class="metric-card">
                         <div class="metric-value">{eo:.4f}</div>
                         <div class="metric-label">Equal Opportunity Diff</div>
                         <div style="font-size: 12px; color: gray;">Ideal: 0.0</div>
                     </div>
-                    \"\"\", unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 

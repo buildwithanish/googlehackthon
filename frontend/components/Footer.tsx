@@ -79,7 +79,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link href={link.href} className="text-slate-500 hover:text-indigo-400 text-sm font-semibold transition-all flex items-center justify-center lg:justify-start gap-2">
                     {link.name}
-                    <ArrowUpRight className="w-3 h-3 opacity-30" />
+                    <span className="opacity-30 text-[10px]">↗</span>
                   </Link>
                 </li>
               ))}
