@@ -40,6 +40,11 @@ export const analyzeBias = async (targetCol: string, sensitiveCol: string, file?
   return response.data;
 };
 
+export const getDatasetProfile = async (fileId: string) => {
+  const response = await api.get(`/get_profile/${fileId}`);
+  return response.data;
+};
+
 export const getFairnessMetrics = async () => {
   const response = await api.get('/fairness_metrics');
   return response.data;

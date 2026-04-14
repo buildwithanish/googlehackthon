@@ -18,6 +18,14 @@ def calculate_fairness_metrics(df, sensitive_feature, target_variable, predictio
     y_true = df[target_variable].values
     sensitive_features = df[sensitive_feature].values
     
+    results = {
+        "dataset_size": len(df),
+        "warnings": []
+    }
+
+    if len(df) < 100:
+        results["warnings"].append("Dataset too small for reliable fairness analysis. Minimum 100 rows recommended.")
+
     if prediction_variable and prediction_variable in df.columns:
         y_pred = df[prediction_variable].values
     else:

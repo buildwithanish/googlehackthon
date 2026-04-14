@@ -211,8 +211,12 @@ export default function DashboardInsights() {
                       <Brain className="w-6 h-6 text-indigo-400" />
                   </div>
                   <div>
-                      <h2 className="text-2xl font-black text-white uppercase tracking-tight">Fairness Analysis Complete</h2>
-                      <p className="text-indigo-400 text-sm font-bold tracking-widest uppercase">Target: {results.metrics?.target || 'Detected'} • Powered By Gemini AI</p>
+                      <h2 className="text-2xl font-black text-white uppercase tracking-tight">
+                         {results.metrics?.insights_mode ? "Dataset Intelligence Panel" : "Fairness Analysis Complete"}
+                      </h2>
+                      <p className="text-indigo-400 text-sm font-bold tracking-widest uppercase">
+                        {results.metrics?.insights_mode ? "General Analytics Mode" : `Target: ${results.metrics?.target || 'Detected'} • Powered By Gemini AI`}
+                      </p>
                   </div>
               </div>
               <div className="flex gap-3">
@@ -220,12 +224,13 @@ export default function DashboardInsights() {
                       <Download className="w-4 h-4" /> Export Report
                   </button>
                   <button onClick={() => runAnalysis(false)} className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/30">
-                      <RefreshCw className="w-4 h-4" /> Re-Run Audit
+                      <RefreshCw className="w-4 h-4" /> Re-Run
                   </button>
               </div>
           </div>
 
           {/* ── KPI Grid ── */}
+          {!results.metrics?.insights_mode && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-1 p-8 rounded-[40px] bg-slate-900 border border-white/5 flex flex-col justify-center">
                   <FairnessGauge score={results?.metrics?.fairness_score || 55} />
@@ -243,13 +248,14 @@ export default function DashboardInsights() {
                               {kpi.status === "critical" && <AlertTriangle className="w-4 h-4 text-rose-500" />}
                           </div>
                           <div className={`text-5xl font-black mb-3 ${kpi.status === "critical" ? "text-rose-500" : kpi.status === "warning" ? "text-amber-500" : "text-emerald-500"}`}>
-                              {kpi.value.toFixed(3)}
+                              {isNaN(kpi.value) ? "0.000" : kpi.value.toFixed(3)}
                           </div>
                           <p className="text-[10px] text-slate-500 font-bold leading-tight group-hover:text-slate-400 transition-colors uppercase">{kpi.desc}</p>
                       </div>
                   ))}
               </div>
           </div>
+          )}
 
           {/* ── Tabs Content ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -258,12 +264,12 @@ export default function DashboardInsights() {
                   <div className="p-10 rounded-[40px] bg-white/[0.02] border border-white/5">
                       <div className="flex items-center justify-between mb-10">
                           <h3 className="text-xl font-black italic flex items-center gap-3 tracking-widest">
-                              <BarChart className="w-6 h-6 text-indigo-400" /> BIAS DISTRIBUTION PROFILER
+                              <BarChart2 className="w-6 h-6 text-indigo-400" /> {results.metrics?.insights_mode ? "DATA DISTRIBUTION" : "BIAS DISTRIBUTION PROFILER"}
                           </h3>
                       </div>
                       <div className="h-80">
                           <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={Object.entries(results.group_rates || { "Male": 68, "Female": 42 }).map(([k, v]) => ({ name: k, val: v }))}>
+                              <BarChart data={results.metrics?.insights_mode ? Object.entries(results.metrics.distributions || {}).slice(0, 1).map(([_, v]) => Object.entries(v as any).map(([nk, nv]) => ({name: nk, val: nv}))).flat() : Object.entries(results.group_rates || {}).map(([k, v]) => ({ name: k, val: v }))}>
                                   <defs>
                                       <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                                           <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
@@ -283,28 +289,39 @@ export default function DashboardInsights() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <div className="p-8 rounded-[40px] bg-indigo-600/5 border border-indigo-500/20">
                           <h4 className="text-sm font-black italic tracking-widest mb-6 flex items-center gap-2">
-                              <Layers className="w-4 h-4 text-indigo-400" /> INTERSECTIONAL MATRIX
+                              <Layers className="w-4 h-4 text-indigo-400" /> {results.metrics?.insights_mode ? "COLUMN SUMMARY" : "INTERSECTIONAL MATRIX"}
                           </h4>
-                          <IntersectionalTable data={results} />
+                          {results.metrics?.insights_mode ? (
+                              <div className="space-y-4 text-xs font-mono text-slate-400">
+                                  {Object.entries(results.metrics.distributions).slice(0, 5).map(([k, v]) => (
+                                      <div key={k} className="flex justify-between border-b border-white/5 pb-2">
+                                          <span>{k}</span>
+                                          <span className="text-white">{Object.keys(v as any).length} unique</span>
+                                      </div>
+                                  ))}
+                              </div>
+                          ) : (
+                             <IntersectionalTable data={results} />
+                          )}
                       </div>
                       <div className="p-8 rounded-[40px] bg-emerald-600/5 border border-emerald-500/20">
                           <h4 className="text-sm font-black italic tracking-widest mb-6 flex items-center gap-2">
-                              <Zap className="w-4 h-4 text-emerald-400" /> EXPLAINABLE AI (XAI)
+                              <Zap className="w-4 h-4 text-emerald-400" /> EXPLAINABLE AI (XAI) - SHAP
                           </h4>
                           <div className="space-y-4">
-                              {[
-                                  { feature: "Top Feature 1", weight: 0.85 },
-                                  { feature: "Top Feature 2", weight: 0.72 },
-                                  { feature: "Correlated Risk", weight: 0.45 },
-                                  { feature: "Sensitive Proxy", weight: 0.38 },
-                              ].map((f, i) => (
+                              {(results.metrics?.shap_importance || [
+                                  { feature: "Top Feature 1", importance: 0.85 },
+                                  { feature: "Top Feature 2", importance: 0.72 },
+                                  { feature: "Correlated Risk", importance: 0.45 },
+                                  { feature: "Sensitive Proxy", importance: 0.38 },
+                              ]).map((f: any, i: number) => (
                                   <div key={i} className="flex flex-col gap-2">
                                       <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                                          <span>{f.feature}</span>
-                                          <span>{Math.round(f.weight * 100)}%</span>
+                                          <span>{f.feature || f.feature}</span>
+                                          <span>{Math.round((f.importance || f.weight) * 100)}%</span>
                                       </div>
                                       <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                          <motion.div initial={{ width: 0 }} animate={{ width: `${f.weight * 100}%` }} className="h-full bg-emerald-500" />
+                                          <motion.div initial={{ width: 0 }} animate={{ width: `${(f.importance || f.weight) * 100}%` }} className="h-full bg-emerald-500" />
                                       </div>
                                   </div>
                               ))}
@@ -320,25 +337,25 @@ export default function DashboardInsights() {
                           <div className="p-2.5 bg-indigo-500/10 rounded-xl">
                               <Brain className="w-5 h-5 text-indigo-400" />
                           </div>
-                          <h3 className="text-lg font-black uppercase tracking-[0.2em]">Google Gemini Insights</h3>
+                          <h3 className="text-lg font-black uppercase tracking-[0.2em]">Data Audit Insights</h3>
                       </div>
                       <div className="p-6 bg-indigo-500/5 border border-indigo-500/10 rounded-3xl mb-8 flex-grow">
                           <p className="text-sm text-slate-300 leading-relaxed font-medium">
-                              {results.ai_explanation || "No explanation returned. Please verify Gemini API key configuration to unlock full mitigation insights."}
+                              {results.ai_report || results.ai_explanation || "Analyzing dataset metadata to generate automated recommendations..."}
                           </p>
                       </div>
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Remediation Strategies</h4>
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Strategy Engine</h4>
                       <div className="space-y-4">
                           {[
-                              { title: "Adversarial Debiasing", tech: "AIF360", risk: "Med" },
-                              { title: "Threshold Optimization", tech: "Fairlearn", risk: "Low" }
+                              { title: results.metrics?.insights_mode ? "Profile Correlation" : "Adversarial Debiasing", tech: "Stats Engine", risk: "Med" },
+                              { title: results.metrics?.insights_mode ? "Data Cleaning" : "Threshold Optimization", tech: "Fairlearn", risk: "Low" }
                           ].map((step, i) => (
                               <div key={i} className="p-4 rounded-xl border border-white/5 bg-white/[0.03] flex items-center justify-between">
                                   <div>
                                       <div className="text-xs font-bold">{step.title}</div>
                                       <div className="text-[10px] text-indigo-400 font-mono">{step.tech} Pipeline</div>
                                   </div>
-                                  <div className="px-2 py-1 bg-white/5 rounded text-[8px] font-black uppercase text-slate-500">Risk: {step.risk}</div>
+                                  <div className="px-2 py-1 bg-white/5 rounded text-[8px] font-black uppercase text-slate-500">Priority: {step.risk}</div>
                               </div>
                           ))}
                       </div>

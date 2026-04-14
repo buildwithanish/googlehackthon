@@ -13,3 +13,6 @@ python-pptx
 python-docx
 shap
 matplotlib
+polars
+aif360
+openpyxl

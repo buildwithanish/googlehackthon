@@ -262,6 +262,7 @@ export default function UploadPage() {
                 data={preview.preview} 
                 columns={preview.columns} 
                 stats={preview.stats} 
+                fileId={preview.file_id}
               />
               
               {/* Display Results directly below */}

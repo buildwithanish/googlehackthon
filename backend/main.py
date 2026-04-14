@@ -47,74 +47,83 @@ def read_root():
 def health_check():
     return {"status": "ok"}
 
+import polars as pl
+from fastapi import BackgroundTasks
+
 TEMP_DIR = os.path.join(os.path.dirname(__file__), "temp_uploads")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-@app.post("/upload_dataset")
-async def upload_dataset(file: UploadFile = File(...)):
+def profile_dataset_task(file_path: str, file_id: str):
+    """Heavy background task for full dataset profiling."""
     try:
-        contents = await file.read()
-        df = pd.read_csv(io.StringIO(contents.decode('utf-8', errors='ignore')))
+        # Load with polars for speed
+        df = pl.read_csv(file_path)
         
-        # Step 5: Data Cleaning Engine
-        # Remove completely empty rows
-        df.dropna(how='all', inplace=True)
-        # Remove duplicate rows
-        df.drop_duplicates(inplace=True)
-        
-        # Handle missing values & adapt categorical
-        for col in df.columns:
-            if pd.api.types.is_numeric_dtype(df[col]):
-                # fill numeric with median
-                if not df[col].isnull().all():
-                    df[col] = df[col].fillna(df[col].median())
-                else:
-                    df[col] = df[col].fillna(0)
-            else:
-                # fill missing categoricals
-                df[col] = df[col].fillna("Unknown").astype(str)
-                    
-        # Step 11: Auto Target Detection
-        target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y']
-        detected_target = df.columns[-1] if len(df.columns) > 0 else "unknown"
-        for col in df.columns:
-            if col.lower() in target_aliases:
-                detected_target = col
-                break
-
-        # Step 2: Auto column mapping (fuzzy detection for sensitive/features happens below dynamically)
-        
-        # Save file for later analysis
-        file_id = f"ds_{os.urandom(4).hex()}"
-        file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
-        df.to_csv(file_path, index=False)
-
-        # Data Preview & Stats (Step 6/10)
-        # Step 6: first 100 rows
-        preview = df.head(100).fillna("").to_dict(orient='records')
+        # Calculate full stats
         stats = {
             "rows": len(df),
             "cols": len(df.columns),
-            "column_types": {col: str(dtype) for col, dtype in df.dtypes.items()},
-            "missing_values": df.isnull().sum().to_dict(),
-            "unique_values": {col: df[col].nunique() for col in df.columns[:15]},
-            "target_detected": detected_target
+            "missing_values": {col: df[col].null_count() for col in df.columns},
+            "types": {col: str(df[col].dtype) for col in df.columns},
+            "unique_counts": {col: df[col].n_unique() for col in df.columns[:20]}, # Limit for heavy files
         }
         
-        sensitive_hints = [col for col in df.columns if any(hint in col.lower() for hint in ["gender", "age", "race", "ethnicity", "religion", "sex", "nationality"])]
+        # Save profile to disk
+        profile_path = os.path.join(TEMP_DIR, f"{file_id}_profile.json")
+        with open(profile_path, 'w') as f:
+            json.dump(stats, f)
+            
+    except Exception as e:
+        print(f"Profiling failed for {file_id}: {str(e)}")
+
+@app.get("/get_profile/{file_id}")
+async def get_dataset_profile(file_id: str):
+    profile_path = os.path.join(TEMP_DIR, f"{file_id}_profile.json")
+    if os.path.exists(profile_path):
+        with open(profile_path, 'r') as f:
+            return json.load(f)
+    return {"status": "processing"}
+
+@app.post("/upload_dataset")
+async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    try:
+        # 1. Save file locally first (high performance chunked write)
+        file_id = f"ds_{os.urandom(4).hex()}"
+        file_path = os.path.join(TEMP_DIR, f"{file_id}.csv")
+        
+        with open(file_path, "wb") as buffer:
+            while chunk := await file.read(1024 * 1024): # 1MB chunks
+                buffer.write(chunk)
+                
+        # 2. Instant Preview (Read only first 100 rows using polars/pandas)
+        # Using polars for faster scanning of large files
+        df_preview = pl.read_csv(file_path, n_rows=100)
+        
+        # 3. Auto Detection Logic
+        columns = df_preview.columns
+        target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y', 'accepted', 'selected', 'loan_status']
+        sensitive_aliases = ["gender", "age", "race", "ethnicity", "religion", "sex", "nationality", "country"]
+        
+        detected_target = next((col for col in columns if col.lower() in target_aliases), columns[-1])
+        detected_sensitive = [col for col in columns if any(hint in col.lower() for hint in sensitive_aliases)]
+        
+        # 4. Trigger Background Profiling
+        background_tasks.add_task(profile_dataset_task, file_path, file_id)
         
         return {
             "file_id": file_id,
             "filename": file.filename,
-            "preview": preview,
-            "columns": list(df.columns),
-            "shape": {"rows": len(df), "cols": len(df.columns)},
-            "stats": stats,
-            "sensitive_column_hints": sensitive_hints,
-            "target_column": detected_target
+            "preview": df_preview.to_dicts(),
+            "columns": columns,
+            "shape": {"rows": "Calculating...", "cols": len(columns)},
+            "sensitive_column_hints": detected_sensitive,
+            "target_column": detected_target,
+            "analysis_ready": True if detected_target != "unknown" and detected_sensitive else False
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Upload processing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"In pill-speed upload failed: {str(e)}")
+
+from bias_detection.shap_explainer import get_shap_explanations
 
 @app.post("/analyze_bias", response_model=AnalysisResponse)
 async def analyze_bias_endpoint(
@@ -138,7 +147,27 @@ async def analyze_bias_endpoint(
         else:
              raise HTTPException(status_code=400, detail="No dataset provided.")
 
+        # Handle Insights Mode (Step 6)
+        if not sensitive_col or sensitive_col == "none" or not target_col or target_col == "none" or sensitive_col not in df.columns or target_col not in df.columns:
+            # Dataset Insights Mode
+            numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+            stats = {
+                "insights_mode": True,
+                "correlations": df[numeric_cols].corr().to_dict() if len(numeric_cols) > 1 else {},
+                "distributions": {col: df[col].value_counts().head(10).to_dict() for col in df.columns[:10]},
+                "summary": df.describe().to_dict()
+            }
+            return {
+                "metrics": stats,
+                "group_rates": {},
+                "ai_report": "This dataset does not contain a valid decision variable or sensitive attribute for fairness analysis. Switched to General Insights Mode."
+            }
+
         metrics, rates = calculate_fairness_metrics(df, sensitive_col, target_col)
+        
+        # Add SHAP explanations
+        shap_importance = get_shap_explanations(df, target_col)
+        metrics['shap_importance'] = shap_importance
         
         ai_report = None
         if gemini_api_key:

@@ -1,23 +1,41 @@
-"use client";
-import React, { useState } from 'react';
-import { Search, RotateCcw, Filter, ChevronLeft, ChevronRight, Hash, Type, AlertCircle, BarChart3 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, RotateCcw, Filter, ChevronLeft, ChevronRight, Hash, Type, AlertCircle, BarChart3, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getDatasetProfile } from '@/lib/api';
 
 interface DatasetViewerProps {
   data: any[];
   columns: string[];
-  stats?: {
-    rows: number;
-    cols: number;
-    column_types: Record<string, string>;
-    missing_values: Record<string, number>;
-  };
+  stats?: any;
+  fileId?: string;
 }
 
-export default function DatasetViewer({ data = [], columns = [], stats }: DatasetViewerProps) {
+export default function DatasetViewer({ data = [], columns = [], stats: initialStats, fileId }: DatasetViewerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [stats, setStats] = useState(initialStats);
   const rowsPerPage = 10;
+
+  useEffect(() => {
+    setStats(initialStats);
+  }, [initialStats]);
+
+  useEffect(() => {
+    if (fileId && (!stats || stats.rows === "Calculating...")) {
+      const poll = setInterval(async () => {
+        try {
+          const profile = await getDatasetProfile(fileId);
+          if (profile && profile.status !== "processing") {
+            setStats(profile);
+            clearInterval(poll);
+          }
+        } catch (e) {
+          console.error("Polling failed", e);
+        }
+      }, 3000);
+      return () => clearInterval(poll);
+    }
+  }, [fileId, stats]);
 
   const filteredData = data.filter(row => 
     columns.some(col => 
@@ -37,28 +55,29 @@ export default function DatasetViewer({ data = [], columns = [], stats }: Datase
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Records</p>
-            <p className="text-xl font-bold text-white">{stats.rows.toLocaleString()}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Features</p>
-            <p className="text-xl font-bold text-indigo-400">{stats.cols}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Null Values</p>
-            <p className="text-xl font-bold text-rose-400">
-              {Object.values(stats.missing_values).reduce((a, b) => a + b, 0)}
-            </p>
-          </div>
-          <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
-            <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Data Quality</p>
-            <p className="text-xl font-bold text-emerald-400">98.4%</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Records</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xl font-bold text-white">{stats?.rows?.toLocaleString() || "..."}</p>
+            {stats?.rows === "Calculating..." && <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />}
           </div>
         </div>
-      )}
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Features</p>
+          <p className="text-xl font-bold text-indigo-400">{stats?.cols || columns.length}</p>
+        </div>
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Null Values</p>
+          <p className="text-xl font-bold text-rose-400">
+            {stats?.missing_values ? Object.values(stats.missing_values as Record<string, number>).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) : "..."}
+          </p>
+        </div>
+        <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+          <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Auto-Detect</p>
+          <p className="text-xl font-bold text-emerald-400">{stats?.types ? "Ready" : "Scanning..."}</p>
+        </div>
+      </div>
 
       {/* Table Controls */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
