@@ -87,18 +87,24 @@ async def get_dataset_profile(file_id: str):
 def guess_dataset_domain(columns: list, df: pd.DataFrame):
     cols_set = {str(c).lower() for c in columns}
     
-    if any(c in cols_set for c in ['loan', 'credit', 'amount', 'mortgage', 'default']):
-        return "Financial/Loan Dataset"
-    if any(c in cols_set for c in ['sale', 'revenue', 'price', 'product', 'customer_id', 'order']):
-        return "Sales/E-commerce Dataset"
-    if any(c in cols_set for c in ['hired', 'resume', 'candidate', 'applicant', 'job', 'interview']):
-        return "HR/Recruitment Dataset"
-    if any(c in cols_set for c in ['patient', 'diagnosis', 'treatment', 'medical', 'blood', 'heart']):
-        return "Healthcare/Medical Dataset"
-    if any(c in cols_set for c in ['survey', 'rating', 'feedback', 'satisfaction', 'score']):
-        return "Survey/User Feedback Dataset"
-    if any(c in cols_set for c in ['student', 'grade', 'exam', 'course', 'university']):
-        return "Education/Student Dataset"
+    if any(c in cols_set for c in ['loan', 'credit', 'amount', 'mortgage', 'default', 'interest']):
+        return "Financial/Banking Analysis"
+    if any(c in cols_set for c in ['sale', 'revenue', 'price', 'product', 'customer_id', 'order', 'sku']):
+        return "Sales & E-commerce Portfolio"
+    if any(c in cols_set for c in ['hired', 'resume', 'candidate', 'applicant', 'job', 'interview', 'salary']):
+        return "HR/Recruitment Analytics"
+    if any(c in cols_set for c in ['patient', 'diagnosis', 'treatment', 'medical', 'blood', 'heart', 'glucose']):
+        return "Healthcare/Medical Monitoring"
+    if any(c in cols_set for c in ['churn', 'customer', 'loyalty', 'satisfaction', 'nps', 'user_id', 'retention']):
+        return "Customer/CRM Relationship Data"
+    if any(c in cols_set for c in ['traffic', 'clicks', 'campaign', 'ad', 'marketing', 'conversion', 'leads']):
+        return "Digital Marketing Performance"
+    if any(c in cols_set for c in ['student', 'grade', 'exam', 'course', 'university', 'gpa', 'education']):
+        return "Education/Student Performance"
+    if any(c in cols_set for c in ['log', 'timestamp', 'cpu', 'memory', 'status_code', 'error', 'request']):
+        return "System Logs/Infrastructure Audit"
+    
+    return "Universal Intelligence Layer"
     
     return "General Data Intelligence"
 
@@ -118,12 +124,31 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
                 buffer.write(chunk)
                 filesize += len(chunk)
         
-        # Step 2: Robust CSV Parsing (sep=None to auto-detect delimiter)
-        # We use pandas here because polars might be stricter on formatting for initial scan
-        df_full = pd.read_csv(file_path, sep=None, engine='python', on_bad_lines='skip')
-        df_full.columns = [str(c).strip() for c in df_full.columns]
+        # Step 1: Universal CSV Parser with Encoding Fallbacks
+        encodings = ['utf-8', 'latin1', 'iso-8859-1', 'utf-8-sig']
+        df_full = None
+        error_msg = ""
         
-        # Step 3: Preview Generation (Always head 50)
+        for enc in encodings:
+            try:
+                # Use pandas with auto-delimiter detection
+                df_full = pd.read_csv(file_path, sep=None, engine='python', encoding=enc, on_bad_lines='skip')
+                # Step 3: Remove empty rows
+                df_full.dropna(how="all", inplace=True)
+                if not df_full.empty:
+                    print(f"[FairAI] Successfully parsed with {enc}")
+                    break
+            except Exception as e:
+                error_msg = str(e)
+                continue
+        
+        if df_full is None or df_full.empty:
+             return {"success": False, "error": "Parser Error", "message": f"Could not decode CSV or file is empty. Details: {error_msg}"}
+
+        # Step 4: Safe Header Detection
+        df_full.columns = [str(c).strip() if str(c).strip() else f"column_{i}" for i, c in enumerate(df_full.columns)]
+        
+        # Step 3: Preview Generation
         df_preview = df_full.head(50)
         
         # Step 6: Column Auto Detection
