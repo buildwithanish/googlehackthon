@@ -80,7 +80,8 @@ export default function UploadPage() {
         // For now, we'll store the object and handle the file upload during analysis
       } catch (err: any) {
         console.error("API Error:", err);
-        setError("Could not process dataset. Ensure it's a valid CSV and matches the required schema.");
+        const actualError = err.response?.data?.detail || err.message || "Unknown error";
+        setError(`Processing failed: ${actualError}`);
       } finally {
         setLoading(false);
       }
@@ -211,9 +212,9 @@ export default function UploadPage() {
                     <AlertCircle className="w-8 h-8 text-rose-400" />
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-2xl font-black text-white tracking-tight">Dataset Validation Error</h3>
+                    <h3 className="text-2xl font-black text-white tracking-tight">Dataset Processing Error</h3>
                     <p className="text-rose-400/80 mt-2 text-lg font-medium">{error}</p>
-                    <p className="mt-4 text-sm text-slate-500">Please ensure your CSV includes: gender, age, income, education, credit_score, loan_amount, loan_approved.</p>
+                    <p className="mt-4 text-sm text-slate-500">Ensure the CSV is properly formatted and does not contain unsupported characters.</p>
                     <div className="mt-8 flex items-center gap-3">
                         <button onClick={() => { setError(""); setFile(null); }} className="px-6 py-3 bg-rose-500 text-white rounded-2xl text-sm font-black transition-all shadow-lg shadow-rose-500/20 uppercase tracking-widest">
                             Try Another File

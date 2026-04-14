@@ -72,7 +72,7 @@ async def upload_dataset(file: UploadFile = File(...)):
                     
         # Step 11: Auto Target Detection
         target_aliases = ['loan_approved', 'approved', 'decision', 'outcome', 'label', 'status', 'target', 'hired', 'y']
-        detected_target = df.columns[-1] # fallback to last column
+        detected_target = df.columns[-1] if len(df.columns) > 0 else "unknown"
         for col in df.columns:
             if col.lower() in target_aliases:
                 detected_target = col
