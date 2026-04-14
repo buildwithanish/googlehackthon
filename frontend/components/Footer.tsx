@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Brain, Github, Twitter, ExternalLink } from "lucide-react";
+import { Brain, GitBranch, Code2 } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -22,7 +22,7 @@ export default function Footer() {
             <div className="mt-4 flex gap-3">
               <a href="https://github.com/buildwithanish/googlehackthon" target="_blank" rel="noreferrer"
                 className="text-slate-500 hover:text-white transition-colors">
-                <Github className="w-5 h-5" />
+                <GitBranch className="w-5 h-5" />
               </a>
             </div>
           </div>
