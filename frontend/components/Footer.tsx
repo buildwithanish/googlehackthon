@@ -52,16 +52,14 @@ export default function Footer() {
           </div>
 
           {/* Social/Team Column */}
-          <div>
-            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-widest">Developer</h4>
+            <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-widest">Hackathon Team</h4>
             <div className="space-y-3 text-sm text-slate-500">
-              <p className="flex items-center gap-2">👨‍💻 Developed by <span className="text-indigo-400 font-bold">Anish</span></p>
-              <p>🚀 <span className="text-purple-400">AnishNova Technologies</span></p>
+              <p className="flex items-center gap-2">🚀 <span className="text-indigo-400 font-bold">Team Synapse Squad Hub</span></p>
+              <p className="flex items-center gap-2">🏢 <span className="text-purple-400 font-semibold">AnishNova Technologies</span></p>
               <p className="text-[10px] leading-tight text-slate-600 mt-4 border-t border-white/5 pt-4">
-                Winner of Google Solution Challenge 2026 Simulation Prototype.
+                Google Solution Challenge 2026 Participant. Focused on Ethical AI and Mathematical Fairness.
               </p>
             </div>
-          </div>
         </div>
 
         {/* Bottom Banner */}
@@ -76,11 +74,13 @@ export default function Footer() {
           </div>
           <div className="text-center md:text-right">
             <p className="text-slate-400 font-bold text-xs uppercase tracking-tighter">
-              Powered by FairAI, AnishNova Technologies, and Google Gemini AI. <span className="text-indigo-500">Antigravity</span>
+              Developed by <span className="text-indigo-400">Team Synapse Squad Hub</span> · Powered by Google Gemini AI & Antigravity
             </p>
             <div className="flex gap-2 justify-center md:justify-end mt-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-              <span className="text-slate-700 text-[10px]">Cloud Infrastructure Active</span>
+              <div className="flex px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 items-center gap-1.5">
+                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                 <span className="text-emerald-500 text-[9px] font-bold uppercase tracking-widest">System Operational</span>
+              </div>
             </div>
           </div>
         </div>
