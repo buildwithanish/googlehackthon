@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { 
-  Brain, Shield, FileText, Activity, Scale, Heart, Github, GitBranch
+  Brain, Shield, FileText, Activity, Scale, Heart, GitBranch
 } from "lucide-react";
 
 const GithubIcon = (props: any) => (
