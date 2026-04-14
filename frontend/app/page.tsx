@@ -1,23 +1,23 @@
 "use client";
 import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Brain, FileDigit, BarChart3, ShieldCheck, Database, Zap, ArrowRight,
   GitBranch, Play, TrendingUp, Star, ChevronRight
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+// Helper: stable fade-up animation object (no custom fn, no Variants type issues)
+function fadeUp(delay = 0) {
+  return {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { delay, duration: 0.5, ease: "easeOut" as const },
+  };
+}
+
 export default function LandingPage() {
   const router = useRouter();
-
-  const fadeUpVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" as const },
-    }),
-  };
 
   const features = [
     { icon: <Database className="w-6 h-6" />, title: "Smart Dataset Profiling", desc: "Auto-detect sensitive columns, missing values, and data distributions with one click.", color: "from-blue-500 to-cyan-500" },
@@ -53,17 +53,13 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section className="relative pt-24 pb-32 overflow-hidden">
-        {/* Glow blobs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-40 left-20 w-72 h-72 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-40 right-20 w-72 h-72 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            custom={0}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
+            {...fadeUp(0)}
             className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 px-5 py-2 rounded-full text-sm font-semibold mb-8 backdrop-blur-sm"
           >
             <Star className="w-4 h-4 fill-indigo-400 text-indigo-400" />
@@ -71,10 +67,7 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.h1
-            custom={1}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
+            {...fadeUp(0.1)}
             className="text-6xl md:text-8xl font-black tracking-tight leading-[1.05]"
           >
             <span className="bg-gradient-to-r from-white via-indigo-200 to-purple-300 bg-clip-text text-transparent">
@@ -90,10 +83,7 @@ export default function LandingPage() {
           </motion.h1>
 
           <motion.p
-            custom={2}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
+            {...fadeUp(0.2)}
             className="mt-8 text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
           >
             Detect, explain, and eliminate bias in AI systems using
@@ -103,10 +93,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.div
-            custom={3}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
+            {...fadeUp(0.3)}
             className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link
@@ -124,7 +111,7 @@ export default function LandingPage() {
                   shape: { rows: 500, cols: 5 },
                   columns: ["gender", "age", "income", "education", "loan_approved"],
                   sensitive_column_hints: ["gender"],
-                  preview: []
+                  preview: [],
                 }));
                 localStorage.setItem("demo_mode", "sample_bias_dataset.csv");
                 router.push("/dashboard");
@@ -136,12 +123,9 @@ export default function LandingPage() {
             </button>
           </motion.div>
 
-          {/* Social proof stats */}
+          {/* Stats */}
           <motion.div
-            custom={4}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
+            {...fadeUp(0.4)}
             className="mt-16 flex justify-center gap-12 flex-wrap"
           >
             {[
@@ -166,6 +150,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
             className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-indigo-950/80 to-purple-950/80 backdrop-blur-xl p-10 md:p-16"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-purple-600/5 pointer-events-none" />
@@ -199,7 +184,7 @@ export default function LandingPage() {
                         shape: { rows: 500, cols: 5 },
                         columns: ["gender", "age", "income", "education", "loan_approved"],
                         sensitive_column_hints: ["gender"],
-                        preview: []
+                        preview: [],
                       }));
                       localStorage.setItem("demo_mode", "sample_bias_dataset.csv");
                       router.push("/dashboard");
@@ -225,7 +210,7 @@ export default function LandingPage() {
                     initial={{ opacity: 0, x: 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: i * 0.1, ease: "easeOut" as const }}
                     className={`rounded-xl p-4 border ${m.bg} backdrop-blur-sm`}
                   >
                     <div className="flex justify-between items-center mb-2">
@@ -237,7 +222,7 @@ export default function LandingPage() {
                         initial={{ width: 0 }}
                         whileInView={{ width: `${m.bar}%` }}
                         viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 + 0.3, duration: 0.8 }}
+                        transition={{ delay: i * 0.1 + 0.3, duration: 0.8, ease: "easeOut" as const }}
                         className={`h-full rounded-full ${m.barColor}`}
                       />
                     </div>
@@ -256,6 +241,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white">
@@ -271,11 +257,10 @@ export default function LandingPage() {
             {features.map((f, i) => (
               <motion.div
                 key={i}
-                custom={i}
-                variants={fadeUpVariants}
-                initial="hidden"
-                whileInView="visible"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.4, ease: "easeOut" as const }}
                 className="group relative p-7 rounded-2xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
@@ -300,6 +285,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-white">System Architecture</h2>
@@ -310,23 +296,23 @@ export default function LandingPage() {
             {[
               {
                 layer: "01", name: "Frontend Layer", color: "from-blue-500 to-cyan-500",
-                items: ["Next.js 14 + React", "Tailwind CSS + Shadcn UI", "Recharts Visualizations", "Framer Motion Animations"]
+                items: ["Next.js 14 + React", "Tailwind CSS + Shadcn UI", "Recharts Visualizations", "Framer Motion Animations"],
               },
               {
                 layer: "02", name: "AI & ML Layer", color: "from-purple-500 to-pink-500",
-                items: ["Microsoft Fairlearn", "IBM AIF360", "Google Gemini API", "Scikit-learn"]
+                items: ["Microsoft Fairlearn", "IBM AIF360", "Google Gemini API", "Scikit-learn"],
               },
               {
                 layer: "03", name: "Backend Layer", color: "from-emerald-500 to-teal-500",
-                items: ["FastAPI + Uvicorn", "Pandas + NumPy", "REST API Endpoints", "Render / Cloud Run Deployment"]
-              }
+                items: ["FastAPI + Uvicorn", "Pandas + NumPy", "REST API Endpoints", "Render / Cloud Run Deployment"],
+              },
             ].map((arch, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.15, duration: 0.4 }}
                 className="p-7 rounded-2xl border border-white/5 bg-white/[0.03]"
               >
                 <div className={`text-xs font-black bg-gradient-to-r ${arch.color} bg-clip-text text-transparent mb-3`}>
@@ -367,7 +353,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.04, duration: 0.3 }}
                 className="flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 transition-all"
               >
                 <span className="text-xs text-indigo-400 font-semibold uppercase tracking-wider">{t.cat}</span>
@@ -378,13 +364,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TEAM SECTION ── */}
+      {/* ── TEAM ── */}
       <section id="about" className="py-24 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
           >
             <h2 className="text-4xl font-bold text-white mb-4">Meet the Team</h2>
             <p className="text-slate-400 text-xl mb-14">Built for the Google Solution Challenge 2026</p>
