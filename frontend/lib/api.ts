@@ -12,7 +12,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.message === "Network Error") {
-      error.message = `Network Error: Could not connect to API at ${API_URL}. If on Vercel, ensure NEXT_PUBLIC_API_URL is set in dashboard.`;
+      error.message = `Network Error: Could not connect to API at ${API_URL}. 
+      
+Possible Solutions:
+1. Render Backend is Sleeping: Open ${API_URL}/health in your browser to wake it up (takes 30-60s).
+2. Environment Mismatch: If running locally, RESTART your terminal/server to apply .env.local changes.
+3. Local Server Down: Ensure your backend is running at ${API_URL}.`;
     }
     return Promise.reject(error);
   }
