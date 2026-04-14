@@ -10,11 +10,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "FairAI – Bias Detection Platform",
-  description: "Powered by FairAI, AnishNova Technologies, and Google Gemini AI. Bias Detection Platform",
+  title: "FairAI – Universal Data Intelligence Platform",
+  description: "Enterprise-grade AI bias detection and data intelligence suite powered by Google Gemini.",
   openGraph: {
-    title: "FairAI – Bias Detection Platform",
-    description: "Ensure fairness and detect bias in automated AI decision systems.",
+    title: "FairAI – Data Intelligence Platform",
+    description: "Detect, explain, and eliminate bias in AI systems with automated BI analytics.",
     type: "website",
   },
 };
@@ -24,17 +24,33 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
-        className={`${inter.className} bg-slate-950 text-white min-h-screen flex flex-col`}
+        className={`${inter.variable} ${outfit.variable} font-inter bg-[#050505] text-white min-h-screen flex flex-col selection:bg-indigo-500/30 selection:text-white`}
         suppressHydrationWarning
       >
+        {/* ── PREMIUM GLOBAL EFFECTS ── */}
+        <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+            {/* Animated Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#050505] via-[#0b0b1a] to-[#050505]" />
+            
+            {/* Floating Glows */}
+            <div className="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse" />
+            <div className="absolute bottom-[10%] right-[15%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[150px] animate-pulse delay-1000" />
+            
+            {/* Grid Pattern Overlay */}
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat opacity-[0.03]" />
+        </div>
+
         <BackendWakeup />
         <Navbar />
-        <main className="flex-1">{children}</main>
+        
+        {/* Main Content Wrapper */}
+        <main className="flex-1 flex flex-col pt-20">
+            {children}
+        </main>
+        
         <Footer />
         <ChatSupport />
       </body>
