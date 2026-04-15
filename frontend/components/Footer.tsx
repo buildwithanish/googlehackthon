@@ -38,6 +38,7 @@ export default function Footer() {
               <h4 className="text-white font-black text-xs uppercase tracking-widest mb-8">Platform</h4>
               <ul className="space-y-4">
                 {[
+                  { name: "Upload", href: "/upload" },
                   { name: "Dashboard", href: "/dashboard" },
                   { name: "Metrics", href: "/metrics" },
                   { name: "Reports", href: "/ai-report" },

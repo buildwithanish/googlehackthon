@@ -96,7 +96,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md"
           >
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Google Solution Challenge 2026
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Built for Google Solution Challenge 2026 • Team Synapse Squad Hub
           </motion.div>
           
           <div className="space-y-4">
@@ -124,22 +124,25 @@ export default function LandingPage() {
             transition={{ delay: 0.5 }}
             className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto leading-relaxed font-medium"
           >
-            Detect, explain, and eliminate bias in AI systems using advanced fairness metrics and Google AI intelligence. Built for professional governance.
+            Detect, explain, and eliminate bias in AI systems using advanced fairness metrics.
           </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8"
+            className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center items-center pt-8"
           >
             <Link href="/upload" className="group relative px-10 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:scale-110 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] overflow-hidden">
                <span className="relative z-10 flex items-center gap-3">
                  <Database className="w-5 h-5" /> Upload Dataset
                </span>
             </Link>
-            <Link href="/upload" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl">
-               <Zap className="w-5 h-5 text-indigo-400" /> Run Demo Analysis
+            <Link href="/simulator" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl">
+               <Zap className="w-5 h-5 text-indigo-400" /> Try Live Demo
+            </Link>
+            <Link href="/metrics" className="px-10 py-5 bg-indigo-600 border border-indigo-500 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-indigo-500 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl shadow-xl">
+               <Activity className="w-5 h-5 text-white" /> Run Bias Analysis
             </Link>
           </motion.div>
 
@@ -214,12 +217,20 @@ export default function LandingPage() {
                         className="absolute -bottom-10 -right-10 bg-[#0B1023] border border-white/10 p-10 rounded-[40px] shadow-4xl w-72 backdrop-blur-3xl"
                       >
                          <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-6">Inbound Profile</h4>
-                         <div className="space-y-4">
+                         <div className="space-y-3">
+                            <div className="flex justify-between items-center text-[11px] font-bold mb-2">
+                               <span className="text-slate-500 uppercase tracking-tight italic">Dataset</span>
+                               <span className="text-white italic truncate max-w-[120px]">{uploadedFile.name}</span>
+                            </div>
                             <div className="flex justify-between items-center text-[11px] font-bold">
                                <span className="text-slate-500 uppercase tracking-tight italic">Records</span>
                                <span className="text-white italic">{uploadedFile.rows}</span>
                             </div>
                             <div className="flex justify-between items-center text-[11px] font-bold">
+                               <span className="text-slate-500 uppercase tracking-tight italic">Columns</span>
+                               <span className="text-white italic">{uploadedFile.cols}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-[11px] font-bold mt-2 pt-2 border-t border-white/10">
                                <span className="text-slate-500 uppercase tracking-tight italic">Score</span>
                                <span className="text-emerald-400 font-black italic">{uploadedFile.score}</span>
                             </div>
@@ -512,20 +523,26 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[
-              { t: "Smart Dataset Profiling", d: "Autonomous schema extraction and data health scoring.", i: <Database /> },
-              { t: "6 Fairness Metrics", d: "Demographic Parity, Equal Opportunity, Disparate Impact audit.", i: <Activity /> },
-              { t: "Gemini AI Explanations", d: "Neural reasoning for bias clusters using Google Intelligence.", i: <Sparkles /> },
-              { t: "Visual Dashboard", d: "PowerBI style analytics for high-fidelity data forensics.", i: <BarChart3 /> },
-              { t: "PDF Bias Reports", d: "Enterprise-ready documentation for regulatory readiness.", i: <FileText /> },
-              { t: "Explainable AI (XAI)", d: "Decision causality visualization via LIME and SHAP logic.", i: <Brain /> },
-              { t: "Real-Time Mitigation", d: "On-the-fly threshold correction and data re-weighting.", i: <Zap /> },
-              { t: "Data Anonymization", d: "High-utility masking for sensitive feature protection.", i: <ShieldCheck /> },
-              { t: "Intersectional Bias", d: "Audit bias across nested sensitive attribute combinations.", i: <Users /> },
-              { t: "Synthetic Data Gen.", d: "Autonomous generation of bias-free training repositories.", i: <Cpu /> },
-              { t: "Multi-Model Support", d: "Cross-platform audit for XGBoost, RF, and Neural Nets.", i: <Layers /> },
-              { t: "API Scanning", d: "Live inference monitoring for production endpoints.", i: <Globe /> },
-              { t: "Custom Thresholds", d: "Tailored fairness tolerance for specific industry regulations.", i: <Filter /> },
-              { t: "Bias Monitoring", d: "Continuous drift tracking for governance integrity.", i: <TrendingUp /> }
+              { t: "Smart Dataset Profiling", d: "Autonomous schema extraction and data health scoring.", i: <Database className="w-6 h-6" /> },
+              { t: "AI Bias Detection Engine", d: "Advanced forensic algorithms to detect hidden bias in data.", i: <Search className="w-6 h-6" /> },
+              { t: "Explainable AI", d: "Decision causality visualization for interpretable AI.", i: <Brain className="w-6 h-6" /> },
+              { t: "Fairness Metrics Analyzer", d: "Demographic Parity, Equal Opportunity, Disparate Impact audit.", i: <Activity className="w-6 h-6" /> },
+              { t: "Bias Risk Score", d: "Single aggregated metric for AI liability assessment.", i: <ShieldAlert className="w-6 h-6" /> },
+              { t: "Automated Bias Mitigation", d: "On-the-fly threshold correction and data re-weighting.", i: <Zap className="w-6 h-6" /> },
+              { t: "Dataset Bias Heatmap", d: "Visual mapping of bias clusters across sensitive attributes.", i: <LayoutGrid className="w-6 h-6" /> },
+              { t: "Intersectional Bias Detection", d: "Audit bias across nested combinations of demographics.", i: <Users className="w-6 h-6" /> },
+              { t: "PowerBI Style Dashboard", d: "High-fidelity analytics and forensic visualizations.", i: <BarChart3 className="w-6 h-6" /> },
+              { t: "Real Time Data Visualization", d: "Live charting and active distribution monitoring.", i: <TrendingUp className="w-6 h-6" /> },
+              { t: "Feature Importance Analysis", d: "LIME and SHAP logic for model weighting insights.", i: <Activity className="w-6 h-6" /> },
+              { t: "Correlation Matrix", d: "Discover multi-variable structural relationships.", i: <Layers className="w-6 h-6" /> },
+              { t: "Synthetic Dataset Generator", d: "Autonomous generation of bias-free training repositories.", i: <Cpu className="w-6 h-6" /> },
+              { t: "Data Anonymization", d: "High-utility masking and protection for sensitive data.", i: <ShieldCheck className="w-6 h-6" /> },
+              { t: "Smart Data Cleaning", d: "Automated imputation and outlier correction algorithms.", i: <RefreshCw className="w-6 h-6" /> },
+              { t: "AI Governance Dashboard", d: "Policy compliance tracking and regulatory monitoring.", i: <Globe className="w-6 h-6" /> },
+              { t: "Responsible AI Report", d: "Enterprise-ready PDF documentation for stakeholder audits.", i: <FileText className="w-6 h-6" /> },
+              { t: "Live Bias Simulator", d: "Interactive what-if analysis and model stress testing.", i: <Zap className="w-6 h-6" /> },
+              { t: "Demo Dataset Mode", d: "Pre-loaded scenarios to explore the platform without data.", i: <Database className="w-6 h-6" /> },
+              { t: "One Click Bias Scan", d: "Instant evaluation of tabular files with zero configuration.", i: <CheckCircle className="w-6 h-6" /> }
             ].map((f, i) => (
               <div key={i} className="group p-10 rounded-[50px] bg-[#0B1023] border border-white/5 hover:border-indigo-500/40 hover:translate-y-[-12px] transition-all shadow-xl shadow-black/40">
                 <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
@@ -584,7 +601,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto text-center space-y-12">
           <p className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-600 mb-10">Powering Autonomous Algorithmic Fairness</p>
           <div className="flex flex-wrap justify-center gap-6 opacity-30 hover:opacity-100 transition-all duration-700 transform-gpu">
-            {['Next.js', 'React', 'TailwindCSS', 'Python', 'FastAPI', 'Pandas', 'Scikit-learn', 'Docker', 'Google Cloud', 'Gemini AI'].map((tech, i) => (
+            {['Next.js', 'React', 'TailwindCSS', 'Framer Motion', 'Recharts', 'Python', 'FastAPI', 'Pandas', 'Scikit Learn', 'Docker', 'Google Cloud', 'Gemini AI'].map((tech, i) => (
               <span key={i} className="px-10 py-5 bg-[#0B1023] border border-white/10 rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] text-white whitespace-nowrap shadow-xl hover:border-indigo-500/30 hover:bg-white/5 transition-all cursor-crosshair italic">
                 {tech}
               </span>
@@ -593,37 +610,95 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TEAM SECTION ── */}
+      {/* ── DEMO SECTION ── */}
+      <section className="py-40 px-6 bg-[#0B1023]/20 border-y border-white/5 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+        <div className="max-w-5xl mx-auto text-center space-y-16 relative z-10">
+           <h2 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter">Try the Platform Live</h2>
+           <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Experience the power of the Bias Detection Engine instantly.</p>
+           
+           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+             <Link href="/simulator" className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-110 active:scale-95 transition-all shadow-[0_10px_30px_rgba(79,70,229,0.3)]">
+               Try Demo
+             </Link>
+             <Link href="/upload" className="px-10 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-110 active:scale-95 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
+               Upload Dataset
+             </Link>
+             <Link href="/ai-report" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-white/10 hover:scale-110 active:scale-95 transition-all">
+               View Sample Report
+             </Link>
+           </div>
+        </div>
+      </section>
+
+      {/* ── FEEDBACK SECTION ── */}
       <section className="py-40 px-6 bg-[#050816]">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-24 space-y-6">
-             <h2 className="text-5xl md:text-[7rem] font-black text-white italic uppercase tracking-tighter leading-none select-none opacity-90">Experience <br /> <span className="text-indigo-500">The Vision</span></h2>
-             <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Design & Engineering at Synapse Squad Hub.</p>
+        <div className="max-w-3xl mx-auto space-y-16">
+          <div className="text-center space-y-4">
+             <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter">User Feedback</h2>
+             <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Help us improve the fairness audit ecosystem.</p>
           </div>
           
-          <div className="flex flex-col md:flex-row gap-10">
-             <div className="p-12 rounded-[60px] bg-gradient-to-br from-indigo-600/20 to-[#0B1023] border border-indigo-500/30 text-center space-y-6 flex-1 shadow-4xl group">
-                <div className="w-32 h-32 bg-white/5 rounded-full mx-auto flex items-center justify-center text-5xl mb-6 border border-white/10 group-hover:scale-110 transition-transform shadow-2xl">👨‍💻</div>
+          <motion.form 
+            whileHover={{ scale: 1.02 }}
+            className="p-12 rounded-[50px] bg-[#0B1023] border border-white/10 shadow-2xl flex flex-col gap-8 transition-all duration-300"
+          >
+             <div className="space-y-2 text-left">
+                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Name</label>
+                <input type="text" placeholder="Jane Doe" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
+             </div>
+             <div className="space-y-2 text-left">
+                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Email Address</label>
+                <input type="email" placeholder="jane@example.com" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
+             </div>
+             <div className="space-y-2 text-left">
+                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Feedback</label>
+                <textarea rows={4} placeholder="Your thoughts on the bias detection engine..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none resize-none" />
+             </div>
+             <button type="button" className="mt-4 px-8 py-5 bg-indigo-600 w-full rounded-2xl text-white font-black uppercase text-xs tracking-widest hover:bg-indigo-500 transition-colors shadow-[0_10px_30px_rgba(79,70,229,0.3)]">
+                Submit Feedback
+             </button>
+          </motion.form>
+        </div>
+      </section>
+
+      {/* ── TEAM SECTION ── */}
+      <section className="py-40 px-6 bg-[#0B1023]/20 border-t border-white/5 relative overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/5 rounded-full blur-[160px] pointer-events-none" />
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20 space-y-4">
+             <h2 className="text-6xl md:text-8xl font-black text-white italic uppercase tracking-tighter">Meet The Team</h2>
+             <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Visionaries behind the intelligence.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
+             <motion.div 
+               whileHover={{ y: -10 }}
+               className="p-12 rounded-[50px] bg-gradient-to-br from-indigo-600/10 to-[#0B1023] border border-indigo-500/30 text-center space-y-6 flex flex-col items-center justify-center shadow-4xl"
+             >
+                <div className="w-28 h-28 bg-white/5 rounded-full flex items-center justify-center text-4xl mb-4 border border-white/10 shadow-2xl">👨‍💻</div>
                 <div className="space-y-1">
                   <h4 className="text-3xl font-black text-white italic uppercase tracking-tighter">Anish Kumar Raj</h4>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 italic font-black">Lead Developer & AI Engineer</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">Lead AI Developer</p>
                 </div>
-                <div className="flex justify-center gap-4 pt-4">
+                <div className="flex gap-4 pt-2">
                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Github className="w-5 h-5" /></div>
-                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Twitter className="w-5 h-5" /></div>
+                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Linkedin className="w-5 h-5" /></div>
                 </div>
-             </div>
+             </motion.div>
              
-             <div className="p-12 rounded-[60px] bg-[#0B1023] border border-white/10 text-center space-y-10 flex flex-col justify-center flex-1 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-white/[0.01] pointer-events-none" />
-                <p className="text-sm font-bold text-slate-400 leading-relaxed italic uppercase tracking-tighter relative z-10 select-none">
-                  "Revolutionizing algorithmic governance through decentralized fairness metrics and autonomous reasoning."
-                </p>
-                <div className="pt-10 border-t border-white/5 relative z-10">
-                   <p className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">Synapse Squad Hub</p>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-2">Google Solution Challenge 2026</p>
+             <motion.div 
+               whileHover={{ y: -10 }}
+               className="p-12 rounded-[50px] bg-[#0B1023] border border-white/10 text-center space-y-8 flex flex-col justify-center items-center shadow-2xl relative overflow-hidden"
+             >
+                <div className="w-20 h-20 bg-indigo-500/10 rounded-[30px] flex items-center justify-center text-indigo-400 mb-2">
+                  <Brain className="w-10 h-10" />
                 </div>
-             </div>
+                <div className="space-y-2 relative z-10 w-full border-t border-white/5 pt-8">
+                   <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">Synapse Squad Hub</h4>
+                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Google Solution Challenge 2026</p>
+                </div>
+             </motion.div>
           </div>
         </div>
       </section>
