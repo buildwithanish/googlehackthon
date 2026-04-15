@@ -89,6 +89,24 @@ html, body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.3);
+}
+
+.premium-glow {
+  text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
 /* Gauge needle */
 @keyframes spin-gauge {
   from { transform: rotate(-90deg); }

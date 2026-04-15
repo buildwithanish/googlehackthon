@@ -119,8 +119,13 @@ export default function LandingPage() {
             <motion.h1 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ 
+                textShadow: "0 0 50px rgba(99, 102, 241, 0.8)",
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-7xl md:text-[11rem] font-black tracking-tighter leading-none text-white select-none"
+              className="text-7xl md:text-[11rem] font-black tracking-tighter leading-none text-white select-none cursor-default bg-clip-text hover:text-transparent hover:bg-gradient-to-br hover:from-white hover:via-indigo-300 hover:to-indigo-500 transition-all duration-500"
             >
               FairAI
             </motion.h1>
@@ -541,7 +546,7 @@ export default function LandingPage() {
             {[
               { t: "Smart Dataset Profiling", d: "Autonomous schema extraction and data health scoring.", i: <Database className="w-6 h-6" /> },
               { t: "AI Bias Detection Engine", d: "Advanced forensic algorithms to detect hidden bias in data.", i: <Search className="w-6 h-6" /> },
-              { t: "Explainable AI", d: "Decision causality visualization for interpretable AI.", i: <Brain className="w-6 h-6" /> },
+              { t: "Explainable AI (XAI)", d: "Decision causality visualization for interpretable AI.", i: <Brain className="w-6 h-6" /> },
               { t: "Fairness Metrics Analyzer", d: "Demographic Parity, Equal Opportunity, Disparate Impact audit.", i: <Activity className="w-6 h-6" /> },
               { t: "Bias Risk Score", d: "Single aggregated metric for AI liability assessment.", i: <ShieldAlert className="w-6 h-6" /> },
               { t: "Automated Bias Mitigation", d: "On-the-fly threshold correction and data re-weighting.", i: <Zap className="w-6 h-6" /> },
@@ -560,13 +565,38 @@ export default function LandingPage() {
               { t: "Demo Dataset Mode", d: "Pre-loaded scenarios to explore the platform without data.", i: <Database className="w-6 h-6" /> },
               { t: "One Click Bias Scan", d: "Instant evaluation of tabular files with zero configuration.", i: <CheckCircle className="w-6 h-6" /> }
             ].map((f, i) => (
-              <div key={i} className="group p-10 rounded-[50px] bg-[#0B1023] border border-white/5 hover:border-indigo-500/40 hover:translate-y-[-12px] transition-all shadow-xl shadow-black/40">
-                <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                  {f.i}
+              <motion.div 
+                key={i} 
+                whileHover={{ y: -15, scale: 1.02 }}
+                className="group p-10 rounded-[50px] bg-[#0B1023] border border-white/5 hover:border-indigo-500/40 transition-all shadow-2xl shadow-black/60 flex flex-col justify-between overflow-hidden relative"
+              >
+                {/* Background Glow */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/10 rounded-full blur-[80px] group-hover:bg-indigo-600/20 transition-all" />
+                
+                <div>
+                  <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
+                    {f.i}
+                  </div>
+                  <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4 group-hover:text-indigo-300 transition-colors">{f.t}</h3>
+                  <p className="text-[12px] text-slate-500 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-tight mb-8">
+                    {f.d}
+                  </p>
                 </div>
-                <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4">{f.t}</h3>
-                <p className="text-[12px] text-slate-500 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-tight">{f.d}</p>
-              </div>
+
+                <div className="grid grid-cols-1 gap-3 mt-auto">
+                   <div className="flex gap-2">
+                     <Link href="/upload" className="flex-1 px-4 py-3 bg-white text-black text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-500 hover:text-white transition-all text-center flex items-center justify-center gap-2">
+                       Live <ArrowRight className="w-3 h-3" />
+                     </Link>
+                     <Link href="/simulator" className="flex-1 px-4 py-3 bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/20 transition-all text-center flex items-center justify-center gap-2">
+                       Demo <ChevronRight className="w-3 h-3" />
+                     </Link>
+                   </div>
+                   <button className="w-full px-4 py-3 border border-white/5 bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl hover:border-indigo-500/30 hover:text-indigo-400 transition-all flex items-center justify-center gap-2 italic">
+                     <Info className="w-3 h-3" /> Read More
+                   </button>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
