@@ -157,9 +157,14 @@ export default function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md"
+            className="flex flex-col md:flex-row items-center justify-center gap-4"
           >
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Built for Google Solution Challenge 2026 • Team Synapse Squad Hub
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Built for Google Solution Challenge 2026
+            </div>
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 backdrop-blur-md">
+              <Globe className="w-3.5 h-3.5" /> Supporting SDG 10: Reduced Inequalities
+            </div>
           </motion.div>
           
           <div className="space-y-4">
@@ -190,9 +195,9 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto leading-relaxed font-medium"
+            className="text-xl md:text-2xl text-slate-500 max-w-4xl mx-auto leading-relaxed font-medium italic"
           >
-            Detect, explain, and eliminate bias in AI systems using advanced fairness metrics.
+            Addressing the <span className="text-white">Unbiased AI Decision</span> theme by building open innovation protocols that audit, explain, and mitigate algorithmic discrimination in real-world infrastructure.
           </motion.p>
           
           <motion.div 

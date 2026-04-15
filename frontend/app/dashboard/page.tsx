@@ -281,30 +281,23 @@ export default function Dashboard() {
 
         {!loading && results && (
             <div className="space-y-10">
-                {/* ── KPI Grid ── */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1 p-8 rounded-[40px] bg-slate-900 border border-white/5 flex flex-col justify-center">
-                        <FairnessGauge score={results.metrics?.fairness_score || 0} />
-                    </div>
-                    
-                    <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        {[
-                            { label: "Dem. Parity", value: results.metrics?.demographic_parity_difference, status: "critical", desc: "Max group selection disparity" },
-                            { label: "Disp. Impact", value: results.metrics?.disparate_impact, status: "warning", desc: "Selection ratio vs baseline" },
-                            { label: "Equalized Odds", value: results.metrics?.equalized_odds_difference, status: "safe", desc: "Model error rate equality" }
-                        ].map((kpi, i) => (
-                            <div key={i} className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all">
-                                <div className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4">{kpi.label}</div>
-                                <div className={`text-4xl font-black mb-3 ${kpi.status === "critical" ? "text-rose-500" : kpi.status === "warning" ? "text-amber-500" : "text-emerald-500"}`}>
-                                    {(kpi.value !== undefined && kpi.value !== null) ? Number(kpi.value).toFixed(3) : "0.000"}
-                                </div>
-                                <p className="text-[10px] text-slate-500 font-bold leading-tight group-hover:text-slate-400 transition-colors uppercase">{kpi.desc}</p>
-                            </div>
-                        ))}
-                    </div>
+                 {/* ── Tabs Navigation ── */}
+                <div className="flex items-center gap-2 bg-white/5 p-1.5 rounded-2xl w-fit mb-10 border border-white/10">
+                    <button 
+                        onClick={() => setActiveTab('overview')}
+                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        Overview Audit
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('mitigation')}
+                        className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'mitigation' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        Mitigation Center
+                    </button>
                 </div>
 
-                {/* ── Tabs Content ── */}
+                {activeTab === 'overview' ? (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Left: Visualization */}
                     <div className="lg:col-span-8 space-y-10">
@@ -423,6 +416,90 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
+                ) : (
+                /* ── Mitigation Center Content ── */
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-10"
+                >
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="p-10 rounded-[50px] bg-white/[0.02] border border-white/5 relative overflow-hidden">
+                             <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+                                <ShieldCheck className="w-40 h-40 text-emerald-500" />
+                             </div>
+                             <div className="relative z-10 space-y-8">
+                                <div className="space-y-2">
+                                    <h3 className="text-3xl font-black italic uppercase tracking-tighter">Automatic Mitigation Recommender</h3>
+                                    <p className="text-slate-500 font-bold text-sm uppercase tracking-widest italic">Techniques to reduce bias in AI decision pipelines.</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {[
+                                        { title: "Correlation Suppression", desc: "Eliminate hidden proxies (zip code, interest) that correlate with sensitive features.", type: "Pre-processing", status: "Recommended" },
+                                        { title: "Adversarial Training", desc: "Train a sub-network to minimize the model's ability to predict protected classes.", type: "In-processing", status: "Advanced" },
+                                        { title: "Threshold Calibration", desc: "Shift decision boundaries dynamically for underprivileged groups to reach parity.", type: "Post-processing", status: "Applied" },
+                                        { title: "Reweighing Protocol", desc: "Assign weights to training records to ensure equal representation in model loss.", type: "Pre-processing", status: "Stable" }
+                                    ].map((strat, j) => (
+                                        <div key={j} className="p-8 rounded-3xl bg-slate-900 border border-white/5 hover:border-indigo-500/30 transition-all space-y-4 shadow-xl">
+                                            <div className="flex justify-between items-start">
+                                                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest">{strat.type}</span>
+                                                <span className="text-[9px] font-black text-emerald-400 uppercase italic">{strat.status}</span>
+                                            </div>
+                                            <h4 className="text-lg font-black italic uppercase text-white tracking-tight">{strat.title}</h4>
+                                            <p className="text-xs text-slate-500 font-bold leading-relaxed italic">{strat.desc}</p>
+                                            <button className="w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest border border-white/5 transition-all">Apply Strategy</button>
+                                        </div>
+                                    ))}
+                                </div>
+                             </div>
+                        </div>
+
+                        <div className="p-10 rounded-[50px] bg-indigo-600/5 border border-indigo-500/10">
+                             <h4 className="text-xl font-black italic uppercase tracking-tighter text-white mb-6">Simulated Result After Mitigation</h4>
+                             <div className="h-64 flex items-end gap-10 justify-center">
+                                {[
+                                    { label: "Original Gap", val: 35, color: "bg-rose-500/30 border-rose-500" },
+                                    { label: "Post Calibration", val: 12, color: "bg-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.3)] border-emerald-500" }
+                                ].map((bar, k) => (
+                                    <div key={k} className="flex flex-col items-center gap-4">
+                                        <div className="text-xl font-black italic text-white">{bar.val}%</div>
+                                        <motion.div initial={{ height: 0 }} animate={{ height: bar.val * 3 }} className={`w-20 rounded-2xl border-2 ${bar.color}`} />
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{bar.label}</div>
+                                    </div>
+                                ))}
+                             </div>
+                        </div>
+                    </div>
+
+                    <div className="lg:col-span-4 space-y-10">
+                        <div className="p-8 rounded-[40px] bg-[#0B1023] border border-white/5 space-y-8">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-white/5 rounded-2xl text-emerald-400">
+                                    <ShieldCheck className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-lg font-black uppercase tracking-widest">Compliance Audit</h3>
+                            </div>
+                            <div className="space-y-6">
+                                {[
+                                    { l: "GDPR Art 22", status: "Complaint" },
+                                    { l: "EU AI Act (2024)", status: "High Confidence" },
+                                    { l: "NIST Fairness Framework", status: "Verified" }
+                                ].map((item, m) => (
+                                    <div key={m} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                                        <span className="text-[10px] font-black uppercase text-slate-400">{item.l}</span>
+                                        <span className="text-[10px] font-black uppercase text-emerald-500 italic">{item.status}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button className="w-full py-10 rounded-[40px] bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-black uppercase tracking-[0.3em] shadow-4xl shadow-indigo-600/20 hover:scale-105 active:scale-95 transition-all text-sm italic group">
+                            Generate Unbiased Model <ArrowRight className="w-6 h-6 inline-block ml-4 group-hover:translate-x-2 transition-transform" />
+                        </button>
+                    </div>
+                </motion.div>
+                )}
             </div>
         )}
       </main>

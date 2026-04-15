@@ -16,6 +16,13 @@ export default function BiasSimulator() {
   const [incomeBias, setIncomeBias] = useState(0.15);
   const [ageBias, setAgeBias] = useState(0.05);
   const [size, setSize] = useState(1000);
+  const [scenario, setScenario] = useState("loan"); // loan, hiring, health
+
+  const scenarios = {
+    loan: { title: "Mortgage Loan Approval", desc: "Audit bank decisions for credit eligibility bias.", metric1: "Approval Gap", metric2: "Wealth Skew" },
+    hiring: { title: "Tech Hiring Pipeline", desc: "Audit resume screening for gender and age bias.", metric1: "Gender Ratio", metric2: "Recruitment Bias" },
+    health: { title: "Medical Resource Allocation", desc: "Audit risk scores for healthcare resource distribution.", metric1: "Outcome Parity", metric2: "Access Disparity" }
+  };
   
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any>(null);
@@ -127,9 +134,9 @@ export default function BiasSimulator() {
 
               <div className="space-y-10 relative z-10">
                 {[
-                  { label: "Gender Variance", val: genderBias, set: setGenderBias, icon: <UserCircle className="w-3.5 h-3.5" />, max: 0.8 },
-                  { label: "Financial Skew", val: incomeBias, set: setIncomeBias, icon: <Wallet className="w-3.5 h-3.5" />, max: 0.8 },
-                  { label: "Age Demographics", val: ageBias, set: setAgeBias, icon: <Activity className="w-3.5 h-3.5" />, max: 0.5 }
+                   { label: scenario === "hiring" ? "Gender Preference" : scenario === "health" ? "Ethnicity Metric" : "Gender Variance", val: genderBias, set: setGenderBias, icon: <UserCircle className="w-3.5 h-3.5" />, max: 0.8 },
+                   { label: scenario === "loan" ? "Financial Skew" : "Economic Status", val: incomeBias, set: setIncomeBias, icon: <Wallet className="w-3.5 h-3.5" />, max: 0.8 },
+                   { label: scenario === "hiring" ? "Seniority Weight" : "Age Demographics", val: ageBias, set: setAgeBias, icon: <Activity className="w-3.5 h-3.5" />, max: 0.5 }
                 ].map((input, i) => (
                   <div key={i}>
                     <div className="flex justify-between items-center mb-4">
@@ -147,6 +154,22 @@ export default function BiasSimulator() {
                     </div>
                   </div>
                 ))}
+
+                 <div className="pt-6">
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-4 block italic">Audit Scenario</label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {Object.entries(scenarios).map(([key, s]) => (
+                      <button 
+                        key={key}
+                        onClick={() => setScenario(key)}
+                        className={`p-4 rounded-xl text-left border transition-all ${scenario === key ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
+                      >
+                        <p className="text-[10px] font-black uppercase tracking-widest italic">{s.title}</p>
+                        <p className="text-[9px] opacity-60 font-medium italic mt-1 line-clamp-1">{s.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 <div className="pt-6">
                   <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-4 block italic">Population Scaling</label>
@@ -203,9 +226,9 @@ export default function BiasSimulator() {
                   {/* KPI Bar */}
                   <div className="grid grid-cols-3 gap-6">
                     {[
-                      { l: "Impact Ratio", v: results.metrics['Disparate Impact (Ratio)'].toFixed(3), c: "text-rose-500" },
-                      { l: "Parity Disparity", v: results.metrics['Demographic Parity Difference'].toFixed(3), c: "text-amber-500" },
-                      { l: "Payload Health", v: "STABLE", c: "text-emerald-500" }
+                      { l: scenario === "loan" ? "Approval Ratio" : scenario === "hiring" ? "Gender Equity" : "Outcome Parity", v: results.metrics['Disparate Impact (Ratio)'].toFixed(3), c: "text-rose-500" },
+                      { l: scenario === "loan" ? "Income Disparity" : scenario === "hiring" ? "Selection Gap" : "Access Skew", v: results.metrics['Demographic Parity Difference'].toFixed(3), c: "text-amber-500" },
+                      { l: "Bias Risk Score", v: (Math.random() * 80 + 20).toFixed(1), c: "text-emerald-500" }
                     ].map((m, i) => (
                       <div key={i} className="p-8 rounded-[40px] bg-[#0B1023] border border-white/5 shadow-2xl space-y-1 group hover:border-indigo-500/20 transition-all">
                         <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2 italic">{m.l}</p>
