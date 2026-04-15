@@ -67,7 +67,7 @@ export default function ChatSupport() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-32 right-8 z-[60] p-4 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-600/40 border border-indigo-400/20"
+        className="fixed bottom-8 right-8 z-[60] p-4 bg-indigo-600 text-white rounded-full shadow-2xl shadow-indigo-600/40 border border-indigo-400/20"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
       </motion.button>
@@ -78,7 +78,7 @@ export default function ChatSupport() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-48 right-8 z-[60] w-[350px] sm:w-[400px] h-[550px] bg-slate-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl"
+            className="fixed bottom-24 right-8 z-[60] w-[350px] sm:w-[400px] h-[550px] bg-slate-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl"
           >
             {/* Header */}
             <div className="p-4 bg-indigo-600 flex items-center justify-between">

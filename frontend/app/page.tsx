@@ -189,6 +189,30 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── MISSION / HOW IT WORKS SECTION ── */}
+      <section className="py-24 px-6 bg-[#0B1023]/20 relative">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-16 text-center">
+           <div className="space-y-4">
+              <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter">AI Bias Detection <span className="text-indigo-500">System</span></h2>
+              <p className="text-slate-400 max-w-2xl font-bold uppercase tracking-widest text-sm">Humaara platform AI algorithms mein un-fairness aur discrimination ko khatam karne ke liye banaya gaya hai.</p>
+           </div>
+           
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full">
+              {[
+                { title: "1. Upload Data", desc: "Apna CSV upload karein. Humaara engine features identify karke data patterns scan karta hai.", icon: <Upload className="w-8 h-8 text-indigo-400" /> },
+                { title: "2. Scan Biases", desc: "Scientific metrics ke zariye hum detect karte hain ki system kis group ke saath pakshpaat kar raha hai.", icon: <Search className="w-8 h-8 text-indigo-400" /> },
+                { title: "3. Fix & Report", desc: "Mitigation steps follow karein aur Gemini AI-powered audited reports download karein.", icon: <Sparkles className="w-8 h-8 text-indigo-400" /> }
+              ].map((step, i) => (
+                <div key={i} className="p-10 rounded-[40px] bg-[#0B1023] border border-white/5 space-y-6 hover:translate-y-[-10px] transition-all">
+                   <div className="mx-auto w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center">{step.icon}</div>
+                   <h4 className="text-xl font-black text-white italic uppercase">{step.title}</h4>
+                   <p className="text-sm text-slate-500 font-medium italic">{step.desc}</p>
+                </div>
+              ))}
+           </div>
+        </div>
+      </section>
+
       {/* ── PREMIUM CSV UPLOAD INTERFACE ── */}
       <section className="py-32 px-6 bg-[#0B1023]/20 border-y border-white/5">
         <div className="max-w-6xl mx-auto">
@@ -543,28 +567,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {[
-              { t: "Smart Dataset Profiling", d: "Autonomous schema extraction and data health scoring.", i: <Database className="w-6 h-6" /> },
-              { t: "AI Bias Detection Engine", d: "Advanced forensic algorithms to detect hidden bias in data.", i: <Search className="w-6 h-6" /> },
-              { t: "Explainable AI (XAI)", d: "Decision causality visualization for interpretable AI.", i: <Brain className="w-6 h-6" /> },
-              { t: "Fairness Metrics Analyzer", d: "Demographic Parity, Equal Opportunity, Disparate Impact audit.", i: <Activity className="w-6 h-6" /> },
-              { t: "Bias Risk Score", d: "Single aggregated metric for AI liability assessment.", i: <ShieldAlert className="w-6 h-6" /> },
-              { t: "Automated Bias Mitigation", d: "On-the-fly threshold correction and data re-weighting.", i: <Zap className="w-6 h-6" /> },
-              { t: "Dataset Bias Heatmap", d: "Visual mapping of bias clusters across sensitive attributes.", i: <LayoutGrid className="w-6 h-6" /> },
-              { t: "Intersectional Bias Detection", d: "Audit bias across nested combinations of demographics.", i: <Users className="w-6 h-6" /> },
-              { t: "PowerBI Style Dashboard", d: "High-fidelity analytics and forensic visualizations.", i: <BarChart3 className="w-6 h-6" /> },
-              { t: "Real Time Data Visualization", d: "Live charting and active distribution monitoring.", i: <TrendingUp className="w-6 h-6" /> },
-              { t: "Feature Importance Analysis", d: "LIME and SHAP logic for model weighting insights.", i: <Activity className="w-6 h-6" /> },
-              { t: "Correlation Matrix", d: "Discover multi-variable structural relationships.", i: <Layers className="w-6 h-6" /> },
-              { t: "Synthetic Dataset Generator", d: "Autonomous generation of bias-free training repositories.", i: <Cpu className="w-6 h-6" /> },
-              { t: "Data Anonymization", d: "High-utility masking and protection for sensitive data.", i: <ShieldCheck className="w-6 h-6" /> },
-              { t: "Smart Data Cleaning", d: "Automated imputation and outlier correction algorithms.", i: <RefreshCw className="w-6 h-6" /> },
-              { t: "AI Governance Dashboard", d: "Policy compliance tracking and regulatory monitoring.", i: <Globe className="w-6 h-6" /> },
-              { t: "Responsible AI Report", d: "Enterprise-ready PDF documentation for stakeholder audits.", i: <FileText className="w-6 h-6" /> },
-              { t: "Live Bias Simulator", d: "Interactive what-if analysis and model stress testing.", i: <Zap className="w-6 h-6" /> },
-              { t: "Demo Dataset Mode", d: "Pre-loaded scenarios to explore the platform without data.", i: <Database className="w-6 h-6" /> },
-              { t: "One Click Bias Scan", d: "Instant evaluation of tabular files with zero configuration.", i: <CheckCircle className="w-6 h-6" /> }
-            ].map((f, i) => (
+            {featuresList.map((f, i) => (
               <motion.div 
                 key={i} 
                 whileHover={{ y: -15, scale: 1.02 }}
@@ -577,8 +580,8 @@ export default function LandingPage() {
                   <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
                     {f.i}
                   </div>
-                  <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4 group-hover:text-indigo-300 transition-colors">{f.t}</h3>
-                  <p className="text-[12px] text-slate-500 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-tight mb-8">
+                  <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4 group-hover:text-indigo-300 transition-colors line-clamp-1">{f.t}</h3>
+                  <p className="text-[12px] text-slate-500 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity uppercase tracking-tight mb-8 line-clamp-2">
                     {f.d}
                   </p>
                 </div>
@@ -592,7 +595,10 @@ export default function LandingPage() {
                        Demo <ChevronRight className="w-3 h-3" />
                      </Link>
                    </div>
-                   <button className="w-full px-4 py-3 border border-white/5 bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl hover:border-indigo-500/30 hover:text-indigo-400 transition-all flex items-center justify-center gap-2 italic">
+                   <button 
+                    onClick={() => setSelectedFeature({t: f.t, d: f.d})}
+                    className="w-full px-4 py-3 border border-white/5 bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl hover:border-indigo-500/30 hover:text-indigo-400 transition-all flex items-center justify-center gap-2 italic"
+                   >
                      <Info className="w-3 h-3" /> Read More
                    </button>
                 </div>
@@ -601,6 +607,41 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ── FEATURE MODAL ── */}
+      <AnimatePresence>
+        {selectedFeature && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
+             <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               onClick={() => setSelectedFeature(null)}
+               className="absolute inset-0 bg-black/80 backdrop-blur-md"
+             />
+             <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-lg w-full bg-[#0B1023] border border-white/10 p-12 rounded-[50px] shadow-4xl text-left space-y-8"
+             >
+                <div className="space-y-4">
+                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter">{selectedFeature.t}</h3>
+                  <div className="h-1 w-20 bg-indigo-500 rounded-full" />
+                </div>
+                <p className="text-lg text-slate-300 font-bold italic leading-relaxed border-l-4 border-white/5 pl-8">
+                  {selectedFeature.d}
+                </p>
+                <button 
+                  onClick={() => setSelectedFeature(null)}
+                  className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all"
+                >
+                  Close Insight
+                </button>
+             </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* ── SYSTEM ARCHITECTURE VIZ ── */}
       <section className="py-40 px-6 bg-[#0B1023]/20 border-y border-white/5 relative overflow-hidden">
