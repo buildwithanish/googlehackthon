@@ -15,7 +15,7 @@ export default function Navbar() {
     { name: "Dashboard", href: "/dashboard" },
     { name: "Simulator", href: "/simulator" },
     { name: "Metrics", href: "/metrics" },
-    { name: "AI Report", href: "/report" },
+    { name: "AI Report", href: "/ai-report" },
     { name: "Governance", href: "/governance" }
   ];
 

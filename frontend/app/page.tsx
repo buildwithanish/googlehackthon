@@ -67,6 +67,22 @@ const COLORS = ['#818cf8', '#f43f5e', '#10b981', '#f59e0b'];
 export default function LandingPage() {
   const [uploadedFile, setUploadedFile] = useState<UploadedFileInfo | null>(null);
 
+  const [feedbacks, setFeedbacks] = useState([
+    { name: "Suresh Sharma", feedback: "The AI Bias Detection Engine is remarkably accurate and fast!", email: "suresh@example.com" }
+  ]);
+  const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackEmail, setFeedbackEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+
+  const handleFeedbackSubmit = () => {
+    if (feedbackName && feedbackText) {
+      setFeedbacks([{ name: feedbackName, email: feedbackEmail, feedback: feedbackText }, ...feedbacks]);
+      setFeedbackName("");
+      setFeedbackEmail("");
+      setFeedbackText("");
+    }
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       setUploadedFile({
@@ -633,32 +649,54 @@ export default function LandingPage() {
 
       {/* ── FEEDBACK SECTION ── */}
       <section className="py-40 px-6 bg-[#050816]">
-        <div className="max-w-3xl mx-auto space-y-16">
+        <div className="max-w-6xl mx-auto space-y-16">
           <div className="text-center space-y-4">
              <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter">User Feedback</h2>
              <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Help us improve the fairness audit ecosystem.</p>
           </div>
           
-          <motion.form 
-            whileHover={{ scale: 1.02 }}
-            className="p-12 rounded-[50px] bg-[#0B1023] border border-white/10 shadow-2xl flex flex-col gap-8 transition-all duration-300"
-          >
-             <div className="space-y-2 text-left">
-                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Name</label>
-                <input type="text" placeholder="Jane Doe" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
-             </div>
-             <div className="space-y-2 text-left">
-                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Email Address</label>
-                <input type="email" placeholder="jane@example.com" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
-             </div>
-             <div className="space-y-2 text-left">
-                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Feedback</label>
-                <textarea rows={4} placeholder="Your thoughts on the bias detection engine..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none resize-none" />
-             </div>
-             <button type="button" className="mt-4 px-8 py-5 bg-indigo-600 w-full rounded-2xl text-white font-black uppercase text-xs tracking-widest hover:bg-indigo-500 transition-colors shadow-[0_10px_30px_rgba(79,70,229,0.3)]">
-                Submit Feedback
-             </button>
-          </motion.form>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <motion.form 
+              whileHover={{ scale: 1.02 }}
+              className="p-12 rounded-[50px] bg-[#0B1023] border border-white/10 shadow-2xl flex flex-col gap-8 transition-all duration-300"
+            >
+               <div className="space-y-2 text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Name</label>
+                  <input type="text" value={feedbackName} onChange={(e) => setFeedbackName(e.target.value)} placeholder="Jane Doe" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
+               </div>
+               <div className="space-y-2 text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Email Address</label>
+                  <input type="email" value={feedbackEmail} onChange={(e) => setFeedbackEmail(e.target.value)} placeholder="jane@example.com" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none" />
+               </div>
+               <div className="space-y-2 text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Feedback</label>
+                  <textarea rows={4} value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} placeholder="Your thoughts on the bias detection engine..." className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-medium outline-none resize-none" />
+               </div>
+               <button type="button" onClick={handleFeedbackSubmit} className="mt-4 px-8 py-5 bg-indigo-600 w-full rounded-2xl text-white font-black uppercase text-xs tracking-widest hover:bg-indigo-500 transition-colors shadow-[0_10px_30px_rgba(79,70,229,0.3)]">
+                  Submit Feedback
+               </button>
+            </motion.form>
+            
+            <div className="p-12 rounded-[50px] bg-[#0B1023]/50 border border-white/5 flex flex-col gap-6 h-[600px] overflow-y-auto custom-scrollbar">
+               <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-4">Recent Submissions</h3>
+               <AnimatePresence>
+                 {feedbacks.map((fb, idx) => (
+                   <motion.div 
+                     key={idx}
+                     initial={{ opacity: 0, x: 20 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     className="p-6 bg-[#0B1023] border border-white/10 rounded-3xl space-y-3"
+                   >
+                     <div className="flex justify-between items-center">
+                       <span className="text-indigo-400 font-black italic">{fb.name}</span>
+                       <span className="text-[9px] text-slate-500 uppercase tracking-widest">Just now</span>
+                     </div>
+                     <p className="text-sm text-slate-300 font-medium italic">{fb.feedback}</p>
+                   </motion.div>
+                 ))}
+               </AnimatePresence>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -671,34 +709,32 @@ export default function LandingPage() {
              <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Visionaries behind the intelligence.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
-             <motion.div 
-               whileHover={{ y: -10 }}
-               className="p-12 rounded-[50px] bg-gradient-to-br from-indigo-600/10 to-[#0B1023] border border-indigo-500/30 text-center space-y-6 flex flex-col items-center justify-center shadow-4xl"
-             >
-                <div className="w-28 h-28 bg-white/5 rounded-full flex items-center justify-center text-4xl mb-4 border border-white/10 shadow-2xl">👨‍💻</div>
-                <div className="space-y-1">
-                  <h4 className="text-3xl font-black text-white italic uppercase tracking-tighter">Anish Kumar Raj</h4>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">Lead AI Developer</p>
-                </div>
-                <div className="flex gap-4 pt-2">
-                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Github className="w-5 h-5" /></div>
-                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"><Linkedin className="w-5 h-5" /></div>
-                </div>
-             </motion.div>
-             
-             <motion.div 
-               whileHover={{ y: -10 }}
-               className="p-12 rounded-[50px] bg-[#0B1023] border border-white/10 text-center space-y-8 flex flex-col justify-center items-center shadow-2xl relative overflow-hidden"
-             >
-                <div className="w-20 h-20 bg-indigo-500/10 rounded-[30px] flex items-center justify-center text-indigo-400 mb-2">
-                  <Brain className="w-10 h-10" />
-                </div>
-                <div className="space-y-2 relative z-10 w-full border-t border-white/5 pt-8">
-                   <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">Synapse Squad Hub</h4>
-                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Google Solution Challenge 2026</p>
-                </div>
-             </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+             {[
+               { name: "Amrit Anand", role: "rounakjha122@gmail.com", avatar: "🧑‍💻" },
+               { name: "Kapil Vishwakarma", role: "kapilbhai758@gmail.com", avatar: "👤" },
+               { name: "Subham Sharma", role: "subhamsharma765688@gmail.com", avatar: "👨‍💻" },
+               { name: "Anish Raj", role: "anishkumar9905287@gmail.com", avatar: "🌟", badge: "(Leader)" }
+             ].map((member, i) => (
+               <motion.div 
+                 key={i}
+                 whileHover={{ y: -5 }}
+                 className="p-8 rounded-[40px] bg-[#0B1023] border border-white/10 shadow-xl flex items-center gap-6 group hover:border-indigo-500/30 transition-all font-outfit"
+               >
+                  <div className="w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl border border-white/5 bg-gradient-to-br from-white/10 to-white/5 text-white/80 group-hover:scale-110 transition-transform shadow-lg overflow-hidden">
+                     {member.avatar}
+                  </div>
+                  <div className="space-y-1 w-full flex justify-between items-center">
+                    <div>
+                      <h4 className="text-lg font-bold text-white tracking-tight">{member.name} {member.badge && <span className="text-yellow-400 text-[10px] ml-1 uppercase italic tracking-widest">{member.badge}</span>}</h4>
+                      <p className="text-[11px] font-medium tracking-wide text-slate-400 italic">{member.role}</p>
+                    </div>
+                    <div className="text-slate-600 group-hover:text-white transition-colors">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </div>
+                  </div>
+               </motion.div>
+             ))}
           </div>
         </div>
       </section>
