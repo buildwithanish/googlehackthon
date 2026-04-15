@@ -168,25 +168,38 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
                 filesize += len(chunk)
         
         # Step 1: Universal CSV Parser with Encoding Fallbacks
-        encodings = ['utf-8', 'latin1', 'iso-8859-1', 'utf-8-sig']
+        encodings = ['utf-8', 'latin1', 'iso-8859-1', 'utf-8-sig', 'cp1252', 'mac_roman']
+        delimiters = [',', ';', '\t', '|']
         df_full = None
         error_msg = ""
         
         for enc in encodings:
+            if df_full is not None: break
+            for sep in delimiters:
+                try:
+                    # Try reading with specific encoding and separator
+                    df_full = pd.read_csv(file_path, sep=sep, encoding=enc, on_bad_lines='skip', low_memory=False)
+                    # Basic check if it actually parsed columns correctly
+                    if len(df_full.columns) > 1 or (len(df_full.columns) == 1 and len(df_full) > 1):
+                        df_full.dropna(how="all", inplace=True)
+                        if not df_full.empty:
+                            print(f"[FairAI] Successfully parsed: Enc={enc}, Sep={sep}")
+                            break
+                    df_full = None # Reset if it looks like a single-column failure
+                except Exception as e:
+                    error_msg = str(e)
+                    continue
+        
+        # FINAL FALLBACK: Let pandas auto-detect if everything else failed
+        if df_full is None:
             try:
-                # Use pandas with auto-delimiter detection
-                df_full = pd.read_csv(file_path, sep=None, engine='python', encoding=enc, on_bad_lines='skip')
-                # Step 3: Remove empty rows
-                df_full.dropna(how="all", inplace=True)
-                if not df_full.empty:
-                    print(f"[FairAI] Successfully parsed with {enc}")
-                    break
+                df_full = pd.read_csv(file_path, sep=None, engine='python', on_bad_lines='skip')
+                print("[FairAI] Fallback to Auto-detect success")
             except Exception as e:
                 error_msg = str(e)
-                continue
-        
+
         if df_full is None or df_full.empty:
-             return {"success": False, "error": "Parser Error", "message": f"Could not decode CSV or file is empty. Details: {error_msg}"}
+             return {"success": False, "error": "Parser Error", "message": f"Incompatible CSV format. Humne kai techniques try ki par aapka file readable nahi hai. Please ensure it's a valid CSV. Error: {error_msg}"}
 
         # Step 4: Safe Header Detection
         df_full.columns = [str(c).strip() if str(c).strip() else f"column_{i}" for i, c in enumerate(df_full.columns)]
