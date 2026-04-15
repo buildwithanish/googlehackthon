@@ -14,7 +14,7 @@ COPY . .
 EXPOSE 8000
 
 # For FastAPI (REST API)
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
 
 # Alternate CMD for Streamlit:
 # CMD ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
