@@ -8,7 +8,7 @@ const api = axios.create({
   timeout: 120000, // 120 seconds timeout to allow Render to wake up
 });
 
-// Step 2: Automatic Retry Logic (3 Retries)
+// Step 2: Automatic Retry Logic (5 Retries for Cold Starts)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -17,19 +17,19 @@ api.interceptors.response.use(
     // Retry only on network errors or 503/504 Service Unavailable (Render sleeping)
     if (!config || !config.retryCount) config.retryCount = 0;
     
-    if (config.retryCount < 3 && (!response || response.status >= 500)) {
+    if (config.retryCount < 5 && (!response || response.status >= 500)) {
         config.retryCount += 1;
-        console.log(`[FairAI API] Retry attempt #${config.retryCount} for ${config.url}`);
+        console.log(`[FairAI API] Render is sleeping. Retry attempt #${config.retryCount} for ${config.url}`);
         
-        // Exponential backoff delay
+        // Progressive backoff delay (2s, 4s, 6s, 8s, 10s)
         const delay = config.retryCount * 2000;
         await new Promise(resolve => setTimeout(resolve, delay));
         
         return api(config);
     }
 
-    if (error.message === "Network Error") {
-      error.message = `Backend server is waking up or unreachable. Please wait 30-60 seconds and try again. URL: ${API_URL}`;
+    if (error.message === "Network Error" || (response && response.status >= 500)) {
+      error.message = `Neural Core is initializing. Please wait 30-60 seconds for the service to wake up. Base URL: ${API_URL}`;
     }
     return Promise.reject(error);
   }

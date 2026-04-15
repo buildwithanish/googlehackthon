@@ -72,9 +72,10 @@ export default function LandingPage() {
   const [feedbacks, setFeedbacks] = useState([
     { name: "Suresh Sharma", feedback: "The AI Bias Detection Engine is remarkably accurate and fast!", email: "suresh@example.com" }
   ]);
-  const [feedbackName, setFeedbackName] = useState("");
+   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
+  const [backendStatus, setBackendStatus] = useState<"idle" | "waking" | "ready" | "error">("idle");
 
   const [selectedFeature, setSelectedFeature] = useState<{t: string, d: string} | null>(null);
 
@@ -109,6 +110,28 @@ export default function LandingPage() {
       setFeedbackText("");
     }
   };
+
+  // ── Wake up Backend ──
+  useEffect(() => {
+    const wakeup = async () => {
+      setBackendStatus("waking");
+      try {
+        const { pingHealth } = await import("@/lib/api");
+        const isUp = await pingHealth();
+        if (isUp) setBackendStatus("ready");
+        else {
+          // Retry logic if first ping fails after a delay
+          setTimeout(async () => {
+            const retry = await pingHealth();
+            setBackendStatus(retry ? "ready" : "error");
+          }, 15000); // Wait 15s for Render to spin up
+        }
+      } catch (e) {
+        // Suppress initial errors during wakeup
+      }
+    };
+    wakeup();
+  }, []);
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -162,8 +185,13 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Built for Google Solution Challenge 2026
             </div>
-            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 backdrop-blur-md">
-              <Globe className="w-3.5 h-3.5" /> Supporting SDG 10: Reduced Inequalities
+            <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md transition-all ${
+              backendStatus === "ready" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : 
+              backendStatus === "waking" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : 
+              "bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
+            }`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${backendStatus === "ready" ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-amber-500 animate-pulse"}`} />
+              {backendStatus === "ready" ? "Neural Core Connected" : backendStatus === "waking" ? "Connecting to Core..." : "Core Link Failure - Refresh"}
             </div>
           </motion.div>
           
