@@ -66,6 +66,8 @@ const COLORS = ['#818cf8', '#f43f5e', '#10b981', '#f59e0b'];
 
 export default function LandingPage() {
   const [uploadedFile, setUploadedFile] = useState<UploadedFileInfo | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [feedbacks, setFeedbacks] = useState([
     { name: "Suresh Sharma", feedback: "The AI Bias Detection Engine is remarkably accurate and fast!", email: "suresh@example.com" }
@@ -73,6 +75,31 @@ export default function LandingPage() {
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
+
+  const [selectedFeature, setSelectedFeature] = useState<{t: string, d: string} | null>(null);
+
+  const featuresList = [
+    { t: "Smart Dataset Profiling", d: "FairAI analyze karta hai aapka dataset columns aur schema automatically, aur data quality score provide karta hai taaki aapko pata chale ki data audit ke liye ready hai ya nahi.", i: <Database className="w-6 h-6" /> },
+    { t: "AI Bias Detection Engine", d: "Ye engine sophisticated statistical algorithms use karta hai jaise Disparate Impact aur Demographic Parity, hidden bias patterns ko pehchanne aur highlight karne ke liye.", i: <Search className="w-6 h-6" /> },
+    { t: "Explainable AI (XAI)", d: "Decision causality visualization ensure karta hai ki AI ke faisle transparency ke sath samajh mein aayein, LIME aur SHAP indicators ke madhyam se.", i: <Brain className="w-6 h-6" /> },
+    { t: "Fairness Metrics Analyzer", d: "Humaara analyzer global standards jaise Demographic Parity aur Equal Opportunity ka audit karta hai, aapke model ki fairness score calculate karne ke liye.", i: <Activity className="w-6 h-6" /> },
+    { t: "Bias Risk Score", d: "Saare detect kiye gaye biases ko summarize karke ek single Risk Score dia jata hai, jo governance compliance ke liye crucial hai.", i: <ShieldAlert className="w-6 h-6" /> },
+    { t: "Automated Bias Mitigation", d: "Detect karne ke baad, FairAI suggest karta hai mitigation steps, jaise re-weighting techniques, taaki outcomes fair ho sakein.", i: <Zap className="w-6 h-6" /> },
+    { t: "Dataset Bias Heatmap", d: "Heatmap visualization se aap dekh sakte hain ki bias dataset ke kaunse demographic slices mein sabse zyada condensed hai.", i: <LayoutGrid className="w-6 h-6" /> },
+    { t: "Intersectional Bias Detection", d: "Sirf single feature nahi, balki multiple combinations (jaise Race + Gender) ke nested biases ko bhi handle karta hai humaara system.", i: <Users className="w-6 h-6" /> },
+    { t: "PowerBI Style Dashboard", d: "Professional level graphics aur interactive forensic visualizations jo enterprise decision makers ke liye design kiye gaye hain.", i: <BarChart3 className="w-6 h-6" /> },
+    { t: "Real Time Data Visualization", d: "Data distributions aur active monitoring ke sath live charting dashboard jo instantly update hota hai.", i: <TrendingUp className="w-6 h-6" /> },
+    { t: "Feature Importance Analysis", d: "Ye feature highlight karta hai ki kaunse columns (variables) AI ke outcomes ko sabse zyada bias kar rahe hain.", i: <Activity className="w-6 h-6" /> },
+    { t: "Correlation Matrix", d: "Multi-variable structural relationships ko visualize karke hidden dependencies detect karein jo fairness ko impact kar sakte hain.", i: <Layers className="w-6 h-6" /> },
+    { t: "Synthetic Dataset Generator", d: "Agar training data mein bias hai, toh ye feature bias-free synthetic records generate karne mein madad karta hai.", i: <Cpu className="w-6 h-6" /> },
+    { t: "Data Anonymization", d: "Sensitive features ko high-utility masking ke sath protect karta hai, taaki auditing process privacy-compliant rahe.", i: <ShieldCheck className="w-6 h-6" /> },
+    { t: "Smart Data Cleaning", d: "Automated outlier detection aur missing value imputation jo datasets ko auditing aur training ke liye optimize karta hai.", i: <RefreshCw className="w-6 h-6" /> },
+    { t: "AI Governance Dashboard", d: "Regulatory monitoring aur standard compliance records maintain karne ke liye ek central command center.", i: <Globe className="w-6 h-6" /> },
+    { t: "Responsible AI Report", d: "Ek click mein generate karein professional PDF reports jo stakeholders ke audit trails ke liye ready hote hain.", i: <FileText className="w-6 h-6" /> },
+    { t: "Live Bias Simulator", d: "Interactive what-if scenarios chalaayein aur dekhein ki parameters badalne se model ki fairness pe kya asar padta hai.", i: <Zap className="w-6 h-6" /> },
+    { t: "Demo Dataset Mode", d: "Platform ko test karne ke liye hume pre-loaded biased scenarios provide karte hain, bina apna data upload kiye.", i: <Database className="w-6 h-6" /> },
+    { t: "One Click Bias Scan", d: "Configuration ki koi chinta nahi, bas file drop karein aur pura audit analysis instantly generate karein.", i: <CheckCircle className="w-6 h-6" /> }
+  ];
 
   const handleFeedbackSubmit = () => {
     if (feedbackName && feedbackText) {
@@ -83,15 +110,35 @@ export default function LandingPage() {
     }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => {
+  const onDrop = async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+    
+    setIsUploading(true);
+    setUploadError(null);
+    
+    try {
+      const file = acceptedFiles[0];
+      // Note: we'll call import from lib/api but since I'm in a client component 
+      // I should ideally use the Dynamic import or ensure api is loaded.
+      // For now let's assume uploadDataset is available if imported.
+      const { uploadDataset } = await import("@/lib/api");
+      const result = await uploadDataset(file);
+      
       setUploadedFile({
-        name: acceptedFiles[0].name,
-        rows: "12,450",
-        cols: "24",
-        score: "85/100"
+        name: file.name,
+        rows: result.rows?.toLocaleString() || "N/A",
+        cols: result.cols?.toString() || "N/A",
+        score: result.quality_score ? `${result.quality_score}/100` : "Audit Ready"
       });
-    },
+    } catch (err: any) {
+      setUploadError(err.message || "Upload failed. Backend might be sleeping.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
     accept: { 'text/csv': ['.csv'] },
     multiple: false
   });
@@ -246,8 +293,17 @@ export default function LandingPage() {
                     <div className="w-20 h-20 bg-indigo-500/10 rounded-[30px] flex items-center justify-center mb-10 text-indigo-400 group-hover:scale-110 transition-transform duration-500">
                       <Upload className="w-10 h-10" />
                     </div>
-                    <h3 className="text-2xl font-black text-white mb-3 uppercase italic tracking-widest">Drop your CSV here</h3>
+                    <h3 className="text-2xl font-black text-white mb-3 uppercase italic tracking-widest">
+                      {isUploading ? "Uploading..." : "Drop your CSV here"}
+                    </h3>
                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-10">UTF-8 • ISO-8859 • MacRoman</p>
+                    
+                    {uploadError && (
+                      <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 text-[10px] font-bold uppercase tracking-widest">
+                        {uploadError}
+                      </div>
+                    )}
+
                     <button className="px-10 py-4 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
                       Browse Files
                     </button>
