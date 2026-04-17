@@ -292,12 +292,16 @@ export default function LandingPage() {
           ))}
         </motion.div>
 
-        {/* Trust indicators / Badges */}
+      </section>
+
+      {/* ── PROBLEM / STORYTELLING SECTION ── */}
+      <section className="py-40 px-6 relative overflow-hidden bg-[#070B1D]/50 border-y border-white/5">
+        {/* Trust Indicators (Moved here to avoid overlap) */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto pt-24 relative z-10"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-32 relative z-10"
         >
           {[
             { icon: <ShieldCheck />, label: "25+ AI Bias Tools" },
@@ -305,19 +309,17 @@ export default function LandingPage() {
             { icon: <Zap />, label: "Google Cloud Powered" },
             { icon: <FileText />, label: "PDF / Word Reports" }
           ].map((badge, i) => (
-            <div key={i} className="flex flex-col items-center gap-3 p-6 bg-[#0B1023]/40 border border-white/5 rounded-3xl backdrop-blur-sm group hover:border-indigo-500/30 transition-all">
+            <div key={i} className="flex flex-col items-center gap-3 p-6 bg-[#0B1023]/40 border border-white/5 rounded-3xl backdrop-blur-sm group hover:border-indigo-500/30 transition-all font-outfit uppercase">
               <span className="text-indigo-500 group-hover:scale-110 transition-transform">{badge.icon}</span>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{badge.label}</span>
+              <span className="text-[10px] font-black tracking-[0.2em] text-slate-500">{badge.label}</span>
             </div>
           ))}
         </motion.div>
-      </section>
 
-      {/* ── PROBLEM / STORYTELLING SECTION ── */}
-      <section className="py-40 px-6 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-8"
