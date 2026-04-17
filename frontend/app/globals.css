@@ -107,8 +107,49 @@ html, body {
   text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
 }
 
-/* Gauge needle */
-@keyframes spin-gauge {
-  from { transform: rotate(-90deg); }
-  to { transform: rotate(var(--gauge-angle, 0deg)); }
+/* ... existing styles ... */
+
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.mesh-gradient {
+  background: radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+}
+
+.text-glow {
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.border-glow {
+  position: relative;
+}
+
+.border-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.border-glow:hover::after {
+  opacity: 1;
 }

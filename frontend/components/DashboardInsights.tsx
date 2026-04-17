@@ -187,10 +187,16 @@ export default function DashboardInsights() {
                 </div>
             </div>
 
-            <div className="flex-grow max-w-2xl w-full relative group">
+            {/* Theme Alignment Highlight */}
+            <div className="hidden lg:flex items-center gap-3 px-6 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
+               <ShieldCheck className="w-4 h-4 text-emerald-400" />
+               <span className="text-[10px] font-black text-white uppercase tracking-widest italic">Theme: Unbiased AI Decision</span>
+            </div>
+
+            <div className="flex-grow max-w-lg w-full relative group">
                 <input 
                     type="text" 
-                    placeholder="Ask Forensic Engine: 'Visualize gender skew' or 'Scan for missing clusters'..."
+                    placeholder="Ask Forensic Engine: 'Visualize gender skew'..."
                     className="w-full bg-white/[0.04] border border-white/5 rounded-[24px] px-8 py-5 text-sm font-bold focus:ring-4 focus:ring-indigo-500/20 outline-none transition-all pr-16 placeholder:text-slate-700 italic text-indigo-100"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -205,19 +211,17 @@ export default function DashboardInsights() {
             </div>
 
             <div className="flex items-center gap-4">
-                <button onClick={() => runAnalysis(false)} className="px-6 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all border border-white/5 flex items-center gap-3 italic">
-                    <RefreshCw className="w-4 h-4" /> RE-SCAN
+                <button onClick={() => runAnalysis(false)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl text-slate-500 hover:text-white transition-all border border-white/5 italic">
+                    <RefreshCw className="w-4 h-4" />
                 </button>
                 <div className="h-8 w-[1px] bg-white/10 mx-2" />
-                <div className="flex gap-3">
-                   <button 
-                     disabled={exporting}
-                     onClick={() => handleExport('pdf')}
-                     className="px-8 py-4 bg-white text-black hover:scale-105 active:scale-95 disabled:opacity-50 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-xl italic flex items-center gap-3"
-                   >
-                       <FileText className="w-4 h-4" /> PDF REPORT
-                   </button>
-                </div>
+                <button 
+                  disabled={exporting}
+                  onClick={() => handleExport('pdf')}
+                  className="px-8 py-4 bg-white text-black hover:scale-105 active:scale-95 disabled:opacity-50 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-xl italic flex items-center gap-3"
+                >
+                    <FileText className="w-4 h-4" /> PDF REPORT
+                </button>
             </div>
         </div>
 

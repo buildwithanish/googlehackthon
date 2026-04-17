@@ -171,6 +171,19 @@ export default function LandingPage() {
       
       {/* ── HIGH-END HERO SECTION ── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden pt-20">
+        {/* Abstract 3D Background */}
+        <div className="absolute inset-0 z-0">
+          <motion.img 
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 0.3, scale: 1 }}
+            transition={{ duration: 3, ease: "easeOut" }}
+            src="/ai_fairness_abstract_1776416000483.png" 
+            className="w-full h-full object-cover"
+            alt="AI Fairness Abstract"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050816] via-transparent to-[#050816]" />
+        </div>
+
         {/* Subtle Ambient Lighting */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none" />
         <div className="absolute bottom-[0%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
@@ -182,8 +195,8 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col md:flex-row items-center justify-center gap-4"
           >
-            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Built for Google Solution Challenge 2026
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 backdrop-blur-md border-glow">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Google Solution Challenge 2026 Submission
             </div>
             <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md transition-all ${
               backendStatus === "ready" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : 
@@ -191,61 +204,165 @@ export default function LandingPage() {
               "bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full ${backendStatus === "ready" ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-amber-500 animate-pulse"}`} />
-              {backendStatus === "ready" ? "Neural Core Connected" : backendStatus === "waking" ? "Connecting to Core..." : "Core Link Failure - Refresh"}
+              {backendStatus === "ready" ? "Quantum Core Active" : backendStatus === "waking" ? "Initializing Pipeline..." : "Core Link Delay"}
             </div>
           </motion.div>
           
           <div className="space-y-4">
             <motion.h1 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ 
-                textShadow: "0 0 50px rgba(99, 102, 241, 0.8)",
-                scale: 1.05,
-                transition: { duration: 0.2 }
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-7xl md:text-[11rem] font-black tracking-tighter leading-none text-white select-none cursor-default bg-clip-text hover:text-transparent hover:bg-gradient-to-br hover:from-white hover:via-indigo-300 hover:to-indigo-500 transition-all duration-500"
+              className="text-8xl md:text-[13rem] font-black tracking-tighter leading-[0.8] text-white select-none cursor-default bg-clip-text hover:text-transparent hover:bg-gradient-to-br hover:from-white hover:via-indigo-300 hover:to-indigo-500 transition-all duration-700"
             >
               FairAI
             </motion.h1>
-            <motion.h2
+            <motion.div
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
-               transition={{ delay: 0.3, duration: 1 }}
-               className="text-3xl md:text-5xl font-black italic tracking-tight text-slate-400 uppercase"
+               transition={{ delay: 0.5, duration: 1 }}
+               className="flex items-center justify-center gap-4"
             >
-               Bias <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Detection Platform</span>
-            </motion.h2>
+              <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-indigo-500" />
+              <h2 className="text-2xl md:text-4xl font-black italic tracking-tight text-slate-400 uppercase">
+                Unbiased <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">Decision Intelligence</span>
+              </h2>
+              <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-indigo-500" />
+            </motion.div>
           </div>
           
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.7 }}
             className="text-xl md:text-2xl text-slate-500 max-w-4xl mx-auto leading-relaxed font-medium italic"
           >
-            Addressing the <span className="text-white">Unbiased AI Decision</span> theme by building open innovation protocols that audit, explain, and mitigate algorithmic discrimination in real-world infrastructure.
+            Pioneering <span className="text-white">Algorithmic Governance</span> by building deep-audit protocols that identify, explain, and mitigate systemic bias in automated decision systems.
           </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+            transition={{ delay: 0.9 }}
             className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center items-center pt-8"
           >
             <Link href="/upload" className="group relative px-10 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:scale-110 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] overflow-hidden">
                <span className="relative z-10 flex items-center gap-3">
-                 <Database className="w-5 h-5" /> Upload Dataset
+                 <Upload className="w-5 h-5" /> Audit Dataset
                </span>
             </Link>
-            <Link href="/simulator" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl">
-               <Zap className="w-5 h-5 text-indigo-400" /> Try Live Demo
-            </Link>
-            <Link href="/metrics" className="px-10 py-5 bg-indigo-600 border border-indigo-500 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-indigo-500 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl shadow-xl">
-               <Activity className="w-5 h-5 text-white" /> Run Bias Analysis
+            <Link href="/simulator" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl group">
+               <Zap className="w-5 h-5 text-indigo-400 group-hover:animate-bounce" /> Live Bias Simulator
             </Link>
           </motion.div>
+        </div>
+
+        {/* Floating Metrics Badge */}
+        <motion.div 
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-20 right-10 hidden xl:block p-8 glass-morphism rounded-[40px] border-glow animate-float"
+        >
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400">
+              <Activity className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Global Parity Index</div>
+              <div className="text-3xl font-black italic text-white">0.92<span className="text-emerald-500 ml-2 text-sm">↑</span></div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── PROBLEM / STORYTELLING SECTION ── */}
+      <section className="py-40 px-6 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <div className="p-3 w-fit bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-500 mb-6">
+               <ShieldAlert className="w-8 h-8" />
+            </div>
+            <h2 className="text-6xl md:text-8xl font-black text-white italic uppercase tracking-tighter leading-none">
+              AI shouldn't be a <span className="text-slate-600">Black Box.</span>
+            </h2>
+            <p className="text-xl text-slate-400 font-bold italic leading-relaxed uppercase tracking-tight">
+              Hidden biases in training data lead to discriminatory outcomes in loan approvals, recruitment, and healthcare. FairAI brings transparency to the "Unbiased AI Decision" theme.
+            </p>
+            <div className="grid grid-cols-2 gap-8 pt-10 border-t border-white/5">
+               <div className="space-y-2">
+                 <div className="text-4xl font-black text-white italic tracking-tighter">72%</div>
+                 <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Decision opacity in modern LLMs</div>
+               </div>
+               <div className="space-y-2">
+                 <div className="text-4xl font-black text-rose-500 italic tracking-tighter">15%</div>
+                 <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Bias drift observed per quarter</div>
+               </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="absolute -inset-10 bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="p-1 glass-morphism rounded-[60px] relative z-10">
+               <div className="p-12 md:p-16 space-y-12">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400">Bias Mitigation Flow</h3>
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 rounded-full bg-rose-500" />
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-10">
+                    <div className="p-8 rounded-[30px] bg-rose-500/5 border border-rose-500/20 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black uppercase text-rose-500 tracking-widest">Inbound Unfairness</span>
+                        <span className="text-xl font-black italic text-white tracking-widest">DR=0.62</span>
+                      </div>
+                      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          animate={{ width: ["0%", "85%", "85%"] }} 
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="h-full bg-rose-500" 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                       <div className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center animate-pulse shadow-2xl">
+                          <RefreshCw className="w-6 h-6" />
+                       </div>
+                    </div>
+
+                    <div className="p-8 rounded-[30px] bg-emerald-500/5 border border-emerald-500/20 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black uppercase text-emerald-500 tracking-widest">Optimized Parity</span>
+                        <span className="text-xl font-black italic text-white tracking-widest">DR=0.98</span>
+                      </div>
+                      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                           animate={{ width: ["0%", "98%", "98%"] }} 
+                           transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                           className="h-full bg-emerald-500 shadow-[0_0_15px_#10b981]" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+               </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
           {/* Trust indicators / Badges */}
           <motion.div 
@@ -646,8 +763,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── PREMIUM FEATURES SECTION ── */}
-      <section className="py-40 px-6 bg-[#050816]">
-        <div className="max-w-7xl mx-auto space-y-24">
+      <section className="py-40 px-6 bg-[#050816] relative overflow-hidden">
+        {/* Animated Mesh Background */}
+        <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-indigo-600/5 rounded-full blur-[160px] animate-pulse-glow" />
+        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-purple-600/5 rounded-full blur-[140px] animate-pulse-glow delay-1000" />
+
+        <div className="max-w-7xl mx-auto space-y-24 relative z-10">
           <div className="text-center space-y-6">
             <h2 className="text-6xl md:text-[9rem] font-black text-white italic tracking-tighter uppercase leading-[0.8] select-none opacity-90">
                Responsible <br /> <span className="text-indigo-500">AI Ecosystem</span>
@@ -659,14 +780,18 @@ export default function LandingPage() {
             {featuresList.map((f, i) => (
               <motion.div 
                 key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: (i % 4) * 0.1 }}
                 whileHover={{ y: -15, scale: 1.02 }}
-                className="group p-10 rounded-[50px] bg-[#0B1023] border border-white/5 hover:border-indigo-500/40 transition-all shadow-2xl shadow-black/60 flex flex-col justify-between overflow-hidden relative"
+                className="group p-10 rounded-[50px] glass-morphism border-glow transition-all shadow-2xl flex flex-col justify-between overflow-hidden relative"
               >
                 {/* Background Glow */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/10 rounded-full blur-[80px] group-hover:bg-indigo-600/20 transition-all" />
                 
                 <div>
-                  <div className="w-16 h-16 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
+                  <div className="w-16 h-16 bg-white/[0.03] border border-white/10 rounded-3xl flex items-center justify-center text-indigo-400 mb-8 group-hover:bg-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-inner">
                     {f.i}
                   </div>
                   <h3 className="text-xl font-black uppercase text-white italic tracking-tighter leading-none mb-4 group-hover:text-indigo-300 transition-colors line-clamp-1">{f.t}</h3>
@@ -675,20 +800,20 @@ export default function LandingPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 mt-auto">
+                <div className="grid grid-cols-1 gap-3 mt-auto relative z-10">
                    <div className="flex gap-2">
                      <Link href="/upload" className="flex-1 px-4 py-3 bg-white text-black text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-500 hover:text-white transition-all text-center flex items-center justify-center gap-2">
-                       Live <ArrowRight className="w-3 h-3" />
+                       Analyze <ArrowRight className="w-3 h-3" />
                      </Link>
                      <Link href="/simulator" className="flex-1 px-4 py-3 bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/20 transition-all text-center flex items-center justify-center gap-2">
-                       Demo <ChevronRight className="w-3 h-3" />
+                       Simulator <ChevronRight className="w-3 h-3" />
                      </Link>
                    </div>
                    <button 
                     onClick={() => setSelectedFeature({t: f.t, d: f.d})}
                     className="w-full px-4 py-3 border border-white/5 bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl hover:border-indigo-500/30 hover:text-indigo-400 transition-all flex items-center justify-center gap-2 italic"
                    >
-                     <Info className="w-3 h-3" /> Read More
+                     <Info className="w-3 h-3" /> Documentation
                    </button>
                 </div>
               </motion.div>
