@@ -118,6 +118,35 @@ export default function UploadPage() {
               Autonomous Bias Detection • High-Fidelity Matrix Analysis. <br />
               <span className="text-slate-700">Built for Google Solution Challenge 2026</span>
             </p>
+
+            {/* DEMO DATA SHORTCUT */}
+            <div className="flex justify-center gap-6 pt-6">
+               <button 
+                 onClick={async () => {
+                   setUploading(true);
+                   setLoadingMessage("Fetching Demo Dataset...");
+                   try {
+                     const response = await fetch('/demo_datasets/loan_audit_demo.csv');
+                     const blob = await response.blob();
+                     const demoFile = new File([blob], "loan_audit_demo.csv", { type: "text/csv" });
+                     handleUpload(demoFile);
+                   } catch (e) {
+                     setError("Demo load failed. Please upload manually.");
+                     setUploading(false);
+                   }
+                 }}
+                 className="px-8 py-3 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all italic flex items-center gap-3 backdrop-blur-xl group"
+               >
+                 <Sparkles className="w-4 h-4 group-hover:animate-spin" /> Try Demo Dataset
+               </button>
+               <a 
+                 href="/demo_datasets/loan_audit_demo.csv" 
+                 download 
+                 className="px-8 py-3 bg-white/5 border border-white/10 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-white/30 hover:text-white transition-all italic flex items-center gap-3"
+               >
+                 <Database className="w-4 h-4" /> Download Sample CSV
+               </a>
+            </div>
           </div>
 
           <div className="max-w-4xl mx-auto w-full">

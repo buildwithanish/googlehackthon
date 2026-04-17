@@ -283,6 +283,21 @@ export default function LandingPage() {
                <Zap className="w-5 h-5 text-indigo-400 group-hover:animate-bounce" /> Live Bias Simulator
             </Link>
           </motion.div>
+
+          {/* Quick Demo Link */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1 }}
+            className="pt-4"
+          >
+            <a 
+              href="/demo_datasets/loan_audit_demo.csv" 
+              className="text-[10px] font-black text-slate-600 uppercase tracking-widest hover:text-indigo-400 transition-colors flex items-center justify-center gap-2 group italic"
+            >
+              <Database className="w-3 h-3" /> Don't have data? <span className="underline decoration-indigo-500/30 group-hover:decoration-indigo-500 underline-offset-4">Download our Financial Bias Demo CSV</span>
+            </a>
+          </motion.div>
         </div>
 
         {/* ── LIVE INTELLIGENCE FEED (MOVED INTO FLOW) ── */}
