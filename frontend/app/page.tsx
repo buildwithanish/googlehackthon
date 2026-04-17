@@ -274,6 +274,26 @@ export default function LandingPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* Trust indicators / Badges */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto pt-24 relative z-10"
+        >
+          {[
+            { icon: <ShieldCheck />, label: "25+ AI Bias Tools" },
+            { icon: <Globe />, label: "Cloud Native" },
+            { icon: <Zap />, label: "Google Cloud Powered" },
+            { icon: <FileText />, label: "PDF / Word Reports" }
+          ].map((badge, i) => (
+            <div key={i} className="flex flex-col items-center gap-3 p-6 bg-[#0B1023]/40 border border-white/5 rounded-3xl backdrop-blur-sm group hover:border-indigo-500/30 transition-all">
+              <span className="text-indigo-500 group-hover:scale-110 transition-transform">{badge.icon}</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{badge.label}</span>
+            </div>
+          ))}
+        </motion.div>
       </section>
 
       {/* ── PROBLEM / STORYTELLING SECTION ── */}
@@ -364,27 +384,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-          {/* Trust indicators / Badges */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto pt-24"
-          >
-            {[
-              { icon: <ShieldCheck />, label: "25+ AI Bias Tools" },
-              { icon: <Globe />, label: "Cloud Native" },
-              { icon: <Zap />, label: "Google Cloud Powered" },
-              { icon: <FileText />, label: "PDF / Word Reports" }
-            ].map((badge, i) => (
-              <div key={i} className="flex flex-col items-center gap-3 p-6 bg-[#0B1023]/40 border border-white/5 rounded-3xl backdrop-blur-sm group hover:border-indigo-500/30 transition-all">
-                <span className="text-indigo-500 group-hover:scale-110 transition-transform">{badge.icon}</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{badge.label}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
       {/* ── MISSION / HOW IT WORKS SECTION ── */}
       <section className="py-24 px-6 bg-[#0B1023]/20 relative">
@@ -471,19 +470,19 @@ export default function LandingPage() {
                          <div className="space-y-3">
                             <div className="flex justify-between items-center text-[11px] font-bold mb-2">
                                <span className="text-slate-500 uppercase tracking-tight italic">Dataset</span>
-                               <span className="text-white italic truncate max-w-[120px]">{uploadedFile.name}</span>
+                               <span className="text-white italic truncate max-w-[120px]">{uploadedFile?.name}</span>
                             </div>
                             <div className="flex justify-between items-center text-[11px] font-bold">
                                <span className="text-slate-500 uppercase tracking-tight italic">Records</span>
-                               <span className="text-white italic">{uploadedFile.rows}</span>
+                               <span className="text-white italic">{uploadedFile?.rows}</span>
                             </div>
                             <div className="flex justify-between items-center text-[11px] font-bold">
                                <span className="text-slate-500 uppercase tracking-tight italic">Columns</span>
-                               <span className="text-white italic">{uploadedFile.cols}</span>
+                               <span className="text-white italic">{uploadedFile?.cols}</span>
                             </div>
                             <div className="flex justify-between items-center text-[11px] font-bold mt-2 pt-2 border-t border-white/10">
                                <span className="text-slate-500 uppercase tracking-tight italic">Score</span>
-                               <span className="text-emerald-400 font-black italic">{uploadedFile.score}</span>
+                               <span className="text-emerald-400 font-black italic">{uploadedFile?.score}</span>
                             </div>
                          </div>
                       </motion.div>
@@ -825,35 +824,29 @@ export default function LandingPage() {
       {/* ── FEATURE MODAL ── */}
       <AnimatePresence>
         {selectedFeature && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-             <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               onClick={() => setSelectedFeature(null)}
-               className="absolute inset-0 bg-black/80 backdrop-blur-md"
-             />
-             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-lg w-full bg-[#0B1023] border border-white/10 p-12 rounded-[50px] shadow-4xl text-left space-y-8"
-             >
-                <div className="space-y-4">
-                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter">{selectedFeature.t}</h3>
-                  <div className="h-1 w-20 bg-indigo-500 rounded-full" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 50 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <div className="max-w-xl w-full p-12 glass-morphism rounded-[60px] border-glow animate-float space-y-8" onClick={e => e.stopPropagation()}>
+                <div className="w-20 h-20 bg-indigo-500/10 rounded-3xl flex items-center justify-center text-indigo-400 mx-auto">
+                    <Info className="w-10 h-10" />
                 </div>
-                <p className="text-lg text-slate-300 font-bold italic leading-relaxed border-l-4 border-white/5 pl-8">
-                  {selectedFeature.d}
-                </p>
+                <div className="text-center space-y-4">
+                    <h3 className="text-3xl font-black uppercase text-white italic tracking-tighter">{selectedFeature.t}</h3>
+                    <p className="text-slate-400 font-bold leading-relaxed italic uppercase tracking-tight">{selectedFeature.d}</p>
+                </div>
                 <button 
-                  onClick={() => setSelectedFeature(null)}
-                  className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl transition-all"
+                    onClick={() => setSelectedFeature(null)}
+                    className="w-full py-5 bg-white text-black rounded-[24px] font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl"
                 >
-                  Close Insight
+                    Close Core Intel
                 </button>
-             </motion.div>
-          </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
