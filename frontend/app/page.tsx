@@ -9,6 +9,7 @@ import {
   Upload, FileQuestion, TrendingUp, PieChart, Info, Mail,
   ChevronRight, RefreshCw, Shuffle
 } from "lucide-react";
+import DashboardInsights from "@/components/DashboardInsights";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart as RePieChart, Pie, Cell, LineChart, Line, AreaChart, Area
@@ -78,6 +79,7 @@ export default function LandingPage() {
   const [backendStatus, setBackendStatus] = useState<"idle" | "waking" | "ready" | "error">("idle");
 
   const [selectedFeature, setSelectedFeature] = useState<{t: string, d: string} | null>(null);
+  const [showReport, setShowReport] = useState(false);
 
   const featuresList = [
     { t: "Smart Dataset Profiling", d: "FairAI analyze karta hai aapka dataset columns aur schema automatically, aur data quality score provide karta hai taaki aapko pata chale ki data audit ke liye ready hai ya nahi.", i: <Database className="w-6 h-6" /> },
@@ -1046,8 +1048,24 @@ export default function LandingPage() {
                 Launch Enterprise Platform <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
               </Link>
            </div>
-        </div>
-      </section>
+      {/* ── INSTANT ANALYTICS OVERLAY ── */}
+      <AnimatePresence>
+        {showReport && (
+          <motion.section 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-7xl mx-auto px-6 py-32"
+          >
+             <div className="text-center mb-16 space-y-4">
+                <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-white">Live Intelligence Canvas</h2>
+                <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] mt-2 italic flex items-center justify-center gap-4">
+                    Forensic Scrutiny Active • Instant Data Mapping
+                </p>
+             </div>
+             <DashboardInsights />
+          </motion.section>
+        )}
+      </AnimatePresence>
 
     </div>
   );
