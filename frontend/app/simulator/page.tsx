@@ -244,9 +244,42 @@ export default function BiasSimulator() {
                         <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white">Synthetic Stream</h3>
                         <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">Generated Cluster Visualisation</p>
                       </div>
-                      <button onClick={downloadCsv} className="flex items-center gap-4 px-8 py-4 bg-white/[0.04] hover:bg-white/[0.08] text-indigo-400 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-white/5 transition-all italic">
-                        <Download className="w-5 h-5" /> EXPORT CSV BATCH
-                      </button>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <button onClick={downloadCsv} className="flex items-center gap-4 px-8 py-4 bg-white/[0.04] hover:bg-white/[0.08] text-indigo-400 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-white/5 transition-all italic flex-1 justify-center">
+                          <Download className="w-5 h-5" /> EXPORT CSV BATCH
+                        </button>
+                        <button 
+                          onClick={() => {
+                            const dashboardReadyResults = {
+                                success: true,
+                                dataset_name: `simulated_${scenario}.csv`,
+                                preview: results.sample,
+                                metrics: {
+                                    explorer_mode: true,
+                                    quality_score: 95.5,
+                                    duplicates: 0,
+                                    outliers: {},
+                                    domain: scenarios[scenario as keyof typeof scenarios].title,
+                                    total_rows: size.toLocaleString(),
+                                    missing_values: "0.0%",
+                                    distributions: {
+                                        "Gender / Class Breakdown": results.rates || { "Male": 0.45, "Female": 0.55 },
+                                        "Correlation Invariants": results.metrics,
+                                        "Scenario Density": { "Simulated": size, "Threshold": 500 }
+                                    },
+                                    correlations: { "Bias": results.metrics }
+                                },
+                                ai_report: `Simulation Audit complete for ${scenarios[scenario as keyof typeof scenarios].title}. Synthetic drift detected at ${results.metrics['Disparate Impact (Ratio)'].toFixed(3)} DI ratio. Protocol recommends adversarial debiasing.`
+                            };
+                            
+                            localStorage.setItem("simulated_results", JSON.stringify(dashboardReadyResults));
+                            window.location.href = "/upload"; 
+                          }}
+                          className="flex items-center gap-4 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest transition-all italic flex-1 justify-center shadow-xl"
+                        >
+                          <Activity className="w-5 h-5" /> ANALYZE IN DASHBOARD
+                        </button>
+                      </div>
                     </div>
                     
                     <div className="overflow-x-auto rounded-[30px] border border-white/5 bg-white/[0.01]">

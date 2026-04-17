@@ -151,7 +151,14 @@ export default function DashboardInsights() {
 
   useEffect(() => {
     const info = localStorage.getItem("dataset_info");
-    runAnalysis(!info);
+    const simResults = localStorage.getItem("simulated_results");
+    
+    if (simResults) {
+        setResults(JSON.parse(simResults));
+        localStorage.removeItem("simulated_results"); // Clear it so it doesn't persist forever
+    } else {
+        runAnalysis(!info);
+    }
   }, []);
 
   if (loading) return (

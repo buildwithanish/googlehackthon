@@ -376,11 +376,15 @@ async def analyze_dataset_generic(
     file: UploadFile = File(...),
     sensitive_feature: str = Form(...),
     target_variable: str = Form(...),
-    prediction_variable: str = Form(None),
     gemini_api_key: str = Form(None)
 ):
-    # This is an alias for analyze_bias_endpoint to maintain backward compatibility
-    return await analyze_bias_endpoint(file, sensitive_feature, target_variable, gemini_api_key)
+    # CORRECT ALIAS mapping: map arguments to their respective fields in analyze_bias_endpoint
+    return await analyze_bias_endpoint(
+        file=file, 
+        target_col=target_variable, 
+        sensitive_col=sensitive_feature, 
+        gemini_api_key=gemini_api_key
+    )
 
 @app.post("/simulate")
 async def simulate_bias(
