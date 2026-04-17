@@ -241,6 +241,26 @@ export default function LandingPage() {
           >
             Pioneering <span className="text-white">Algorithmic Governance</span> by building deep-audit protocols that identify, explain, and mitigate systemic bias in automated decision systems.
           </motion.p>
+
+          {/* ── LIVE AUDITING CONSOLE (Added "beech mein") ── */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8 }}
+            className="max-w-xl mx-auto p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] italic text-indigo-300 backdrop-blur-3xl border-glow"
+          >
+             <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span>Protocol: Fair-Safe v1.02</span>
+             </div>
+             <div className="h-4 w-[1px] bg-white/10" />
+             <div className="flex items-center gap-3">
+                <Shuffle className="w-3.5 h-3.5" />
+                <span>Scanning Metadata Flows</span>
+             </div>
+             <div className="h-4 w-[1px] bg-white/10" />
+             <div className="text-emerald-400">Sync: Dec 2026</div>
+          </motion.div>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -265,12 +285,12 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* ── LIVE INTELLIGENCE FEED (BOTTOM ROW) ── */}
+        {/* ── LIVE INTELLIGENCE FEED (MOVED INTO FLOW) ── */}
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 1 }}
-          className="absolute bottom-10 left-0 w-full px-6 flex flex-wrap justify-center gap-6 z-10"
+          className="relative mt-20 mb-10 w-full px-6 flex flex-wrap justify-center gap-6 z-10"
         >
           {[
             { icon: <Activity className="w-6 h-6" />, label: "Global Parity Index", val: "0.92", trend: "↑", color: "text-emerald-500" },
