@@ -262,7 +262,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2 }}
-          className="absolute bottom-20 right-10 hidden xl:block p-8 glass-morphism rounded-[40px] border-glow animate-float"
+          className="absolute bottom-20 right-[5%] hidden 2xl:block p-8 glass-morphism rounded-[40px] border-glow animate-float z-50"
         >
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400">
