@@ -2,6 +2,15 @@
   "css.lint.unknownAtRules": "ignore",
   "tailwindCSS.includeLanguages": {
     "plaintext": "css",
-    "html": "css"
+    "html": "css",
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "tailwindCSS.emmetCompletions": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
   }
 }
