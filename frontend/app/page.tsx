@@ -1048,6 +1048,9 @@ export default function LandingPage() {
                 Launch Enterprise Platform <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
               </Link>
            </div>
+        </div>
+      </section>
+
       {/* ── INSTANT ANALYTICS OVERLAY ── */}
       <AnimatePresence>
         {showReport && (
