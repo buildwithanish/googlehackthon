@@ -292,10 +292,10 @@ export default function LandingPage() {
             className="pt-4"
           >
             <a 
-              href="/demo_datasets/loan_audit_demo.csv" 
+              href={`/demo_datasets/demo_audit_${Math.floor(Math.random() * 50) + 1}.csv`}
               className="text-[10px] font-black text-slate-600 uppercase tracking-widest hover:text-indigo-400 transition-colors flex items-center justify-center gap-2 group italic"
             >
-              <Database className="w-3 h-3" /> Don't have data? <span className="underline decoration-indigo-500/30 group-hover:decoration-indigo-500 underline-offset-4">Download our Financial Bias Demo CSV</span>
+              <Database className="w-3 h-3" /> Don't have data? <span className="underline decoration-indigo-500/30 group-hover:decoration-indigo-500 underline-offset-4">Download a Random Bias Demo CSV</span>
             </a>
           </motion.div>
         </div>

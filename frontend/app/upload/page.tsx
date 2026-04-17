@@ -124,11 +124,12 @@ export default function UploadPage() {
                <button 
                  onClick={async () => {
                    setUploading(true);
-                   setLoadingMessage("Fetching Demo Dataset...");
+                   setLoadingMessage("Fetching Random Demo Scenario...");
                    try {
-                     const response = await fetch('/demo_datasets/loan_audit_demo.csv');
+                     const randomIndex = Math.floor(Math.random() * 50) + 1;
+                     const response = await fetch(`/demo_datasets/demo_audit_${randomIndex}.csv`);
                      const blob = await response.blob();
-                     const demoFile = new File([blob], "loan_audit_demo.csv", { type: "text/csv" });
+                     const demoFile = new File([blob], `demo_audit_scenario_${randomIndex}.csv`, { type: "text/csv" });
                      handleUpload(demoFile);
                    } catch (e) {
                      setError("Demo load failed. Please upload manually.");
