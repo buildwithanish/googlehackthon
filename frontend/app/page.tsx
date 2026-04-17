@@ -251,28 +251,43 @@ export default function LandingPage() {
                  <Upload className="w-5 h-5" /> Audit Dataset
                </span>
             </Link>
+            <button 
+              onClick={() => { setShowReport(true); setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 500); }}
+              className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-indigo-500 hover:scale-110 active:scale-95 flex items-center gap-3 shadow-2xl shadow-indigo-600/30 italic group"
+            >
+               <Activity className="w-5 h-5 animate-pulse" /> Run Instant Audit
+            </button>
             <Link href="/simulator" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase text-xs tracking-widest transition-all hover:bg-white/10 hover:scale-110 active:scale-95 flex items-center gap-3 backdrop-blur-xl group">
                <Zap className="w-5 h-5 text-indigo-400 group-hover:animate-bounce" /> Live Bias Simulator
             </Link>
           </motion.div>
         </div>
 
-        {/* Floating Metrics Badge */}
+        {/* ── LIVE INTELLIGENCE FEED (BOTTOM ROW) ── */}
         <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-20 right-[5%] hidden 2xl:block p-8 glass-morphism rounded-[40px] border-glow animate-float z-50"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="absolute bottom-10 left-0 w-full px-6 flex flex-wrap justify-center gap-6 z-10"
         >
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400">
-              <Activity className="w-8 h-8" />
+          {[
+            { icon: <Activity className="w-6 h-6" />, label: "Global Parity Index", val: "0.92", trend: "↑", color: "text-emerald-500" },
+            { icon: <ShieldCheck className="w-6 h-6" />, label: "Audit Confidence", val: "98.4%", trend: "↑", color: "text-indigo-400" },
+            { icon: <Brain className="w-6 h-6" />, label: "Neural Clarity", val: "High", trend: "✓", color: "text-purple-400" },
+            { icon: <Zap className="w-6 h-6" />, label: "Mitigation Speed", val: "12ms", trend: "↓", color: "text-amber-500" }
+          ].map((metric, i) => (
+            <div key={i} className="p-6 bg-[#0B1023]/60 backdrop-blur-2xl border border-white/5 rounded-[30px] flex items-center gap-5 group hover:border-indigo-500/40 transition-all border-glow shadow-2xl">
+              <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                {metric.icon}
+              </div>
+              <div className="text-left space-y-0.5">
+                <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">{metric.label}</div>
+                <div className="text-xl font-black italic text-white tracking-tighter">
+                  {metric.val}<span className={`${metric.color} ml-1.5 text-[10px]`}>{metric.trend}</span>
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Global Parity Index</div>
-              <div className="text-3xl font-black italic text-white">0.92<span className="text-emerald-500 ml-2 text-sm">↑</span></div>
-            </div>
-          </div>
+          ))}
         </motion.div>
 
         {/* Trust indicators / Badges */}
